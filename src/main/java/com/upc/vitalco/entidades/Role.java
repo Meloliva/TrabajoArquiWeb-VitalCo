@@ -1,4 +1,4 @@
-package com.upc.vitalco;
+package com.upc.vitalco.entidades;
 
 import jakarta.persistence.*;
 import lombok.Getter;
