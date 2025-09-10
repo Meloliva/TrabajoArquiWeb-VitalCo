@@ -37,4 +37,7 @@ public class Receta {
     @Column(name = "proteinas", precision = 6, scale = 2)
     private BigDecimal proteinas;
 
+    @Column(name = "favorito")
+    private Boolean favorito;
+
 }
