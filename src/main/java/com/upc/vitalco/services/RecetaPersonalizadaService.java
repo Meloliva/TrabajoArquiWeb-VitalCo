@@ -1,5 +1,5 @@
 //US02 - Implementacion de listar recetas personalizadas por paciente
-package com.upc.vitalco.services;
+/*package com.upc.vitalco.services;
 import com.upc.vitalco.dto.RecetaPersonalizadaDTO;
 import com.upc.vitalco.entidades.Paciente;
 import com.upc.vitalco.entidades.Plannutricional;
@@ -56,4 +56,4 @@ public class RecetaPersonalizadaService implements IRecetaPersonalizadaServices 
             return dto;
         }).collect(Collectors.toList());
     }
-}
+}*/
