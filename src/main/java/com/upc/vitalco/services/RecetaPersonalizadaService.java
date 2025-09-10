@@ -4,8 +4,9 @@ import com.upc.vitalco.dto.RecetaPersonalizadaDTO;
 import com.upc.vitalco.entidades.Paciente;
 import com.upc.vitalco.entidades.Plannutricional;
 import com.upc.vitalco.entidades.Receta;
+import com.upc.vitalco.interfaces.IRecetaPersonalizadaServices;
 import com.upc.vitalco.repositorios.PacienteRepository;
-import com.upc.vitalco.repositorios.PlannutricionalRepository;
+import com.upc.vitalco.repositorios.PlanNutricionalRepositorio;
 import com.upc.vitalco.repositorios.RecetaRepositorio;
 import com.upc.vitalco.services.RecetaService;
 import org.springframework.stereotype.Service;
@@ -14,13 +15,13 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-public class RecetaPersonalizadaService {
+public class RecetaPersonalizadaService implements IRecetaPersonalizadaServices {
     private final PacienteRepository pacienteRepository;
-    private final PlannutricionalRepository plannutricionalRepository;
+    private final PlanNutricionalRepositorio plannutricionalRepository;
     private final RecetaRepositorio RecetaRepositorio;
 
     public RecetaServiceImpl(PacienteRepository pacienteRepository,
-                             PlannutricionalRepository plannutricionalRepository,
+                             PlanNutricionalRepositorio plannutricionalRepository,
                              RecetaRepositorio recetaRepository) {
         this.pacienteRepository = pacienteRepository;
         this.plannutricionalRepository = plannutricionalRepository;

@@ -29,11 +29,14 @@ public class Paciente {
     @Column(name = "edad")
     private Integer edad;
 
-    @Column(name = "informemedico", length = Integer.MAX_VALUE)
-    private String informemedico;
-
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "idplan", nullable = false)
     private Plansuscripcion idplan;
+
+    @Column(name = "actividad_fisica", length = 30)
+    private String actividadFisica;
+
+    @Column(name = "trigliceridos", precision = 6, scale = 2)
+    private BigDecimal trigliceridos;
 
 }
