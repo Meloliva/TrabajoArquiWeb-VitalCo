@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
+
 @Getter
 @Setter
 @Entity
@@ -36,5 +38,8 @@ public class Seguimiento {
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "idplanreceta", nullable = false)
     private Planreceta idplanreceta;
+
+    @Column(name = "fecharegistro", columnDefinition = "timestamp default current_timestamp")
+    private LocalDateTime fecharegistro = LocalDateTime.now();
 
 }
