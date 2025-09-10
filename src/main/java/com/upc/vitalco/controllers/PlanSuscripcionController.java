@@ -29,8 +29,8 @@ public class PlanSuscripcionController {
         planSuscripcionService.eliminarReceta(id);
     }
 
-    @PutMapping("/editarPlanSuscripcion/{id}")
-    public ResponseEntity<PlanSuscripcionDTO> editar(@PathVariable Integer id,@RequestBody PlanSuscripcionDTO planSuscripcionDTO){
-        return ResponseEntity.ok(planSuscripcionService.actualizar(id, planSuscripcionDTO));
+    @PutMapping("/editarPlanSuscripcion")
+    public ResponseEntity<PlanSuscripcionDTO> editar(@RequestBody PlanSuscripcionDTO planSuscripcionDTO){
+        return ResponseEntity.ok(planSuscripcionService.actualizar(planSuscripcionDTO));
     }
 }

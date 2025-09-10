@@ -9,5 +9,5 @@ public interface IPlanSuscripcionServices {
     public PlanSuscripcionDTO registrar(PlanSuscripcionDTO PlanSuscripcionDTO);
     public List<PlanSuscripcionDTO> findAll();
     public void eliminarReceta(Integer IdPlanSuscripcion);
-    public PlanSuscripcionDTO actualizar(Integer idPlanSuscripcion, PlanSuscripcionDTO PlanSuscripcionDTO);
+    public PlanSuscripcionDTO actualizar(PlanSuscripcionDTO PlanSuscripcionDTO);
 }

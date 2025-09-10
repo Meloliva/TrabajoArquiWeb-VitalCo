@@ -1,7 +1,9 @@
 package com.upc.vitalco.services;
 
 import com.upc.vitalco.dto.PlanSuscripcionDTO;
+import com.upc.vitalco.dto.RecetaDTO;
 import com.upc.vitalco.entidades.Plansuscripcion;
+import com.upc.vitalco.entidades.Receta;
 import com.upc.vitalco.interfaces.IPlanSuscripcionServices;
 import com.upc.vitalco.repositorios.PlanSuscripcionRepositorio;
 import org.modelmapper.ModelMapper;
@@ -45,12 +47,11 @@ public class PlanSuscripcionService implements IPlanSuscripcionServices {
     }
 
     @Override
-    public PlanSuscripcionDTO actualizar(Integer idPlanSuscripcion, PlanSuscripcionDTO planSuscripcionDTO) {
-        return planSuscripcionRepositorio.findById(idPlanSuscripcion)
+    public PlanSuscripcionDTO actualizar(PlanSuscripcionDTO planSuscripcionDTO) {
+        return planSuscripcionRepositorio.findById(planSuscripcionDTO.getId())
                 .map(existing -> {
-                    existing.setTipo(planSuscripcionDTO.getTipo());
-                    existing.setPrecio(planSuscripcionDTO.getPrecio());
-                    Plansuscripcion guardado = planSuscripcionRepositorio.save(existing);
+                    Plansuscripcion planSuscripcionEntidad = modelMapper.map(planSuscripcionDTO, Plansuscripcion.class);
+                    Plansuscripcion guardado = planSuscripcionRepositorio.save(planSuscripcionEntidad);
                     return modelMapper.map(guardado, PlanSuscripcionDTO.class);
                 })
                 .orElseThrow(() -> new RuntimeException("PlanSuscripcion con ID " + planSuscripcionDTO.getId() +
