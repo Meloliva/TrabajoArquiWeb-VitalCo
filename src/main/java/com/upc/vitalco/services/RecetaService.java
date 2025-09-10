@@ -1,0 +1,58 @@
+package com.upc.vitalco.services;
+
+import com.upc.vitalco.dto.RecetaDTO;
+import com.upc.vitalco.entidades.Receta;
+import com.upc.vitalco.interfaces.IRecetaServices;
+import com.upc.vitalco.repositorios.RecetaRepositorio;
+import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.stream.Collectors;
+
+@Service
+public class RecetaService implements IRecetaServices {
+    @Autowired
+    private RecetaRepositorio recetaRepositorio;
+
+    @Autowired
+    private ModelMapper modelMapper;
+
+    @Override
+    public RecetaDTO registrar(RecetaDTO recetaDTO) {
+        if (recetaDTO.getIdReceta() == null) {
+            Receta receta = modelMapper.map(recetaDTO, Receta.class);
+            receta = recetaRepositorio.save(receta);//insert into
+            return modelMapper.map(receta, RecetaDTO.class);
+        }
+        return null;
+    }
+
+    @Override
+    public List<RecetaDTO> findAll() {
+        return recetaRepositorio.findAll().
+                stream()
+                .map(receta -> modelMapper.map(receta, RecetaDTO.class))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public void eliminarReceta(Long idReceta) {
+        if (recetaRepositorio.existsById(idReceta)) {
+            recetaRepositorio.deleteById(idReceta);
+        }
+    }
+
+    @Override
+    public RecetaDTO actualizar(RecetaDTO recetaDTO) {
+        return recetaRepositorio.findById(recetaDTO.getIdReceta())
+                .map(existing -> {
+                    Receta recetaEntidad = modelMapper.map(recetaDTO, Receta.class);
+                    Receta guardado = recetaRepositorio.save(recetaEntidad);
+                    return modelMapper.map(guardado, RecetaDTO.class);
+                })
+                .orElseThrow(() -> new RuntimeException("Receta con ID " + recetaDTO.getIdReceta() +
+                        " no encontrado"));
+    }
+}
