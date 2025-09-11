@@ -34,7 +34,7 @@ public class RecetaController {
     }
     @GetMapping("/buscarRecetasPorNombre")
     public List<RecetaDTO> buscarPorNombre(@RequestParam String nombre) {
-        return recetaService.buscarPorNombre(nombre);
+        return recetaService.buscarRecetasPorNombre(nombre);
     }
 
     @GetMapping("/autocompletarNombresRecetas")
