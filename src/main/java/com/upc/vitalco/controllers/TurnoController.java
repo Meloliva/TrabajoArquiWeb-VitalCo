@@ -9,22 +9,23 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
+@RequestMapping("/api")
 public class TurnoController {
     @Autowired
     private TurnoService  turnoService;
-    @PostMapping("/turno")
+    @PostMapping("/registrarTurno")
     public TurnoDTO registrar(@RequestBody TurnoDTO turnoDTO) {
         return turnoService.registrar(turnoDTO);
     }
-    @PutMapping("/turno")
+    @PutMapping("/editarTurno")
     public ResponseEntity<TurnoDTO> actualizar(@RequestBody TurnoDTO turnoDTO) {
         return ResponseEntity.ok(turnoService.actualizar(turnoDTO));
     }
-    @DeleteMapping("/turno/{id}")
+    @DeleteMapping("/eliminarTurno/{id}")
     public void eliminar(@PathVariable Long id) {
         turnoService.eliminar(id);
     }
-    @GetMapping("/turno")
+    @GetMapping("/listarTurnos")
     public List<TurnoDTO> findAll() {
         return turnoService.findAll();
     }
