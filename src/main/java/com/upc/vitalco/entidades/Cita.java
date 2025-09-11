@@ -19,11 +19,12 @@ public class Cita {
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "idpaciente", nullable = false)
-    private Paciente idpaciente;
+    private Paciente paciente;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "idnutricionista", nullable = false)
-    private Nutricionista idnutricionista;
+    private Nutricionista nutricionista;
+
 
     @Column(name = "dia", nullable = false)
     private LocalDate dia;
