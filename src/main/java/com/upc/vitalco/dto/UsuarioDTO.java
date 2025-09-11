@@ -1,5 +1,4 @@
 package com.upc.vitalco.dto;
-import com.upc.vitalco.dto.RolDTO;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
