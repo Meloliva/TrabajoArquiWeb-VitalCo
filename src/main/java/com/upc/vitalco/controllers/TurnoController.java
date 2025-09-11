@@ -22,7 +22,7 @@ public class TurnoController {
         return ResponseEntity.ok(turnoService.actualizar(turnoDTO));
     }
     @DeleteMapping("/eliminarTurno/{id}")
-    public void eliminar(@PathVariable Long id) {
+    public void eliminar(@PathVariable Integer id) {
         turnoService.eliminar(id);
     }
     @GetMapping("/listarTurnos")

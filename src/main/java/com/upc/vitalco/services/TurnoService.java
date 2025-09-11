@@ -29,7 +29,7 @@ public class TurnoService implements ITurnoServices {
     }
 
     @Override
-    public void eliminar(Long id) {
+    public void eliminar(Integer id) {
         if(turnoRepositorio.existsById(id)) {
             turnoRepositorio.deleteById(id);
         }
