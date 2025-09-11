@@ -21,7 +21,7 @@ public class RolService implements IRolServices {
 
     @Override
     public RolDTO registrar(RolDTO rolesDTO) {
-        if (rolesDTO.getIdRol() == null) {
+        if (rolesDTO.getId() == null) {
             Role rol = modelMapper.map(rolesDTO, Role.class);
             rol = rolRepositorio.save(rol);
             return modelMapper.map(rol, RolDTO.class);
@@ -46,13 +46,13 @@ public class RolService implements IRolServices {
 
     @Override
     public RolDTO actualizar(RolDTO rolesDTO) {
-        return rolRepositorio.findById(rolesDTO.getIdRol())
+        return rolRepositorio.findById(rolesDTO.getId())
                 .map(existing -> {
                     Role roleEntidad = modelMapper.map(rolesDTO, Role.class);
                     Role guardado = rolRepositorio.save(roleEntidad);
                     return modelMapper.map(guardado, RolDTO.class);
                 })
-                .orElseThrow(() -> new RuntimeException("Receta con ID " + rolesDTO.getIdRol() +
+                .orElseThrow(() -> new RuntimeException("Receta con ID " + rolesDTO.getId() +
                         " no encontrado"));
     }
 }

@@ -9,6 +9,6 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class RolDTO {
-    private Long idRol;
+    private Long id;
     private String tipo;
 }
