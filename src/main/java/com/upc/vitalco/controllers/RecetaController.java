@@ -32,5 +32,16 @@ public class RecetaController {
     public ResponseEntity<RecetaDTO> editarReceta(@RequestBody RecetaDTO recetaDTO){
         return ResponseEntity.ok(recetaService.actualizar(recetaDTO));
     }
+    @GetMapping("/buscarRecetasPorNombre")
+    public List<RecetaDTO> buscarPorNombre(@RequestParam String nombre) {
+        return recetaService.buscarPorNombre(nombre);
+    }
+
+    @GetMapping("/autocompletarNombresRecetas")
+    public List<String> autocompletarNombres(@RequestParam String texto) {
+        return recetaService.autocompletarNombresRecetas(texto);
+    }
+
+
 }
 

@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface ITurnoServices {
     public TurnoDTO registrar(TurnoDTO turnoDTO);
-    public void eliminar(Long id);
+    public void eliminar(Integer id);
     public List<TurnoDTO> findAll();
     public TurnoDTO actualizar(TurnoDTO turnoDTO);
 }

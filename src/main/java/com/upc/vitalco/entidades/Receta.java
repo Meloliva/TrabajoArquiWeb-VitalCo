@@ -40,5 +40,6 @@ public class Receta {
     @Column(name = "ingredientes", length = 1000)
     private String ingredientes;
 
-
+    @Column(name = "nombre", nullable = false, length = 100)
+    private String nombre;
 }

@@ -55,4 +55,22 @@ public class RecetaService implements IRecetaServices {
                 .orElseThrow(() -> new RuntimeException("Receta con ID " + recetaDTO.getIdReceta() +
                         " no encontrado"));
     }
+
+    @Override
+    public List<RecetaDTO> buscarRecetasPorNombre(String nombre) {
+        return recetaRepositorio.findByNombreContainingIgnoreCase(nombre)
+                .stream()
+                .map(receta -> modelMapper.map(receta, RecetaDTO.class))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<String> autocompletarNombresRecetas(String texto) {
+        return recetaRepositorio.findByNombreContainingIgnoreCase(texto)
+                .stream()
+                .map(Receta::getNombre)
+                .distinct()
+                .limit(10)
+                .collect(Collectors.toList());
+    }
 }

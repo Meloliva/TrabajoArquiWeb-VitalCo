@@ -1,11 +1,9 @@
 package com.upc.vitalco.services;
 
-import com.upc.vitalco.dto.NutricionistaDTO;
 import com.upc.vitalco.dto.PlanRecetaDTO;
-import com.upc.vitalco.entidades.Nutricionista;
+import com.upc.vitalco.dto.RecetaDTO;
 import com.upc.vitalco.entidades.Planreceta;
 import com.upc.vitalco.interfaces.IPlanRecetaServices;
-import com.upc.vitalco.repositorios.NutricionistaRepositorio;
 import com.upc.vitalco.repositorios.PlanRecetaRepositorio;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
