@@ -10,5 +10,6 @@ public interface IRecetaServices {
     public List<RecetaDTO> findAll();
     public void eliminarReceta(Long idReceta);
     public RecetaDTO actualizar(RecetaDTO recetaDTO);
-
+    public List<RecetaDTO> buscarRecetasPorNombre(String nombre);
+    public List<String> autocompletarNombresRecetas(String texto);
 }

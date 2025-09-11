@@ -10,7 +10,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class TurnoDTO {
-    private Long id;
+    private Integer id;
     private Integer InicioTurno;
     private Integer FimTurno;
 }

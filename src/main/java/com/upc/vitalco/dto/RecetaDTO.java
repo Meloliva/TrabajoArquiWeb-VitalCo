@@ -19,4 +19,5 @@ public class RecetaDTO {
     private BigDecimal grasas;
     private BigDecimal proteinas;
     private String ingredientes;
+    private String nombre;
 }
