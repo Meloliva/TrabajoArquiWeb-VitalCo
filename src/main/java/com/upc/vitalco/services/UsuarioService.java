@@ -20,13 +20,23 @@ public class UsuarioService implements IUsuarioServices {
 
     @Override
     public UsuarioDTO registrar(UsuarioDTO usuarioDTO) {
-        if (usuarioDTO.getId() == null) {
-            Usuario usuario = modelMapper.map(usuarioDTO, Usuario.class);
-            usuario.setEstado("Activo");
-            usuario = usuarioRepositorio.save(usuario);
-            return modelMapper.map(usuario, UsuarioDTO.class);
+        Usuario usuarioExistente = usuarioRepositorio.findByCorreo(usuarioDTO.getCorreo());
+        if (usuarioExistente != null) {
+            if ("Desactivado".equalsIgnoreCase(usuarioExistente.getEstado())) {
+                usuarioExistente.setEstado("Activo");
+                usuarioExistente.setNombre(usuarioDTO.getNombre());
+                usuarioExistente.setApellido(usuarioDTO.getApellido());
+                // Actualiza otros campos necesarios
+                usuarioExistente = usuarioRepositorio.save(usuarioExistente);
+                return modelMapper.map(usuarioExistente, UsuarioDTO.class);
+            } else {
+                throw new RuntimeException("El correo ya está registrado y activo.");
+            }
         }
-        return null;
+        Usuario usuario = modelMapper.map(usuarioDTO, Usuario.class);
+        usuario.setEstado("Activo");
+        usuario = usuarioRepositorio.save(usuario);
+        return modelMapper.map(usuario, UsuarioDTO.class);
     }
 
     @Override
