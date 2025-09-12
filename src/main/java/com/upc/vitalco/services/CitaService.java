@@ -44,6 +44,13 @@ public class CitaService implements ICitaServices {
                 .orElseThrow(() -> new RuntimeException("Paciente no encontrado"));
         cita.setPaciente(paciente);
 
+        // Validar que el paciente tenga plan premium
+        if (paciente.getIdplan() == null ||
+                !"Plan premium".equalsIgnoreCase(paciente.getIdplan().getTipo())) {
+            throw new RuntimeException("Solo los pacientes con plan premium pueden registrar citas.");
+        }
+        cita.setPaciente(paciente);
+
         // Buscar nutricionista por ID
         Nutricionista nutricionista = nutricionistaRepositorio.findById(citaDTO.getIdNutricionista())
                 .orElseThrow(() -> new RuntimeException("Nutricionista no encontrado"));
