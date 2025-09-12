@@ -39,6 +39,7 @@ public class UsuarioService implements IUsuarioServices {
         return modelMapper.map(usuario, UsuarioDTO.class);
     }
 
+
     @Override
     public void eliminar(Integer id) {
         usuarioRepositorio.findById(id).ifPresent(usuario -> {
