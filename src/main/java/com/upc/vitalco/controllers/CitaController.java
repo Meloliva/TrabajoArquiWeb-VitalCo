@@ -18,8 +18,14 @@ public class CitaController {
         return citaService.registrar(citaDTO);
     }
 
-    @GetMapping("/listarCitas")
-    public List<CitaDTO> findAll(){
-        return citaService.findAll();
+
+    @GetMapping("/listarCitasPorNutricionista/{idNutricionista}")
+    public List<CitaDTO> listarPorNutricionista(@PathVariable Integer idNutricionista){
+        return citaService.listarPorNutricionista(idNutricionista);
+    }
+
+    @GetMapping("/listarCitasPorPaciente/{idPaciente}")
+    public List<CitaDTO> listarPorPaciente(@PathVariable Integer idPaciente){
+        return citaService.listarPorPaciente(idPaciente);
     }
 }

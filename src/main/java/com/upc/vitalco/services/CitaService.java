@@ -74,8 +74,27 @@ public class CitaService implements ICitaServices {
     }
 
     @Override
-    public List<CitaDTO> findAll() {
-        return citaRepositorio.findAll()
+    public List<CitaDTO> listarPorNutricionista(Integer idNutricionista) {
+        return citaRepositorio.findByNutricionistaId(idNutricionista)
+                .stream()
+                .map(cita -> {
+                    CitaDTO dto = new CitaDTO();
+                    dto.setId(cita.getId());
+                    dto.setDia(cita.getDia());
+                    dto.setHora(cita.getHora());
+                    dto.setDescripcion(cita.getDescripcion());
+                    dto.setEstado(cita.getEstado());
+                    dto.setLink(cita.getLink());
+                    dto.setIdPaciente(cita.getPaciente().getId());
+                    dto.setIdNutricionista(cita.getNutricionista().getId());
+                    return dto;
+                })
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<CitaDTO> listarPorPaciente(Integer idPaciente) {
+        return citaRepositorio.findByPacienteId(idPaciente)
                 .stream()
                 .map(cita -> {
                     CitaDTO dto = new CitaDTO();
