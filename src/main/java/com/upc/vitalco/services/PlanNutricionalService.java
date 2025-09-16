@@ -19,7 +19,7 @@ public class PlanNutricionalService implements IPlanNutricionalServices{
     private ModelMapper modelMapper;
 
     @Override
-    public PlanNutricionalDTO registrar(PlanNutricionalDTO dto) {
+    public PlanNutricionalDTO registrar(PlanNutricionalDTO dto) {//si es que hay administrador se tendra que hacer en el mockup
         if (dto.getId() == null) {
             Plannutricional entidad = modelMapper.map(dto, Plannutricional.class);
             entidad = plannutricionalRepositorio.save(entidad);
@@ -37,14 +37,14 @@ public class PlanNutricionalService implements IPlanNutricionalServices{
     }
 
     @Override
-    public void eliminar(Integer id) {
+    public void eliminar(Integer id) {//si es que hay administrador se tendra que hacer en el mockup
         if (plannutricionalRepositorio.existsById(id)) {
             plannutricionalRepositorio.deleteById(id);
         }
     }
 
     @Override
-    public PlanNutricionalDTO actualizar(Integer id, PlanNutricionalDTO dto) {
+    public PlanNutricionalDTO actualizar(Integer id, PlanNutricionalDTO dto) {//si es que hay administrador se tendra que hacer en el mockup
         return plannutricionalRepositorio.findById(id)
                 .map(existing -> {
                     existing.setDuracion(dto.getDuracion());

@@ -29,7 +29,7 @@ public class TurnoService implements ITurnoServices {
     }
 
     @Override
-    public void eliminar(Integer id) {
+    public void eliminar(Integer id) {//solo si hay administrador sera visible en la pagina
         if(turnoRepositorio.existsById(id)) {
             turnoRepositorio.deleteById(id);
         }
@@ -44,7 +44,7 @@ public class TurnoService implements ITurnoServices {
     }
 
     @Override
-    public TurnoDTO actualizar(TurnoDTO turnoDTO) {
+    public TurnoDTO actualizar(TurnoDTO turnoDTO) {//solo si hay administrador sera visible en la pagina
         return turnoRepositorio.findById(turnoDTO.getId())
                 .map(existing -> {
                     Turno turnoEntidad = modelMapper.map(turnoDTO, Turno.class);

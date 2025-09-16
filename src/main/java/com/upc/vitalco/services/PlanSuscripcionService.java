@@ -20,7 +20,7 @@ public class PlanSuscripcionService implements IPlanSuscripcionServices {
     private ModelMapper modelMapper;
 
     @Override
-    public PlanSuscripcionDTO registrar(PlanSuscripcionDTO planSuscripcionDTO) {
+    public PlanSuscripcionDTO registrar(PlanSuscripcionDTO planSuscripcionDTO) {//solo si hay administrador sera visible en la pagina
         if (planSuscripcionDTO.getId() == null) {
             Plansuscripcion planSuscripcion = modelMapper.map(planSuscripcionDTO, Plansuscripcion.class);
             Plansuscripcion guardado = planSuscripcionRepositorio.save(planSuscripcion);
@@ -38,14 +38,14 @@ public class PlanSuscripcionService implements IPlanSuscripcionServices {
     }
 
     @Override
-    public void eliminarReceta(Integer idPlanSuscripcion) {
+    public void eliminarReceta(Integer idPlanSuscripcion) {//solo si hay administrador sera visible en la pagina
         if (planSuscripcionRepositorio.existsById(idPlanSuscripcion)) {
             planSuscripcionRepositorio.deleteById(idPlanSuscripcion);
         }
     }
 
     @Override
-    public PlanSuscripcionDTO actualizar(PlanSuscripcionDTO planSuscripcionDTO) {
+    public PlanSuscripcionDTO actualizar(PlanSuscripcionDTO planSuscripcionDTO) {//solo si hay administrador sera visible en la pagina
         return planSuscripcionRepositorio.findById(planSuscripcionDTO.getId())
                 .map(existing -> {
                     Plansuscripcion planSuscripcionEntidad = modelMapper.map(planSuscripcionDTO, Plansuscripcion.class);

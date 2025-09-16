@@ -20,7 +20,7 @@ public class HorarioService implements IHorarioServices{
 
 
 
-    @Override
+    @Override//solo si hay administrador sera visible en el mockup
     public HorarioDTO registrar(HorarioDTO horarioDTO) {
         if( horarioDTO.getId()==null){
             Horario horario = modelMapper.map(horarioDTO,Horario.class);
@@ -30,7 +30,7 @@ public class HorarioService implements IHorarioServices{
         return null;
     }
 
-    @Override
+    @Override//solo si hay administrador sera visible en el mockup
     public void borrar(Long id) {
         if(horarioRepositorio.existsById(id)) {
             horarioRepositorio.deleteById(id);
@@ -46,7 +46,7 @@ public class HorarioService implements IHorarioServices{
     }
 
     @Override
-    public HorarioDTO actualizar(HorarioDTO horarioDTO) {
+    public HorarioDTO actualizar(HorarioDTO horarioDTO) {//solo si hay administrador sera visible en la pagina
         return horarioRepositorio.findById(horarioDTO.getId())
                 .map(existing -> {
                     Horario recetaEntidad = modelMapper.map(horarioDTO, Horario.class);

@@ -23,10 +23,8 @@ public class Plansuscripcion {
     @Column(name = "precio", precision = 8, scale = 2)
     private BigDecimal precio;
 
-    @ElementCollection
-    @CollectionTable(name = "plan_beneficios", joinColumns = @JoinColumn(name = "idplan"))
-    @Column(name = "beneficio")
-    private List<String> beneficios;
+    @Column(name = "beneficios_plan", columnDefinition = "TEXT")
+    private String beneficiosPlan;
 
     @Column(name = "terminos_condiciones", columnDefinition = "TEXT")
     private String terminosCondiciones;
