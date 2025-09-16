@@ -19,7 +19,7 @@ public class TurnoService implements ITurnoServices {
     private ModelMapper modelMapper;
 
     @Override
-    public TurnoDTO registrar(TurnoDTO turnoDTO) {
+    public TurnoDTO registrar(TurnoDTO turnoDTO) {//solo si hay administrador sera visible en la pagina
         if( turnoDTO.getId()==null){
             Turno turno = modelMapper.map(turnoDTO,Turno.class);
             turno= turnoRepositorio.save(turno);

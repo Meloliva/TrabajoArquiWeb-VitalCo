@@ -6,5 +6,6 @@ import java.util.List;
 
 public interface ICitaServices {
     public CitaDTO registrar(CitaDTO citaDTO);
-    public List<CitaDTO> findAll();
+    List<CitaDTO> listarPorNutricionista(Integer idNutricionista);
+    List<CitaDTO> listarPorPaciente(Integer idPaciente);
 }

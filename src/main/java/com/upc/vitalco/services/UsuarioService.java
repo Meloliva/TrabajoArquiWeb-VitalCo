@@ -48,7 +48,7 @@ public class UsuarioService implements IUsuarioServices {
         });
     }
 
-    @Override
+    @Override //si es que hay administrador se hara la lista
     public List<UsuarioDTO> findAll() {
         return usuarioRepositorio.findAll()
                 .stream()
