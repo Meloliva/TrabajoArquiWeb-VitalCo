@@ -20,7 +20,7 @@ public class RolService implements IRolServices {
     private ModelMapper modelMapper;
 
     @Override
-    public RolDTO registrar(RolDTO rolesDTO) {
+    public RolDTO registrar(RolDTO rolesDTO) {//solo si hay administrador sera visible en la pagina
         if (rolesDTO.getId() == null) {
             Role rol = modelMapper.map(rolesDTO, Role.class);
             rol = rolRepositorio.save(rol);
@@ -38,14 +38,14 @@ public class RolService implements IRolServices {
     }
 
     @Override
-    public void eliminarRol(Long idRol) {
+    public void eliminarRol(Long idRol) {//solo si hay administrador sera visible en la pagina
         if(rolRepositorio.existsById(idRol)) {
             rolRepositorio.deleteById(idRol);
         }
     }
 
     @Override
-    public RolDTO actualizar(RolDTO rolesDTO) {
+    public RolDTO actualizar(RolDTO rolesDTO) {//solo si hay administrador sera visible en la pagina
         return rolRepositorio.findById(rolesDTO.getId())
                 .map(existing -> {
                     Role roleEntidad = modelMapper.map(rolesDTO, Role.class);

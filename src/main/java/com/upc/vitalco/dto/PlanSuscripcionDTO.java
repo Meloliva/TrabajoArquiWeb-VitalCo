@@ -19,4 +19,6 @@ public class PlanSuscripcionDTO {
     private Integer id;
     private String tipo;
     private BigDecimal precio;
+    private String beneficiosPlan;
+    private String terminosCondiciones;
 }

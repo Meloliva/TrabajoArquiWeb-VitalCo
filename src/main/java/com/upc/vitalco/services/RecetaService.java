@@ -38,7 +38,7 @@ public class RecetaService implements IRecetaServices {
     }
 
     @Override
-    public void eliminarReceta(Long idReceta) {
+    public void eliminarReceta(Long idReceta) {//solo si hay administrador sera visible en la pagina
         if (recetaRepositorio.existsById(idReceta)) {
             recetaRepositorio.deleteById(idReceta);
         }
