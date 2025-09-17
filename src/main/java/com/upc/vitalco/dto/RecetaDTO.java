@@ -20,4 +20,5 @@ public class RecetaDTO {
     private BigDecimal proteinas;
     private String ingredientes;
     private String nombre;
+    private PlanNutricionalDTO idPlanNutricional;
 }
