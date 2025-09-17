@@ -5,6 +5,8 @@ import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.ColumnDefault;
 
+import java.time.LocalDateTime;
+
 @Getter
 @Setter
 @Entity
@@ -34,4 +36,6 @@ public class Planreceta {
     @Column(name = "cantidadporcion", length = 50)
     private String cantidadporcion;
 
+    @Column(name = "fecharegistro")
+    private LocalDateTime fecharegistro;
 }

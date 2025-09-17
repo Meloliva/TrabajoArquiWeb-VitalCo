@@ -31,8 +31,8 @@ public class Seguimiento {
     @Column(name = "avance", length = 100)
     private String avance;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "idcita", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY, optional = true)
+    @JoinColumn(name = "idcita", nullable = true)
     private Cita idcita;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
