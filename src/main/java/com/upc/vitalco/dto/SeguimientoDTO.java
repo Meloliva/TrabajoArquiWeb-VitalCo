@@ -1,0 +1,21 @@
+package com.upc.vitalco.dto;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
+public class SeguimientoDTO {
+    private Integer id;
+    private Boolean cumplio=false;
+    private CitaDTO idcita;
+    private PlanRecetaDTO idplanreceta;
+    private String fecharegistro;
+    private Double calorias;
+    private Double proteinas;
+    private Double grasas;
+    private Double carbohidratos;
+}

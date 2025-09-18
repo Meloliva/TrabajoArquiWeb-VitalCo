@@ -16,20 +16,11 @@ public class Seguimiento {
     @Column(name = "idseguimiento", nullable = false)
     private Integer id;
 
-    @Column(name = "cumplio")
+    @Column(name = "cumplio") // si cumplio todo el plan nutricional con las calorias indicadas y calculadas esto se convierte en true y va salir en la pantalla felicitaciones completaste tu plan nutricional
     private Boolean cumplio;
 
-    @Column(name = "progeso")
-    private String progeso;
-
-    @Column(name = "descripcion", length = Integer.MAX_VALUE)
-    private String descripcion;
-
-    @Column(name = "objetivo")
-    private String objetivo;
-
-    @Column(name = "avance", length = 100)
-    private String avance;
+    /*@Column(name = "descripcion", length = Integer.MAX_VALUE)
+    private String descripcion; si en caso haiga nutricionista*/
 
     @ManyToOne(fetch = FetchType.LAZY, optional = true)
     @JoinColumn(name = "idcita", nullable = true)
@@ -41,5 +32,17 @@ public class Seguimiento {
 
     @Column(name = "fecharegistro", columnDefinition = "timestamp default current_timestamp")
     private LocalDateTime fecharegistro = LocalDateTime.now();
+
+    @Column(name = "calorias")
+    private Double calorias;
+
+    @Column(name = "proteinas")
+    private Double proteinas;
+
+    @Column(name = "grasas")
+    private Double grasas;
+
+    @Column(name = "carbohidratos")
+    private Double carbohidratos;
 
 }
