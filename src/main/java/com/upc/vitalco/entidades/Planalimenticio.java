@@ -32,21 +32,15 @@ public class Planalimenticio {
     private LocalDate fechafin;
 
     @Column(name = "grasas_diaria", precision = 6, scale = 2)
-    private BigDecimal grasasDiaria;
+    private Double grasasDiaria;
 
     @Column(name = "carbohidratos_diaria", precision = 6, scale = 2)
-    private BigDecimal carbohidratosDiaria;
+    private Double carbohidratosDiaria;
 
     @Column(name = "proteinas_diaria", precision = 6, scale = 2)
-    private BigDecimal proteinasDiaria;
+    private Double proteinasDiaria;
 
     @Column(name = "calorias_diaria", precision = 6, scale = 2)
-    private BigDecimal caloriasDiaria;
-
-    @Column(name = "meta_plan", precision = 6, scale = 2)
-    private BigDecimal metaTotal;
-
-    @Column(name = "meta_diaria", precision = 6, scale = 2)
-    private BigDecimal metaDiaria;
+    private Double caloriasDiaria;
 
 }
