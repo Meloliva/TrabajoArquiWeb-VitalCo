@@ -37,7 +37,7 @@ public class SeguimientoService implements ISeguimientoServices {
     @Override
     public List<SeguimientoDTO> listarPorDia(Integer pacienteId, LocalDate fecha) {
         // Ajusta este método según tu modelo real
-        List<Seguimiento> seguimientos = seguimientoRepositorio.findByPacienteIdAndFecha(pacienteId, fecha);
+        List<Seguimiento> seguimientos = seguimientoRepositorio.buscarPorPacienteYFecha(pacienteId, fecha);
         return seguimientos.stream()
                 .map(s -> modelMapper.map(s, SeguimientoDTO.class))
                 .collect(Collectors.toList());
@@ -45,39 +45,47 @@ public class SeguimientoService implements ISeguimientoServices {
 
     @Override
     public String agregarRecetaADia(Integer pacienteId, LocalDate fecha, RecetaDTO recetaDTO) {
-        // Buscar el plan de receta correspondiente
-        Planreceta planDeReceta = planRecetaRepositorio.findByIdplanalimenticio_Idpaciente_IdAndFecha(pacienteId, fecha);
-        if (planDeReceta == null) {
-            planDeReceta = modelMapper.map(recetaDTO, Planreceta.class);
-            // asociar el plan alimenticio correspondiente si es necesario
-            planDeReceta = planRecetaRepositorio.save(planDeReceta);
+        // 1. Buscar seguimiento del día para el paciente
+        List<Seguimiento> seguimientos = seguimientoRepositorio.buscarPorPacienteYFecha(pacienteId, fecha);
+        Seguimiento seguimiento;
+
+        if (seguimientos.isEmpty()) {
+            // 2. Si no existe, buscar o crear plan de receta
+            Planreceta planDeReceta = planRecetaRepositorio.buscarPorPacienteYFecha(pacienteId, fecha);
+            if (planDeReceta == null) {
+                planDeReceta = modelMapper.map(recetaDTO, Planreceta.class);
+                // asociar el plan alimenticio si hace falta
+                planDeReceta = planRecetaRepositorio.save(planDeReceta);
+            }
+
+            // 3. Crear seguimiento nuevo
+            seguimiento = new Seguimiento();
+            seguimiento.setIdplanreceta(planDeReceta);
+            seguimiento.setFecharegistro(fecha.atStartOfDay());
+            seguimiento = seguimientoRepositorio.save(seguimiento);
+        } else {
+            // 4. Ya existe un seguimiento para ese paciente y fecha
+            seguimiento = seguimientos.get(0);
         }
 
-        // Buscar seguimiento del día, si no existe, crear uno nuevo
-        Planreceta finalPlanDeReceta = planDeReceta;
-        Optional<Seguimiento> seguimientoOpt = seguimientoRepositorio.findByIdplanreceta(planDeReceta);
-        Seguimiento seguimiento = seguimientoOpt.orElseGet(() -> {
-            Seguimiento nuevo = new Seguimiento();
-            nuevo.setIdplanreceta(finalPlanDeReceta);
-            nuevo.setFecharegistro(fecha.atStartOfDay());
-            return seguimientoRepositorio.save(nuevo);
-        });
-        // Verificar cumplimiento de metas
-        Planalimenticio plan = planDeReceta.getIdplanalimenticio();
+        // 5. Verificar cumplimiento de metas
+        Planalimenticio plan = seguimiento.getIdplanreceta().getIdplanalimenticio();
         if (plan != null) {
             double caloriasSeguimiento = seguimiento.getCalorias() != null ? seguimiento.getCalorias() : 0.0;
             double caloriasMeta = plan.getCaloriasDiaria() != null ? plan.getCaloriasDiaria() : 0.0;
             boolean cumplio = caloriasSeguimiento >= caloriasMeta;
+
             if (cumplio) {
                 seguimiento.setCumplio(true);
                 seguimientoRepositorio.save(seguimiento);
                 return "¡Felicitaciones! Has cumplido tu meta diaria.";
             }
         }
+
         seguimientoRepositorio.save(seguimiento);
         return "Receta agregada. Sigue esforzándote para cumplir tu meta.";
-
     }
+
 
     @Override
     public SeguimientoDTO editarRequerimientos(Integer seguimientoId, NutricionistaxRequerimientoDTO requerimientoNutriDTO) {
