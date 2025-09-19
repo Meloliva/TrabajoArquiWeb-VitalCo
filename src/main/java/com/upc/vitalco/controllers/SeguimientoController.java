@@ -9,6 +9,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -18,24 +19,16 @@ public class SeguimientoController {
     @Autowired
     private SeguimientoService seguimientoService;
 
-    @PostMapping
-    public SeguimientoDTO registrar(@RequestBody SeguimientoDTO seguimientoDTO) {
+    @PostMapping("/registrarSeguimiento")
+    public SeguimientoDTO registrarSeguimiento(@RequestBody SeguimientoDTO seguimientoDTO) {
         return seguimientoService.registrar(seguimientoDTO);
     }
 
     @GetMapping("/listarSeguimientos")
     public List<SeguimientoDTO> listarPorDia(
             @RequestParam Integer pacienteId,
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fecha) {
+            @RequestParam LocalDateTime fecha) {
         return seguimientoService.listarPorDia(pacienteId, fecha);
-    }
-
-    @PostMapping("/registrarSeguimiento")
-    public String agregarRecetaADia(
-            @RequestParam Integer pacienteId,
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fecha,
-            @RequestBody RecetaDTO recetaDTO) {
-        return seguimientoService.agregarRecetaADia(pacienteId, fecha, recetaDTO);
     }
 
     @PutMapping("/editarSeguimiento/{seguimientoId}")

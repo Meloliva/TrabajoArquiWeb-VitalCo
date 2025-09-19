@@ -6,6 +6,8 @@ import lombok.Setter;
 import org.hibernate.annotations.ColumnDefault;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Setter
@@ -21,9 +23,8 @@ public class Planreceta {
     @JoinColumn(name = "idplanalimenticio", nullable = false)
     private Planalimenticio idplanalimenticio;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "idreceta", nullable = false)
-    private Receta idreceta;
+    @OneToMany(mappedBy = "planreceta", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Receta> recetas = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "idhorario", nullable = false)

@@ -1,14 +1,20 @@
 package com.upc.vitalco.services;
 
 import com.upc.vitalco.dto.PlanRecetaDTO;
-import com.upc.vitalco.dto.RecetaDTO;
+import com.upc.vitalco.entidades.Horario;
+import com.upc.vitalco.entidades.Planalimenticio;
 import com.upc.vitalco.entidades.Planreceta;
+import com.upc.vitalco.entidades.Receta;
 import com.upc.vitalco.interfaces.IPlanRecetaServices;
+import com.upc.vitalco.repositorios.HorarioRepositorio;
+import com.upc.vitalco.repositorios.PlanAlimenticioRepositorio;
 import com.upc.vitalco.repositorios.PlanRecetaRepositorio;
+import com.upc.vitalco.repositorios.RecetaRepositorio;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -18,16 +24,41 @@ public class PlanRecetaService implements IPlanRecetaServices {
     private PlanRecetaRepositorio planRecetaRepositorio;
     @Autowired
     private ModelMapper modelMapper;
+    @Autowired
+    private PlanAlimenticioRepositorio planAlimenticioRepositorio;
+    @Autowired
+    private HorarioRepositorio horarioRepositorio;
+    @Autowired
+    private RecetaRepositorio recetaRepositorio;
+
 
     @Override
-    public PlanRecetaDTO registrar(PlanRecetaDTO planRecetaDTO) {
-        if (planRecetaDTO.getId() == null) {
-            Planreceta planReceta = modelMapper.map(planRecetaDTO, Planreceta.class);
-            planReceta = planRecetaRepositorio.save(planReceta);
-            return modelMapper.map(planReceta, PlanRecetaDTO.class);
+    public String agregarRecetaADia(PlanRecetaDTO planRecetaDTO) {
+        Planalimenticio planAlimenticio = planAlimenticioRepositorio.buscarPorPacienteId(planRecetaDTO.getIdplanalimenticio().getIdPaciente());
+        if (planAlimenticio == null) {
+            throw new RuntimeException("No existe plan alimenticio para el paciente");
         }
-        return null;
+        Horario horario = horarioRepositorio.findById(planRecetaDTO.getIdhorario().getId())
+                .orElseThrow(() -> new RuntimeException("Horario no encontrado"));
+        Receta receta = recetaRepositorio.findById(planRecetaDTO.getIdreceta().getIdReceta())
+                .orElseThrow(() -> new RuntimeException("Receta no encontrada"));
+        Planreceta planreceta = planRecetaRepositorio.buscarPorPacienteYFecha(planRecetaDTO.getIdplanalimenticio().getIdPaciente(), planRecetaDTO.getFecharegistro());
+        if (planreceta == null) {
+            planreceta = new Planreceta();
+            planreceta.setIdplanalimenticio(planAlimenticio);
+            planreceta.setIdhorario(horario);
+            planreceta.setCantidadporcion(planreceta.getCantidadporcion());
+            planreceta.setFecharegistro(LocalDateTime.now());
+            planreceta.getRecetas().add(receta);
+        }
+        // Mapear RecetaDTO a entidad Receta y agregarla
+        Receta receta1 = modelMapper.map(planRecetaDTO.getRecetas(), Receta.class);
+        planreceta.getRecetas().add(receta1);
+        planRecetaRepositorio.save(planreceta);
+        return "Receta agregada correctamente al plan de receta del día";
     }
+
+
 
     @Override
     public void eliminar(Integer id) {

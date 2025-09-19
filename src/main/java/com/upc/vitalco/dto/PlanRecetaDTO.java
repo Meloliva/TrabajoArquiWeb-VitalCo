@@ -6,6 +6,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @Setter
@@ -17,7 +19,8 @@ public class PlanRecetaDTO {
     private PlanAlimenticioDTO idplanalimenticio;
     private RecetaDTO idreceta;
     private HorarioDTO idhorario;
-    private Boolean favorito;
+    private Boolean favorito=false;
     private String cantidadporcion;
-    private LocalDate fecharegistro;
+    private LocalDateTime fecharegistro;
+    private List<RecetaDTO> recetas;
 }
