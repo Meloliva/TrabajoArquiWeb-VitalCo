@@ -20,7 +20,7 @@ public class PlanRecetaDTO {
     private RecetaDTO idreceta;
     private HorarioDTO idhorario;
     private Boolean favorito=false;
-    private String cantidadporcion;
+    private Double cantidadporcion;
     private LocalDateTime fecharegistro;
     private List<RecetaDTO> recetas;
 }

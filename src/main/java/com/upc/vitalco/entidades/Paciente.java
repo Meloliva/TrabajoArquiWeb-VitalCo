@@ -36,4 +36,7 @@ public class Paciente {
     @Column(name = "trigliceridos", precision = 6, scale = 2)
     private BigDecimal trigliceridos;
 
+    @Column(name = "actividad_fisica", length = 100)
+    private String actividadFisica;
+
 }
