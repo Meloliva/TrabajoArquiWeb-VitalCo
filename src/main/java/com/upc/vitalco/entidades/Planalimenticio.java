@@ -31,16 +31,16 @@ public class Planalimenticio {
     @Column(name = "fechafin")
     private LocalDate fechafin;
 
-    @Column(name = "grasas_diaria", precision = 6, scale = 2)
+    @Column(name = "grasas_diaria")
     private Double grasasDiaria;
 
-    @Column(name = "carbohidratos_diaria", precision = 6, scale = 2)
+    @Column(name = "carbohidratos_diaria")
     private Double carbohidratosDiaria;
 
-    @Column(name = "proteinas_diaria", precision = 6, scale = 2)
+    @Column(name = "proteinas_diaria")
     private Double proteinasDiaria;
 
-    @Column(name = "calorias_diaria", precision = 6, scale = 2)
+    @Column(name = "calorias_diaria")
     private Double caloriasDiaria;
 
 }

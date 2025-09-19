@@ -17,6 +17,5 @@ public class PacienteDTO {
     private BigDecimal peso;
     private Integer edad;
     private PlanSuscripcionDTO idplan;
-    private String actividadFisica;
     private BigDecimal trigliceridos;
 }

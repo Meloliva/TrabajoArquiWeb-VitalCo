@@ -33,9 +33,6 @@ public class Paciente {
     @JoinColumn(name = "idplan", nullable = false)
     private Plansuscripcion idplan;
 
-    @Column(name = "actividad_fisica", length = 30)
-    private String actividadFisica;
-
     @Column(name = "trigliceridos", precision = 6, scale = 2)
     private BigDecimal trigliceridos;
 
