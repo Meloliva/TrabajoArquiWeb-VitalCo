@@ -1,7 +1,5 @@
 package com.upc.vitalco.controllers;
-import com.upc.vitalco.dto.NutricionistaDTO;
 import com.upc.vitalco.dto.PlanRecetaDTO;
-import com.upc.vitalco.services.NutricionistaService;
 import com.upc.vitalco.services.PlanRecetaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -15,9 +13,9 @@ public class PlanRecetaController {
     @Autowired
     private PlanRecetaService planRecetaService;
 
-    @PostMapping("/registrarPlanReceta")
-    public PlanRecetaDTO registrar(@RequestBody PlanRecetaDTO dto) {
-        return planRecetaService.registrar(dto);
+    @PostMapping("/agregarRecetaPorDia")
+    public ResponseEntity<String> agregarRecetaPorDia(@RequestBody PlanRecetaDTO planRecetaDTO) {
+        return ResponseEntity.ok(planRecetaService.agregarRecetaADia(planRecetaDTO));
     }
 
     @GetMapping("/listarPlanRecetas")

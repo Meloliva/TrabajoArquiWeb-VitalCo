@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -18,7 +19,7 @@ public interface SeguimientoRepositorio extends JpaRepository<Seguimiento, Integ
             "AND s.fecharegistro = :fecha")
     List<Seguimiento> buscarPorPacienteYFecha(
             @Param("idPaciente") Integer idPaciente,
-            @Param("fecha") LocalDate fecha
+            @Param("fecha") LocalDateTime fecha
     );
     Optional<Seguimiento> findByIdplanreceta(Planreceta idplanreceta);
 }
