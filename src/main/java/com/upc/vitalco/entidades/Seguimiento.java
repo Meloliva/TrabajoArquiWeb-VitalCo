@@ -45,4 +45,16 @@ public class Seguimiento {
     @Column(name = "carbohidratos")
     private Double carbohidratos;
 
+    // Calorías por horario
+    @Column(name = "calorias_desayuno")
+    private Double caloriasDesayuno;
+
+    @Column(name = "calorias_almuerzo")
+    private Double caloriasAlmuerzo;
+
+    @Column(name = "calorias_cena")
+    private Double caloriasCena;
+
+    @Column(name = "calorias_snack")
+    private Double caloriasSnack;
 }

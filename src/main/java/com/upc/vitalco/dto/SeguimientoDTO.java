@@ -18,4 +18,8 @@ public class SeguimientoDTO {
     private Double proteinas;
     private Double grasas;
     private Double carbohidratos;
+    private Double caloriasAlmuerzo;
+    private Double caloriasDesayuno;
+    private Double caloriasCena;
+    private Double caloriasSnack;
 }

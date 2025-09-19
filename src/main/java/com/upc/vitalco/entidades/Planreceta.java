@@ -34,8 +34,8 @@ public class Planreceta {
     @Column(name = "favorito")
     private Boolean favorito;
 
-    @Column(name = "cantidadporcion", length = 50)
-    private String cantidadporcion;
+    @Column(name = "cantidadporcion")
+    private Double cantidadporcion;
 
     @Column(name = "fecharegistro")
     private LocalDateTime fecharegistro;
