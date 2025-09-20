@@ -19,6 +19,6 @@ public interface PlanRecetaRepositorio extends JpaRepository<Planreceta, Integer
          AND pr.fecharegistro = :fechRegistro
        """)
     Planreceta buscarPorPacienteYFecha(@Param("idPaciente") PacienteDTO idPaciente,
-                                       @Param("fechaRegistro") LocalDateTime fechRegistro);
+                                       @Param("fechaRegistro") LocalDate fechRegistro);
 
 }

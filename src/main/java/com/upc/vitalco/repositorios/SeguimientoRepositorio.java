@@ -19,7 +19,7 @@ public interface SeguimientoRepositorio extends JpaRepository<Seguimiento, Integ
             "AND s.fecharegistro = :fecha")
     List<Seguimiento> buscarPorPacienteYFecha(
             @Param("idPaciente") Integer idPaciente,
-            @Param("fecha") LocalDateTime fecha
+            @Param("fecha") LocalDate fecha
     );
     Optional<Seguimiento> findByIdplanreceta(Planreceta idplanreceta);
 }

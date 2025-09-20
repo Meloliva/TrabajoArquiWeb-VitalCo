@@ -12,7 +12,7 @@ import java.util.List;
 public interface ISeguimientoServices {
     public SeguimientoDTO registrar(SeguimientoDTO seguimientoDTO);
     public void actualizarCumplimiento(Integer seguimientoId);
-    public List<SeguimientoDTO> listarPorDia(Integer pacienteId, LocalDateTime fecha);
+    public List<SeguimientoDTO> listarPorDia(Integer pacienteId, LocalDate fecha);
     public SeguimientoDTO editarRequerimientos(Integer seguimientoId, NutricionistaxRequerimientoDTO requerimientoNutriDTO);
 
 }

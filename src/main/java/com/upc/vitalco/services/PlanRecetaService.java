@@ -14,6 +14,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -48,14 +49,14 @@ public class PlanRecetaService implements IPlanRecetaServices {
             planreceta.setIdplanalimenticio(planAlimenticio);
             planreceta.setIdhorario(horario);
             planreceta.setCantidadporcion(planreceta.getCantidadporcion());
-            planreceta.setFecharegistro(LocalDateTime.now());
+            planreceta.setFecharegistro(LocalDate.now());
             planreceta.getRecetas().add(receta);
         }
-        // Mapear RecetaDTO a entidad Receta y agregarla
-        Receta receta1 = modelMapper.map(planRecetaDTO.getRecetas(), Receta.class);
-        planreceta.getRecetas().add(receta1);
+        // Solo agregar la receta gestionada
+        planreceta.getRecetas().add(receta);
         planRecetaRepositorio.save(planreceta);
         return "Receta agregada correctamente al plan de receta del día";
+
     }
 
 
