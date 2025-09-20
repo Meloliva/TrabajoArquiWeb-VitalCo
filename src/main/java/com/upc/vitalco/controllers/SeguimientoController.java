@@ -27,7 +27,7 @@ public class SeguimientoController {
     @GetMapping("/listarSeguimientos")
     public List<SeguimientoDTO> listarPorDia(
             @RequestParam Integer pacienteId,
-            @RequestParam LocalDateTime fecha) {
+            @RequestParam LocalDate fecha) {
         return seguimientoService.listarPorDia(pacienteId, fecha);
     }
 

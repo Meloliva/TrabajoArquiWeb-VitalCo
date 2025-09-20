@@ -3,6 +3,7 @@ package com.upc.vitalco.entidades;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import java.time.LocalDate;
 
 import java.time.LocalDateTime;
 
@@ -31,7 +32,7 @@ public class Seguimiento {
     private Planreceta idplanreceta;
 
     @Column(name = "fecharegistro", columnDefinition = "timestamp default current_timestamp")
-    private LocalDateTime fecharegistro = LocalDateTime.now();
+    private LocalDate fecharegistro = LocalDate.now();
 
     @Column(name = "calorias")
     private Double calorias;

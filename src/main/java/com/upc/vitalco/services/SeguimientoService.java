@@ -32,21 +32,21 @@ public class SeguimientoService implements ISeguimientoServices {
     private PlanRecetaRepositorio planRecetaRepositorio;
     @Override
     public SeguimientoDTO registrar(SeguimientoDTO seguimientoDTO) {
-        // Buscar el plan de receta por paciente y fecha
-        Planreceta planDeReceta = planRecetaRepositorio.buscarPorPacienteYFecha(
-                seguimientoDTO.getIdplanreceta().getIdplanalimenticio().getIdPaciente(),
-                seguimientoDTO.getIdplanreceta().getFecharegistro()
-        );
-        if (planDeReceta == null) {
-            throw new RuntimeException("No existe plan de receta para el paciente y fecha indicada");
-        }
+    // Buscar el plan de receta por paciente y fecha
+    Planreceta planDeReceta = planRecetaRepositorio.buscarPorPacienteYFecha(
+            seguimientoDTO.getIdplanreceta().getIdplanalimenticio().getIdPaciente(),
+            seguimientoDTO.getIdplanreceta().getFecharegistro()
+    );
+    if (planDeReceta == null) {
+        throw new RuntimeException("No existe plan de receta para el paciente y fecha indicada");
+    }
 
-        double caloriasDesayuno = 0, caloriasAlmuerzo = 0, caloriasCena = 0, caloriasSnack = 0;
-        double caloriasTotales = 0, proteinasTotales = 0, grasasTotales = 0, carbohidratosTotales = 0;
+    double caloriasDesayuno = 0, caloriasAlmuerzo = 0, caloriasCena = 0, caloriasSnack = 0;
+    double caloriasTotales = 0, proteinasTotales = 0, grasasTotales = 0, carbohidratosTotales = 0;
 
-        for (Receta receta : planDeReceta.getRecetas()) {
-            double cantidad = receta.getPlanreceta().getCantidadporcion() != null ? receta.getPlanreceta().getCantidadporcion() : 1.0;
-            String horario = receta.getPlanreceta().getIdhorario().getNombre() != null ? receta.getPlanreceta().getIdhorario().getNombre().toLowerCase(Locale.ROOT) : "";
+    for (Receta receta : planDeReceta.getRecetas()) {
+        double cantidad = receta.getPlanreceta().getCantidadporcion() != null ? receta.getPlanreceta().getCantidadporcion() : 1.0;
+        String horario = receta.getPlanreceta().getIdhorario().getNombre() != null ? receta.getPlanreceta().getIdhorario().getNombre().toLowerCase(Locale.ROOT) : "";
 
         double calorias = receta.getCalorias() != null ? receta.getCalorias().doubleValue() * cantidad : 0.0;
         double proteinas = receta.getProteinas() != null ? receta.getProteinas().doubleValue() * cantidad : 0.0;
@@ -75,7 +75,7 @@ public class SeguimientoService implements ISeguimientoServices {
     }
 
     Seguimiento seguimiento = modelMapper.map(seguimientoDTO, Seguimiento.class);
-    // Puedes asociar el primer planReceta como referencia, si es necesario
+    // Asociar la entidad gestionada
     seguimiento.setIdplanreceta(planDeReceta);
 
     seguimiento.setCaloriasDesayuno(caloriasDesayuno);
@@ -91,6 +91,7 @@ public class SeguimientoService implements ISeguimientoServices {
     seguimiento = seguimientoRepositorio.save(seguimiento);
     return modelMapper.map(seguimiento, SeguimientoDTO.class);
 }
+
 @Override
     public void actualizarCumplimiento(Integer seguimientoId) {
         Optional<Seguimiento> seguimientoOpt = seguimientoRepositorio.findById(seguimientoId);
@@ -110,7 +111,7 @@ public class SeguimientoService implements ISeguimientoServices {
         }
     }
     @Override
-    public List<SeguimientoDTO> listarPorDia(Integer pacienteId, LocalDateTime fecha) {
+    public List<SeguimientoDTO> listarPorDia(Integer pacienteId, LocalDate fecha) {
         // Ajusta este método según tu modelo real
         List<Seguimiento> seguimientos = seguimientoRepositorio.buscarPorPacienteYFecha(pacienteId, fecha);
         return seguimientos.stream()
