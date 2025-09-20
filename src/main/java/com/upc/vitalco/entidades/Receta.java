@@ -43,9 +43,7 @@ public class Receta {
     @Column(name = "nombre", nullable = false, length = 100)
     private String nombre;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "idplannutricional", nullable = false)
-    private Plannutricional planNutricional;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "idplanreceta")
     private Planreceta planreceta;
