@@ -9,4 +9,5 @@ public interface IPlanAlimenticioServices {
     public void eliminar(Integer id);
     public List<PlanAlimenticioDTO> findAll();
     public PlanAlimenticioDTO actualizar(PlanAlimenticioDTO planAlimenticioDTO);
+    public PlanAlimenticioDTO consultarPlanAlimenticio(Integer idPaciente);
 }
