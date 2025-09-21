@@ -126,10 +126,19 @@ public class SeguimientoService implements ISeguimientoServices {
                 Planalimenticio plan = planreceta.getIdplanalimenticio();
                 if (plan != null && plan.getIdpaciente() != null && plan.getIdpaciente().getIdplan() != null
                         && "PREMIUM".equalsIgnoreCase(plan.getIdpaciente().getIdplan().getTipo())) {
+
+                    if (requerimientoNutriDTO.getCalorias() == null || requerimientoNutriDTO.getCalorias() < 0 ||
+                            requerimientoNutriDTO.getProteinas() == null || requerimientoNutriDTO.getProteinas() < 0 ||
+                            requerimientoNutriDTO.getGrasas() == null || requerimientoNutriDTO.getGrasas() < 0 ||
+                            requerimientoNutriDTO.getCarbohidratos() == null || requerimientoNutriDTO.getCarbohidratos() < 0) {
+                        throw new IllegalArgumentException("Los valores de calorías, proteínas, grasas y carbohidratos deben ser no nulos y mayores o iguales a 0");
+                    }
+
                     seguimiento.setCalorias(requerimientoNutriDTO.getCalorias());
                     seguimiento.setProteinas(requerimientoNutriDTO.getProteinas());
                     seguimiento.setGrasas(requerimientoNutriDTO.getGrasas());
                     seguimiento.setCarbohidratos(requerimientoNutriDTO.getCarbohidratos());
+
                     seguimiento = seguimientoRepositorio.save(seguimiento);
                     return modelMapper.map(seguimiento, SeguimientoDTO.class);
                 }
@@ -137,6 +146,7 @@ public class SeguimientoService implements ISeguimientoServices {
         }
         return null;
     }
+    
     @Override
     public List<SeguimientoDTO> listarPorInicialYFecha(String inicial, LocalDate fecha) {
         List<Seguimiento> seguimientos = seguimientoRepositorio.buscarPorInicialUsernameYFecha(inicial, fecha);
