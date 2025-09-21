@@ -33,15 +33,11 @@ public class SeguimientoService implements ISeguimientoServices {
     @Override
     public SeguimientoDTO registrar(SeguimientoDTO seguimientoDTO) {
     // Buscar el plan de receta por paciente y fecha
-    Planreceta planDeReceta = planRecetaRepositorio.buscarPorPacienteYFecha(
-            seguimientoDTO.getIdplanreceta().getIdplanalimenticio().getIdPaciente(),
-            seguimientoDTO.getIdplanreceta().getFecharegistro()
-    );
-    if (planDeReceta == null) {
-        throw new RuntimeException("No existe plan de receta para el paciente y fecha indicada");
-    }
+        Planreceta planDeReceta = planRecetaRepositorio.findById(seguimientoDTO.getIdplanreceta().getId())
+                .orElseThrow(() -> new RuntimeException("No existe plan de receta con el ID indicado"));
 
-    double caloriasDesayuno = 0, caloriasAlmuerzo = 0, caloriasCena = 0, caloriasSnack = 0;
+
+        double caloriasDesayuno = 0, caloriasAlmuerzo = 0, caloriasCena = 0, caloriasSnack = 0;
     double caloriasTotales = 0, proteinasTotales = 0, grasasTotales = 0, carbohidratosTotales = 0;
 
     for (Receta receta : planDeReceta.getRecetas()) {
@@ -91,7 +87,7 @@ public class SeguimientoService implements ISeguimientoServices {
     seguimiento = seguimientoRepositorio.save(seguimiento);
     return modelMapper.map(seguimiento, SeguimientoDTO.class);
 }
-
+/*listar pacientes por fecha falta hacerlo*/
 @Override
     public void actualizarCumplimiento(Integer seguimientoId) {
         Optional<Seguimiento> seguimientoOpt = seguimientoRepositorio.findById(seguimientoId);

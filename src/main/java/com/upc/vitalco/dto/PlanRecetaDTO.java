@@ -17,7 +17,6 @@ import java.util.List;
 public class PlanRecetaDTO {
     private Integer id;
     private PlanAlimenticioDTO idplanalimenticio;
-    private RecetaDTO idreceta;
     private HorarioDTO idhorario;
     private Boolean favorito=false;
     private Double cantidadporcion;
