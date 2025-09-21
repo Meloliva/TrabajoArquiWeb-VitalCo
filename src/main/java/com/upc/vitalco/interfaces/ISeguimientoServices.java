@@ -14,5 +14,6 @@ public interface ISeguimientoServices {
     public void actualizarCumplimiento(Integer seguimientoId);
     public List<SeguimientoDTO> listarPorDia(Integer pacienteId, LocalDate fecha);
     public SeguimientoDTO editarRequerimientos(Integer seguimientoId, NutricionistaxRequerimientoDTO requerimientoNutriDTO);
+    List<SeguimientoDTO> listarPorInicialYFecha(String inicial, LocalDate fecha);
 
 }

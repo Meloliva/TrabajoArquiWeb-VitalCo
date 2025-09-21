@@ -22,4 +22,14 @@ public interface SeguimientoRepositorio extends JpaRepository<Seguimiento, Integ
             @Param("fecha") LocalDate fecha
     );
     Optional<Seguimiento> findByIdplanreceta(Planreceta idplanreceta);
+    @Query("""
+SELECT s FROM Seguimiento s
+WHERE FUNCTION('DATE', s.fecharegistro) = :fecha
+AND s.idplanreceta.idplanalimenticio.idpaciente.idusuario.username LIKE CONCAT(:inicial, '%')
+""")
+    List<Seguimiento> buscarPorInicialUsernameYFecha(
+            @Param("inicial") String inicial,
+            @Param("fecha") LocalDate fecha
+    );
+
 }

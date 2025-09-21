@@ -11,6 +11,9 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import org.springframework.http.ResponseEntity;
+import org.springframework.http.HttpStatus;
+import java.util.NoSuchElementException;
 
 @RestController
 @RequestMapping("/api")
@@ -37,5 +40,17 @@ public class SeguimientoController {
             @RequestBody NutricionistaxRequerimientoDTO requerimientoNutriDTO) {
         return seguimientoService.editarRequerimientos(seguimientoId, requerimientoNutriDTO);
     }
+    @GetMapping("/listarSeguimientosPorInicialYFecha")
+    public ResponseEntity<?> listarPorInicialYFecha(
+            @RequestParam String inicial,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fecha
+    ) {
+        List<SeguimientoDTO> resultados = seguimientoService.listarPorInicialYFecha(inicial, fecha);
+        if (resultados.isEmpty()) {
+            return ResponseEntity.ok("No hay seguimientos registrados para esa fecha.");
+        }
+        return ResponseEntity.ok(resultados);
+    }
+
 }
 
