@@ -12,12 +12,12 @@ import java.time.LocalDate;
 @NoArgsConstructor
 public class PlanAlimenticioDTO {
     private Integer id;
-    private PacienteDTO idPaciente;
-    private PlanNutricionalDTO idPlanNutricional;
+    private PacienteDTO idpaciente;
+    private PlanNutricionalDTO idplanNutricional;
     private LocalDate fechainicio;
     private LocalDate fechafin;
     private Double grasasDiaria;
-    private Double carbohidratos_diaria;
-    private Double proteinas_diaria;
-    private Double calorias_diaria;
+    private Double carbohidratosDiaria;
+    private Double proteinasDiaria;
+    private Double caloriasDiaria;
 }
