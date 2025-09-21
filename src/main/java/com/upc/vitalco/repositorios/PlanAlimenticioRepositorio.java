@@ -10,4 +10,8 @@ public interface PlanAlimenticioRepositorio extends JpaRepository<Planalimentici
     @Query("SELECT p FROM Planalimenticio p WHERE p.idpaciente = :pacienteId")
     Planalimenticio buscarPorPacienteId(PacienteDTO pacienteId);
 
+    @Query("SELECT p FROM Planalimenticio p WHERE p.idpaciente.id = :pacienteId")
+    Planalimenticio buscarPorPaciente(Integer pacienteId);
+    Planalimenticio findByIdpacienteId(Integer pacienteId);
+
 }
