@@ -44,4 +44,7 @@ AND s.idplanreceta.idplanalimenticio.idpaciente.idusuario.username LIKE CONCAT(:
             @Param("fecha") LocalDate fecha,
             @Param("idReceta") Integer idReceta
     );
+    @Query("SELECT s FROM Seguimiento s WHERE s.idplanreceta.id = :idPlanReceta AND s.fecharegistro = :fechaRegistro")
+    Optional<Seguimiento> buscarPorPlanRecetaYFecha(Integer idPlanReceta, LocalDate fechaRegistro);
+
 }

@@ -9,6 +9,7 @@ import com.upc.vitalco.entidades.Receta;
 import com.upc.vitalco.entidades.Seguimiento;
 import com.upc.vitalco.interfaces.ISeguimientoServices;
 import com.upc.vitalco.repositorios.PlanRecetaRepositorio;
+import com.upc.vitalco.repositorios.RecetaRepositorio;
 import com.upc.vitalco.repositorios.SeguimientoRepositorio;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,142 +31,44 @@ public class SeguimientoService implements ISeguimientoServices {
     private SeguimientoRepositorio seguimientoRepositorio;
     @Autowired
     private PlanRecetaRepositorio planRecetaRepositorio;
-@Override
-public SeguimientoDTO registrar(SeguimientoDTO seguimientoDTO) {
-    Planreceta planDeReceta = planRecetaRepositorio.findById(seguimientoDTO.getIdplanreceta().getId())
-            .orElseThrow(() -> new RuntimeException("No existe plan de receta con el ID indicado"));
+    @Autowired
+    private RecetaRepositorio recetaRepositorio;
 
-    Optional<Seguimiento> yaExiste = seguimientoRepositorio
-            .buscarPorPacienteYFecha(
-                    planDeReceta.getIdplanalimenticio().getIdpaciente().getId(),
-                    seguimientoDTO.getFecharegistro()
-            )
-            .stream()
-            .filter(s -> s.getIdplanreceta().getId().equals(planDeReceta.getId()))
-            .findFirst();
-
-    if (yaExiste.isPresent()) {
-        throw new RuntimeException("Ya existe un seguimiento para este plan y fecha.");
-    }
-
-    double caloriasDesayuno = 0, caloriasAlmuerzo = 0, caloriasCena = 0, caloriasSnack = 0;
-    double caloriasTotales = 0, proteinasTotales = 0, grasasTotales = 0, carbohidratosTotales = 0;
-
-    for (Receta receta : planDeReceta.getRecetas()) {
-        String horario = receta.getIdhorario().getNombre() != null
-                ? receta.getIdhorario().getNombre().toLowerCase(Locale.ROOT)
-                : "";
-
-        double calorias = receta.getCalorias() != null ? receta.getCalorias().doubleValue() : 0.0;
-        double proteinas = receta.getProteinas() != null ? receta.getProteinas().doubleValue() : 0.0;
-        double grasas = receta.getGrasas() != null ? receta.getGrasas().doubleValue() : 0.0;
-        double carbohidratos = receta.getCarbohidratos() != null ? receta.getCarbohidratos().doubleValue() : 0.0;
-
-        caloriasTotales += calorias;
-        proteinasTotales += proteinas;
-        grasasTotales += grasas;
-        carbohidratosTotales += carbohidratos;
-
-        switch (horario) {
-            case "desayuno":
-                caloriasDesayuno += calorias;
-                break;
-            case "almuerzo":
-                caloriasAlmuerzo += calorias;
-                break;
-            case "cena":
-                caloriasCena += calorias;
-                break;
-            case "snack":
-                caloriasSnack += calorias;
-                break;
+    @Override
+    public SeguimientoDTO agregarRecetaAProgreso(Integer idPlanReceta, Long idReceta, LocalDate fechaRegistro) {
+        if (fechaRegistro == null) {
+            fechaRegistro = LocalDate.now();
         }
-    }
-
-    Seguimiento seguimiento = modelMapper.map(seguimientoDTO, Seguimiento.class);
-    seguimiento.setIdplanreceta(planDeReceta);
-
-    seguimiento.setCaloriasDesayuno(caloriasDesayuno);
-    seguimiento.setCaloriasAlmuerzo(caloriasAlmuerzo);
-    seguimiento.setCaloriasCena(caloriasCena);
-    seguimiento.setCaloriasSnack(caloriasSnack);
-
-    seguimiento.setCalorias(caloriasTotales);
-    seguimiento.setProteinas(proteinasTotales);
-    seguimiento.setGrasas(grasasTotales);
-    seguimiento.setCarbohidratos(carbohidratosTotales);
-
-    seguimiento = seguimientoRepositorio.save(seguimiento);
-    return modelMapper.map(seguimiento, SeguimientoDTO.class);
-}
-    /*@Override
-    public SeguimientoDTO registrar(SeguimientoDTO seguimientoDTO) {
-
-        Planreceta planDeReceta = planRecetaRepositorio.findById(seguimientoDTO.getIdplanreceta().getId())
+        Planreceta planDeReceta = planRecetaRepositorio.findById(idPlanReceta)
                 .orElseThrow(() -> new RuntimeException("No existe plan de receta con el ID indicado"));
+        Receta receta = recetaRepositorio.findById(idReceta)
+                .orElseThrow(() -> new RuntimeException("No existe receta con el ID indicado"));
 
-        Optional<Seguimiento> yaExiste = seguimientoRepositorio
-                .buscarPorPacienteYFecha(
-                        planDeReceta.getIdplanalimenticio().getIdpaciente().getId(),
-                        seguimientoDTO.getFecharegistro()
-                )
-                .stream()
-                .filter(s -> s.getIdplanreceta().getId().equals(planDeReceta.getId()))
-                .findFirst();
+        Optional<Seguimiento> seguimientoOpt = seguimientoRepositorio
+                .buscarPorPlanRecetaYFecha(idPlanReceta, fechaRegistro);
 
-        if (yaExiste.isPresent()) {
-            throw new RuntimeException("Ya existe un seguimiento para este plan y fecha.");
+        Seguimiento seguimiento;
+        if (seguimientoOpt.isPresent()) {
+            seguimiento = seguimientoOpt.get();
+            // Suma los valores nutricionales de la receta
+            seguimiento.setCalorias(seguimiento.getCalorias() + receta.getCalorias());
+            seguimiento.setProteinas(seguimiento.getProteinas() + receta.getProteinas());
+            seguimiento.setGrasas(seguimiento.getGrasas() + receta.getGrasas());
+            seguimiento.setCarbohidratos(seguimiento.getCarbohidratos() + receta.getCarbohidratos());
+        } else {
+            seguimiento = new Seguimiento();
+            seguimiento.setIdplanreceta(planDeReceta);
+            seguimiento.setFecharegistro(fechaRegistro);
+            seguimiento.setCalorias(receta.getCalorias());
+            seguimiento.setProteinas(receta.getProteinas());
+            seguimiento.setGrasas(receta.getGrasas());
+            seguimiento.setCarbohidratos(receta.getCarbohidratos());
         }
-        double caloriasDesayuno = 0, caloriasAlmuerzo = 0, caloriasCena = 0, caloriasSnack = 0;
-    double caloriasTotales = 0, proteinasTotales = 0, grasasTotales = 0, carbohidratosTotales = 0;
 
-    for (Receta receta : planDeReceta.getRecetas()) {
-        double cantidad = receta.getPlanreceta().getCantidadporcion() != null ? receta.getPlanreceta().getCantidadporcion() : 1.0;
-        String horario = receta.getPlanreceta().getIdhorario().getNombre() != null ? receta.getPlanreceta().getIdhorario().getNombre().toLowerCase(Locale.ROOT) : "";
-
-        double calorias = receta.getCalorias() != null ? receta.getCalorias().doubleValue() * cantidad : 0.0;
-        double proteinas = receta.getProteinas() != null ? receta.getProteinas().doubleValue() * cantidad : 0.0;
-        double grasas = receta.getGrasas() != null ? receta.getGrasas().doubleValue() * cantidad : 0.0;
-        double carbohidratos = receta.getCarbohidratos() != null ? receta.getCarbohidratos().doubleValue() * cantidad : 0.0;
-
-        caloriasTotales += calorias;
-        proteinasTotales += proteinas;
-        grasasTotales += grasas;
-        carbohidratosTotales += carbohidratos;
-
-        switch (horario) {
-            case "desayuno":
-                caloriasDesayuno += calorias;
-                break;
-            case "almuerzo":
-                caloriasAlmuerzo += calorias;
-                break;
-            case "cena":
-                caloriasCena += calorias;
-                break;
-            case "snack":
-                caloriasSnack += calorias;
-                break;
-        }
+        seguimiento = seguimientoRepositorio.save(seguimiento);
+        return modelMapper.map(seguimiento, SeguimientoDTO.class);
     }
 
-    Seguimiento seguimiento = modelMapper.map(seguimientoDTO, Seguimiento.class);
-    // Asociar la entidad gestionada
-    seguimiento.setIdplanreceta(planDeReceta);
-
-    seguimiento.setCaloriasDesayuno(caloriasDesayuno);
-    seguimiento.setCaloriasAlmuerzo(caloriasAlmuerzo);
-    seguimiento.setCaloriasCena(caloriasCena);
-    seguimiento.setCaloriasSnack(caloriasSnack);
-
-    seguimiento.setCalorias(caloriasTotales);
-    seguimiento.setProteinas(proteinasTotales);
-    seguimiento.setGrasas(grasasTotales);
-    seguimiento.setCarbohidratos(carbohidratosTotales);
-
-    seguimiento = seguimientoRepositorio.save(seguimiento);
-    return modelMapper.map(seguimiento, SeguimientoDTO.class);
-}*/
 @Override
     public void actualizarCumplimiento(Integer seguimientoId) {
         Optional<Seguimiento> seguimientoOpt = seguimientoRepositorio.findById(seguimientoId);

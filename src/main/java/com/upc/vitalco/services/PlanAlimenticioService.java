@@ -171,20 +171,6 @@ public class PlanAlimenticioService implements IPlanAlimenticioServices {
             throw new RuntimeException("Plan alimenticio no encontrado para el paciente con ID: " + idPaciente);
         }
 
-        /*Paciente paciente = pacienteRepositorio.findById(idPaciente).orElse(null);
-        if (paciente != null) {
-            String objetivo = planAlimenticio.getIdplannutricional().getObjetivo();
-            String duracion = planAlimenticio.getIdplannutricional().getDuracion();
-
-            double caloriasDiarias = calcularCalorias(paciente, objetivo, duracion);
-            double[] macros = calcularMacronutrientes(caloriasDiarias, objetivo, paciente.getTrigliceridos().doubleValue());
-
-            planAlimenticio.setCaloriasDiaria(caloriasDiarias);
-            planAlimenticio.setCarbohidratosDiaria(macros[0]);
-            planAlimenticio.setProteinasDiaria(macros[1]);
-            planAlimenticio.setGrasasDiaria(macros[2]);
-        }*/
-
         return modelMapper.map(planAlimenticio, PlanAlimenticioDTO.class);
     }
 }
