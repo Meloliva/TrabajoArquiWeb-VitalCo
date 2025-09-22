@@ -19,12 +19,7 @@ public interface PlanRecetaRepositorio extends JpaRepository<Planreceta, Integer
     @Query("""
        SELECT pr
        FROM Planreceta pr
-       WHERE pr.idplanalimenticio.idpaciente.id = :idPaciente 
-         AND pr.fecharegistro = :fechaRegistro
+       WHERE pr.idplanalimenticio.idpaciente.id = :idPaciente
        """)
-    Planreceta buscarPorPacienteYFecha(@Param("idPaciente") PacienteDTO idPaciente,
-                                       @Param("fechaRegistro") LocalDate fechaRegistro);
-    Optional<Planreceta> findByIdplanalimenticioAndIdhorario(Planalimenticio planalimenticio, Horario horario);
-    List<Planreceta> findAllByIdplanalimenticio_Id(Integer idPlanalimenticio);
-
+    List<Planreceta> buscarPorPaciente(@Param("idPaciente") Integer idPaciente);
 }
