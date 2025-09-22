@@ -66,6 +66,15 @@ public class PlanAlimenticioService implements IPlanAlimenticioServices {
         return modelMapper.map(planAlimenticio, PlanAlimenticioDTO.class);
     }
 
+    @Override
+    public PlanAlimenticioDTO eliminarPlanAlimenticio(Integer id) {
+
+        if(planAlimenticioRepositorio.existsById(id)) {
+            planAlimenticioRepositorio.deleteById(id);
+        }
+        return null;
+    }
+
     private LocalDate calcularFechaFinal(String duracion, LocalDate fechaInicio) {
         switch (duracion.toLowerCase()) {
             case "3 meses": return fechaInicio.plusMonths(3);
@@ -76,18 +85,22 @@ public class PlanAlimenticioService implements IPlanAlimenticioServices {
     }
 
 
-    @Override
-    public void eliminar(Integer id) {
-        if(planAlimenticioRepositorio.existsById(id)) {
-            planAlimenticioRepositorio.deleteById(id);
-        }
-    }
+
+
 
     @Override
     public List<PlanAlimenticioDTO> findAll() {
         return planAlimenticioRepositorio.findAll()
                 .stream()
                 .map(planAlimenticio -> modelMapper.map(planAlimenticio, PlanAlimenticioDTO.class))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<PlanAlimenticioDTO> findAllConDatosActualizados() {
+        return planAlimenticioRepositorio.findAll()
+                .stream()
+                .map(this::actualizarDatosCalculados)
                 .collect(Collectors.toList());
     }
 
@@ -101,6 +114,61 @@ public class PlanAlimenticioService implements IPlanAlimenticioServices {
                 })
                 .orElseThrow(() -> new RuntimeException("Usuario con ID " + planAlimenticioDTO.getId() + " no encontrado"));
     }
+
+    @Override
+    public PlanAlimenticioDTO consultarPlanAlimenticio(Integer idPaciente) {
+        Planalimenticio planAlimenticio = planAlimenticioRepositorio.findByIdpacienteId(idPaciente);
+        if (planAlimenticio == null) {
+            throw new RuntimeException("Plan alimenticio no encontrado para el paciente con ID: " + idPaciente);
+        }
+
+        return modelMapper.map(planAlimenticio, PlanAlimenticioDTO.class);
+    }
+
+
+    @Override
+    public PlanAlimenticioDTO consultarPlanAlimenticioConDatosActualizados(Integer idPaciente) {
+        Planalimenticio planAlimenticio = planAlimenticioRepositorio.findByIdpacienteId(idPaciente);
+        if (planAlimenticio == null) {
+            throw new RuntimeException("Plan alimenticio no encontrado para el paciente con ID: " + idPaciente);
+        }
+
+        return actualizarDatosCalculados(planAlimenticio);
+    }
+
+
+    private PlanAlimenticioDTO actualizarDatosCalculados(Planalimenticio planAlimenticio) {
+        try {
+
+            Paciente paciente = pacienteRepositorio.findById(planAlimenticio.getIdpaciente().getId())
+                    .orElseThrow(() -> new RuntimeException("Paciente no encontrado"));
+
+
+            Plannutricional planNutricional = planNutricionalRepositorio.findById(paciente.getIdPlanNutricional().getId())
+                    .orElseThrow(() -> new RuntimeException("Plan nutricional no encontrado"));
+
+            String objetivo = planNutricional.getObjetivo();
+            String duracion = planNutricional.getDuracion();
+
+
+            double caloriasActualizadas = calcularCalorias(paciente, objetivo, duracion);
+            double[] macrosActualizados = calcularMacronutrientes(caloriasActualizadas, objetivo, paciente.getTrigliceridos().doubleValue());
+
+
+            PlanAlimenticioDTO planDTO = modelMapper.map(planAlimenticio, PlanAlimenticioDTO.class);
+            planDTO.setCaloriasDiaria(caloriasActualizadas);
+            planDTO.setCarbohidratosDiaria(macrosActualizados[0]);
+            planDTO.setProteinasDiaria(macrosActualizados[1]);
+            planDTO.setGrasasDiaria(macrosActualizados[2]);
+
+            return planDTO;
+
+        } catch (Exception e) {
+            // Si hay algún error, devolver los datos originales del plan
+            return modelMapper.map(planAlimenticio, PlanAlimenticioDTO.class);
+        }
+    }
+
     private double calcularCalorias(Paciente paciente, String objetivo, String duracion) {
         String sexo = paciente.getIdusuario().getGenero();
         double caloriesBasales = 0;
@@ -139,6 +207,7 @@ public class PlanAlimenticioService implements IPlanAlimenticioServices {
         double minCalorias = "M".equalsIgnoreCase(sexo) ? 1500 : 1200;
         return Math.max(caloriesBasales, minCalorias);
     }
+
     private double[] calcularMacronutrientes(double calorias, String objetivo, double trigliceridos) {
         double carbohidratos, proteinas, grasas;
 
@@ -164,13 +233,5 @@ public class PlanAlimenticioService implements IPlanAlimenticioServices {
 
         return new double[]{carbohidratos, proteinas, grasas};
     }
-    @Override
-    public PlanAlimenticioDTO consultarPlanAlimenticio(Integer idPaciente) {
-        Planalimenticio planAlimenticio = planAlimenticioRepositorio.findByIdpacienteId(idPaciente);
-        if (planAlimenticio == null) {
-            throw new RuntimeException("Plan alimenticio no encontrado para el paciente con ID: " + idPaciente);
-        }
 
-        return modelMapper.map(planAlimenticio, PlanAlimenticioDTO.class);
-    }
 }
