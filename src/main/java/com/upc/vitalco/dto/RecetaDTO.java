@@ -21,5 +21,4 @@ public class RecetaDTO {
     private String ingredientes;
     private String nombre;
     private Double cantidadPorcion;
-    private PlanNutricionalDTO idPlanNutricional;
 }
