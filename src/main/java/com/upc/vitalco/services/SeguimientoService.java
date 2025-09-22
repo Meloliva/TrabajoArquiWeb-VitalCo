@@ -32,7 +32,7 @@ public class SeguimientoService implements ISeguimientoServices {
     private PlanRecetaRepositorio planRecetaRepositorio;
     @Override
     public SeguimientoDTO registrar(SeguimientoDTO seguimientoDTO) {
-    // Buscar el plan de receta por paciente y fecha
+
         Planreceta planDeReceta = planRecetaRepositorio.findById(seguimientoDTO.getIdplanreceta().getId())
                 .orElseThrow(() -> new RuntimeException("No existe plan de receta con el ID indicado"));
 
