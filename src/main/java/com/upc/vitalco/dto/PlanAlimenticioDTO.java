@@ -13,7 +13,6 @@ import java.time.LocalDate;
 public class PlanAlimenticioDTO {
     private Integer id;
     private PacienteDTO idpaciente;
-    private PlanNutricionalDTO idplanNutricional;
     private LocalDate fechainicio;
     private LocalDate fechafin;
     private Double grasasDiaria;

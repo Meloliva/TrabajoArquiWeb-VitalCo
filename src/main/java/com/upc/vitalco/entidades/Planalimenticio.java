@@ -21,10 +21,6 @@ public class Planalimenticio {
     @JoinColumn(name = "idpaciente", nullable = false)
     private Paciente idpaciente;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "idplannutricional", nullable = false)
-    private Plannutricional idplannutricional;
-
     @Column(name = "fechainicio")
     private LocalDate fechainicio;
 
