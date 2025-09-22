@@ -32,74 +32,56 @@ public class PlanRecetaService implements IPlanRecetaServices {
     private HorarioRepositorio horarioRepositorio;
     @Autowired
     private RecetaRepositorio recetaRepositorio;
-
-
-    /*@Override
-    public String agregarRecetaADia(PlanRecetaDTO planRecetaDTO) {
-        // Busca el Planalimenticio por su ID principal
-        Planalimenticio planAlimenticio = planAlimenticioRepositorio.findById(planRecetaDTO.getIdplanalimenticio().getId())
-                .orElseThrow(() -> new RuntimeException("No existe el plan alimenticio con ID: " + planRecetaDTO.getIdplanalimenticio()));
-
-        Horario horario = horarioRepositorio.findById(planRecetaDTO.getIdhorario().getId())
-                .orElseThrow(() -> new RuntimeException("Horario no encontrado"));
-
-        Planreceta planreceta = planRecetaRepositorio.buscarPorPacienteYFecha(
-                planRecetaDTO.getIdplanalimenticio().getIdPaciente(), planRecetaDTO.getFecharegistro());
-
-        if (planreceta == null) {
-            planreceta = new Planreceta();
-            planreceta.setIdplanalimenticio(planAlimenticio);
-            planreceta.setIdhorario(horario);
-            planreceta.setCantidadporcion(planRecetaDTO.getCantidadporcion());
-            planreceta.setFecharegistro(LocalDate.now());
-            // Inicializa la lista de recetas si es nula
-            planreceta.setRecetas(new ArrayList<>());
-        }
-
-        for (RecetaDTO recetaDTO : planRecetaDTO.getRecetas()) {
-            Receta receta = recetaRepositorio.findById(recetaDTO.getIdReceta())
-                    .orElseThrow(() -> new RuntimeException("Receta no encontrada: " + recetaDTO.getIdReceta()));
-            planreceta.getRecetas().add(receta);
-        }
-
-        planRecetaRepositorio.save(planreceta);
-        return "Receta(s) agregada(s) correctamente al plan de receta del día";
-    }*/
-
-    // src/main/java/com/upc/vitalco/services/PlanRecetaService.java
     @Override
     public String agregarRecetaADia(PlanRecetaDTO planRecetaDTO) {
         Planalimenticio plan = planAlimenticioRepositorio.findById(planRecetaDTO.getIdplanalimenticio().getId())
                 .orElseThrow(() -> new RuntimeException("No existe el plan alimenticio con ID: " + planRecetaDTO.getIdplanalimenticio().getId()));
 
-        Horario horario = horarioRepositorio.findById(planRecetaDTO.getIdhorario().getId())
-                .orElseThrow(() -> new RuntimeException("Horario no encontrado con ID: " + planRecetaDTO.getIdhorario().getId()));
-
-        Planreceta planreceta = planRecetaRepositorio
-                .findByIdplanalimenticioAndIdhorario(plan, horario)
-                .orElseGet(() -> {
-                    Planreceta pr = new Planreceta();
-                    pr.setIdplanalimenticio(plan);
-                    pr.setIdhorario(horario);
-                    pr.setCantidadporcion(planRecetaDTO.getCantidadporcion());
-                    pr.setFecharegistro(LocalDate.now()); // solo registro
-                    pr.setRecetas(new ArrayList<>());
-                    return pr;
-                });
-
-        // actualiza cantidad porción si cambia
+        Planreceta planreceta = new Planreceta();
+        planreceta.setIdplanalimenticio(plan);
         planreceta.setCantidadporcion(planRecetaDTO.getCantidadporcion());
+        planreceta.setFecharegistro(LocalDate.now());
+        planreceta.setRecetas(new ArrayList<>());
 
-        for (RecetaDTO recetaDTO : planRecetaDTO.getRecetas()) {
-            Receta receta = recetaRepositorio.findById(recetaDTO.getIdReceta())
-                    .orElseThrow(() -> new RuntimeException("Receta no encontrada: " + recetaDTO.getIdReceta()));
-            if (!planreceta.getRecetas().contains(receta)) { // evita duplicados
-                planreceta.getRecetas().add(receta);
+        // Objetivos nutricionales del plan alimenticio
+        Double caloriasObjetivo = plan.getCaloriasDiaria();
+        Double proteinasObjetivo = plan.getProteinasDiaria();
+        Double grasasObjetivo = plan.getGrasasDiaria();
+        Double carbohidratosObjetivo = plan.getCarbohidratosDiaria();
+
+        // Selección automática de recetas
+        List<Receta> todasRecetas = recetaRepositorio.findAll();
+        List<Receta> recetasSeleccionadas = new ArrayList<>();
+        Double sumaCal = 0.0, sumaPro = 0.0, sumaGra = 0.0, sumaCar = 0.0;
+
+        for (Receta receta : todasRecetas) {
+            Double cal = receta.getCalorias().doubleValue();
+            Double pro = receta.getProteinas().doubleValue();
+            Double gra = receta.getGrasas().doubleValue();
+            Double car = receta.getCarbohidratos().doubleValue();
+
+            if (sumaCal + cal <= caloriasObjetivo &&
+                sumaPro + pro <= proteinasObjetivo &&
+                sumaGra + gra <= grasasObjetivo &&
+                sumaCar + car <= carbohidratosObjetivo) {
+                recetasSeleccionadas.add(receta);
+                sumaCal += cal;
+                sumaPro += pro;
+                sumaGra += gra;
+                sumaCar += car;
+            }
+            if (sumaCal >= caloriasObjetivo &&
+                sumaPro >= proteinasObjetivo &&
+                sumaGra >= grasasObjetivo &&
+                sumaCar >= carbohidratosObjetivo) {
+                break;
             }
         }
 
+        planreceta.setRecetas(recetasSeleccionadas);
+
         planRecetaRepositorio.save(planreceta);
-        return "Receta(s) agregada(s) correctamente al plan y horario seleccionados.";
+        return "Recetas automáticas agregadas correctamente según condiciones del paciente.";
     }
     @Override
     public void eliminar(Integer id) {
