@@ -28,14 +28,16 @@ public class PlanAlimenticioService implements IPlanAlimenticioServices {
     @Autowired
     private PlanNutricionalRepositorio planNutricionalRepositorio;
     @Autowired
+    private PlanRecetaService planRecetaService;
+    @Autowired
     private ModelMapper modelMapper;
 
-    public PlanAlimenticioDTO registrar(PlanAlimenticioDTO planAlimenticioDTO) {
-        Paciente paciente = pacienteRepositorio.findById(planAlimenticioDTO.getIdpaciente().getId())
-                .orElseThrow(() -> new RuntimeException("Paciente no encontrado con ID: " + planAlimenticioDTO.getIdpaciente().getId()));
+    public PlanAlimenticioDTO registrar(Integer idPaciente) {
+        Paciente paciente = pacienteRepositorio.findById(idPaciente)
+                .orElseThrow(() -> new RuntimeException("Paciente no encontrado con ID: " + idPaciente));
 
-        Plannutricional planNutricional = planNutricionalRepositorio.findById(planAlimenticioDTO.getIdpaciente().getIdPlanNutricional().getId())
-                .orElseThrow(() -> new RuntimeException("Plan nutricional no encontrado con ID: " + planAlimenticioDTO.getIdpaciente().getIdPlanNutricional().getId()));
+        Plannutricional planNutricional = planNutricionalRepositorio.findById(paciente.getIdPlanNutricional().getId())
+                .orElseThrow(() -> new RuntimeException("Plan nutricional no encontrado para el paciente con ID: " + idPaciente));
 
         String objetivo = planNutricional.getObjetivo();
         String duracion = planNutricional.getDuracion();
@@ -60,6 +62,7 @@ public class PlanAlimenticioService implements IPlanAlimenticioServices {
         planAlimenticio.setFechafin(fechaFinal);
 
         planAlimenticio = planAlimenticioRepositorio.save(planAlimenticio);
+        planRecetaService.agregarRecetaADia(planAlimenticio.getId());
         return modelMapper.map(planAlimenticio, PlanAlimenticioDTO.class);
     }
 

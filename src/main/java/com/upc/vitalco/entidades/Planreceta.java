@@ -27,10 +27,6 @@ public class Planreceta {
     @OneToMany(mappedBy = "planreceta", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Receta> recetas = new ArrayList<>();
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "idhorario", nullable = false)
-    private Horario idhorario;
-
     @ColumnDefault("false")
     @Column(name = "favorito")
     private Boolean favorito;

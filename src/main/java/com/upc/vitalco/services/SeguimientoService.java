@@ -52,8 +52,8 @@ public SeguimientoDTO registrar(SeguimientoDTO seguimientoDTO) {
     double caloriasTotales = 0, proteinasTotales = 0, grasasTotales = 0, carbohidratosTotales = 0;
 
     for (Receta receta : planDeReceta.getRecetas()) {
-        String horario = receta.getPlanreceta().getIdhorario().getNombre() != null
-                ? receta.getPlanreceta().getIdhorario().getNombre().toLowerCase(Locale.ROOT)
+        String horario = receta.getIdhorario().getNombre() != null
+                ? receta.getIdhorario().getNombre().toLowerCase(Locale.ROOT)
                 : "";
 
         double calorias = receta.getCalorias() != null ? receta.getCalorias().doubleValue() : 0.0;
