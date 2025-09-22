@@ -33,6 +33,7 @@ public class PlanRecetaService implements IPlanRecetaServices {
     @Autowired
     private RecetaRepositorio recetaRepositorio;
 
+    // Método para agregar recetas a un plan alimenticio según las condiciones dadas
     public String agregarRecetaADia(Integer idPlanAlimenticio) {
         Planalimenticio plan = planAlimenticioRepositorio.findById(idPlanAlimenticio)
                 .orElseThrow(() -> new RuntimeException("No existe el plan alimenticio con ID: " + idPlanAlimenticio));
@@ -42,25 +43,31 @@ public class PlanRecetaService implements IPlanRecetaServices {
         planreceta.setFecharegistro(LocalDate.now());
         planreceta.setRecetas(new ArrayList<>());
 
-        Double caloriasObjetivo = plan.getCaloriasDiaria();
-        Double proteinasObjetivo = plan.getProteinasDiaria();
-        Double grasasObjetivo = plan.getGrasasDiaria();
-        Double carbohidratosObjetivo = plan.getCarbohidratosDiaria();
+        double caloriasTotal = 0, proteinasTotal = 0, grasasTotal = 0, carbohidratosTotal = 0;
+        double caloriasObjetivo = plan.getCaloriasDiaria();
+        double proteinasObjetivo = plan.getProteinasDiaria();
+        double grasasObjetivo = plan.getGrasasDiaria();
+        double carbohidratosObjetivo = plan.getCarbohidratosDiaria();
 
         List<Receta> todasRecetas = recetaRepositorio.findAll();
         List<Receta> recetasSeleccionadas = new ArrayList<>();
 
         for (Receta receta : todasRecetas) {
-            Double cal = receta.getCalorias() != null ? receta.getCalorias() : 0.0;
-            Double pro = receta.getProteinas() != null ? receta.getProteinas() : 0.0;
-            Double gra = receta.getGrasas() != null ? receta.getGrasas() : 0.0;
-            Double car = receta.getCarbohidratos() != null ? receta.getCarbohidratos() : 0.0;
+            double cal = receta.getCalorias() != null ? receta.getCalorias() : 0.0;
+            double pro = receta.getProteinas() != null ? receta.getProteinas() : 0.0;
+            double gra = receta.getGrasas() != null ? receta.getGrasas() : 0.0;
+            double car = receta.getCarbohidratos() != null ? receta.getCarbohidratos() : 0.0;
 
-            if (cal < caloriasObjetivo &&
-                    pro < proteinasObjetivo &&
-                    gra < grasasObjetivo &&
-                    car < carbohidratosObjetivo) {
+            if (caloriasTotal + cal <= caloriasObjetivo &&
+                    proteinasTotal + pro <= proteinasObjetivo &&
+                    grasasTotal + gra <= grasasObjetivo &&
+                    carbohidratosTotal + car <= carbohidratosObjetivo) {
+
                 recetasSeleccionadas.add(receta);
+                caloriasTotal += cal;
+                proteinasTotal += pro;
+                grasasTotal += gra;
+                carbohidratosTotal += car;
             }
         }
 
@@ -68,6 +75,7 @@ public class PlanRecetaService implements IPlanRecetaServices {
         planRecetaRepositorio.save(planreceta);
         return "Recetas agregadas correctamente según condiciones del plan alimenticio.";
     }
+
 
     @Override
     public void eliminar(Integer id) {
