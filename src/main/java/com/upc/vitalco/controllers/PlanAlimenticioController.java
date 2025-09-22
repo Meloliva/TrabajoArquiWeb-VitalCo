@@ -18,7 +18,8 @@ public class PlanAlimenticioController {
     @GetMapping("/listarPlanesAlimenticios")
     public ResponseEntity<List<PlanAlimenticioDTO>> findAll() {
         try {
-            List<PlanAlimenticioDTO> planes = planAlimenticioService.findAll();
+
+            List<PlanAlimenticioDTO> planes = planAlimenticioService.findAllConDatosActualizados();
             return ResponseEntity.ok(planes);
         } catch (Exception e) {
             return ResponseEntity.status(500).body(null);
@@ -28,7 +29,7 @@ public class PlanAlimenticioController {
     @DeleteMapping("/eliminarPlanAlimenticio/{id}")
     public ResponseEntity<String> eliminar(@PathVariable Integer id) {
         try {
-            planAlimenticioService.eliminar(id);
+            planAlimenticioService.eliminarPlanAlimenticio(id);
             return ResponseEntity.ok("Plan alimenticio eliminado correctamente");
         } catch (Exception e) {
             return ResponseEntity.status(404).body("Plan alimenticio no encontrado con ID: " + id);
@@ -55,7 +56,8 @@ public class PlanAlimenticioController {
     @GetMapping("/consultarPlanAlimenticio/{idPaciente}")
     public ResponseEntity<PlanAlimenticioDTO> consultarPlanAlimenticio(@PathVariable Integer idPaciente) {
         try {
-            PlanAlimenticioDTO plan = planAlimenticioService.consultarPlanAlimenticio(idPaciente);
+
+            PlanAlimenticioDTO plan = planAlimenticioService.consultarPlanAlimenticioConDatosActualizados(idPaciente);
             return ResponseEntity.ok(plan);
         } catch (RuntimeException e) {
             return ResponseEntity.status(404).body(null);
