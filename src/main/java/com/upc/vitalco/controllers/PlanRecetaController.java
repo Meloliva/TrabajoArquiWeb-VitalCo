@@ -13,14 +13,9 @@ public class PlanRecetaController {
     @Autowired
     private PlanRecetaService planRecetaService;
 
-    @PostMapping("/agregarRecetaPorDia")
-    public ResponseEntity<String> agregarRecetaPorDia(@RequestBody PlanRecetaDTO planRecetaDTO) {
-        return ResponseEntity.ok(planRecetaService.agregarRecetaADia(planRecetaDTO));
-    }
-
-    @GetMapping("/listarPlanRecetas")
-    public List<PlanRecetaDTO> findAll(){
-        return planRecetaService.findAll();
+    @GetMapping("/listarPlanRecetas/{idPaciente}")
+    public List<PlanRecetaDTO> listarPorPaciente(@PathVariable Integer idPaciente) {
+        return planRecetaService.listarPorPaciente(idPaciente);
     }
 
     @DeleteMapping("/eliminarPlanReceta/{id}")

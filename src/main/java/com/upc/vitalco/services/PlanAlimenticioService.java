@@ -30,7 +30,7 @@ public class PlanAlimenticioService implements IPlanAlimenticioServices {
     @Autowired
     private ModelMapper modelMapper;
 
-    @Override
+    //Hacerlo automatico
     public PlanAlimenticioDTO registrar(PlanAlimenticioDTO planAlimenticioDTO) {
 
         Optional<Paciente> pacienteOpt = pacienteRepositorio.findById(planAlimenticioDTO.getIdpaciente().getId());

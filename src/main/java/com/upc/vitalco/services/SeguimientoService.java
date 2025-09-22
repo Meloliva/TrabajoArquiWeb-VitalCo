@@ -166,7 +166,6 @@ public SeguimientoDTO registrar(SeguimientoDTO seguimientoDTO) {
     seguimiento = seguimientoRepositorio.save(seguimiento);
     return modelMapper.map(seguimiento, SeguimientoDTO.class);
 }*/
-/*listar pacientes por fecha falta hacerlo*/
 @Override
     public void actualizarCumplimiento(Integer seguimientoId) {
         Optional<Seguimiento> seguimientoOpt = seguimientoRepositorio.findById(seguimientoId);
