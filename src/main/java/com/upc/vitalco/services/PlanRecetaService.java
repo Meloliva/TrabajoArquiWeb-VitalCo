@@ -39,7 +39,6 @@ public class PlanRecetaService implements IPlanRecetaServices {
 
         Planreceta planreceta = new Planreceta();
         planreceta.setIdplanalimenticio(plan);
-        planreceta.setCantidadporcion(planRecetaDTO.getCantidadporcion());
         planreceta.setFecharegistro(LocalDate.now());
         planreceta.setRecetas(new ArrayList<>());
 
