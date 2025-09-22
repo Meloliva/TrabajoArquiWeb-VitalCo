@@ -32,7 +32,7 @@ public class PlanRecetaService implements IPlanRecetaServices {
     private HorarioRepositorio horarioRepositorio;
     @Autowired
     private RecetaRepositorio recetaRepositorio;
-    @Override
+
     public String agregarRecetaADia(PlanRecetaDTO planRecetaDTO) {
         Planalimenticio plan = planAlimenticioRepositorio.findById(planRecetaDTO.getIdplanalimenticio().getId())
                 .orElseThrow(() -> new RuntimeException("No existe el plan alimenticio con ID: " + planRecetaDTO.getIdplanalimenticio().getId()));
@@ -90,8 +90,8 @@ public class PlanRecetaService implements IPlanRecetaServices {
     }
 
     @Override
-    public List<PlanRecetaDTO> findAll() {
-        return planRecetaRepositorio.findAll()
+    public List<PlanRecetaDTO> listarPorPaciente(Integer idPaciente) {
+        return planRecetaRepositorio.buscarPorPaciente(idPaciente)
                 .stream()
                 .map(planReceta -> modelMapper.map(planReceta, PlanRecetaDTO.class))
                 .collect(Collectors.toList());
