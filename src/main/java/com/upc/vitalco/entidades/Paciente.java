@@ -39,4 +39,10 @@ public class Paciente {
     @Column(name = "actividad_fisica", length = 100)
     private String actividadFisica;
 
+    @OneToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "idplannutricional", nullable = false, unique = true)
+    private Plannutricional idPlanNutricional;
+
+
+
 }
