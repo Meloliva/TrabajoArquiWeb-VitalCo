@@ -34,7 +34,6 @@ public class SeguimientoService implements ISeguimientoServices {
     @Autowired
     private RecetaRepositorio recetaRepositorio;
 
-    @Override
     public SeguimientoDTO agregarRecetaAProgreso(Integer idPlanReceta, Long idReceta, LocalDate fechaRegistro) {
         if (fechaRegistro == null) {
             fechaRegistro = LocalDate.now();
@@ -44,18 +43,41 @@ public class SeguimientoService implements ISeguimientoServices {
         Receta receta = recetaRepositorio.findById(idReceta)
                 .orElseThrow(() -> new RuntimeException("No existe receta con el ID indicado"));
 
+        Planalimenticio plan = planDeReceta.getIdplanalimenticio();
+        if (plan == null) {
+            throw new RuntimeException("El plan de receta no tiene un plan alimenticio asociado");
+        }
+
         Optional<Seguimiento> seguimientoOpt = seguimientoRepositorio
                 .buscarPorPlanRecetaYFecha(idPlanReceta, fechaRegistro);
 
         Seguimiento seguimiento;
         if (seguimientoOpt.isPresent()) {
             seguimiento = seguimientoOpt.get();
-            // Suma los valores nutricionales de la receta
-            seguimiento.setCalorias(seguimiento.getCalorias() + receta.getCalorias());
-            seguimiento.setProteinas(seguimiento.getProteinas() + receta.getProteinas());
-            seguimiento.setGrasas(seguimiento.getGrasas() + receta.getGrasas());
-            seguimiento.setCarbohidratos(seguimiento.getCarbohidratos() + receta.getCarbohidratos());
+
+            double nuevasCalorias = seguimiento.getCalorias() + receta.getCalorias();
+            double nuevasProteinas = seguimiento.getProteinas() + receta.getProteinas();
+            double nuevasGrasas = seguimiento.getGrasas() + receta.getGrasas();
+            double nuevosCarbohidratos = seguimiento.getCarbohidratos() + receta.getCarbohidratos();
+
+            if (nuevasCalorias > plan.getCaloriasDiaria() ||
+                    nuevasProteinas > plan.getProteinasDiaria() ||
+                    nuevasGrasas > plan.getGrasasDiaria() ||
+                    nuevosCarbohidratos > plan.getCarbohidratosDiaria()) {
+                throw new IllegalArgumentException("No puedes exceder los valores del plan alimenticio");
+            }
+
+            seguimiento.setCalorias(nuevasCalorias);
+            seguimiento.setProteinas(nuevasProteinas);
+            seguimiento.setGrasas(nuevasGrasas);
+            seguimiento.setCarbohidratos(nuevosCarbohidratos);
         } else {
+            if (receta.getCalorias() > plan.getCaloriasDiaria() ||
+                    receta.getProteinas() > plan.getProteinasDiaria() ||
+                    receta.getGrasas() > plan.getGrasasDiaria() ||
+                    receta.getCarbohidratos() > plan.getCarbohidratosDiaria()) {
+                throw new IllegalArgumentException("No puedes exceder los valores del plan alimenticio");
+            }
             seguimiento = new Seguimiento();
             seguimiento.setIdplanreceta(planDeReceta);
             seguimiento.setFecharegistro(fechaRegistro);

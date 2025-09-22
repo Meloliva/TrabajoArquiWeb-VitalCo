@@ -56,10 +56,10 @@ public class PlanRecetaService implements IPlanRecetaServices {
             Double gra = receta.getGrasas() != null ? receta.getGrasas() : 0.0;
             Double car = receta.getCarbohidratos() != null ? receta.getCarbohidratos() : 0.0;
 
-            if (cal <= caloriasObjetivo &&
-                    pro <= proteinasObjetivo &&
-                    gra <= grasasObjetivo &&
-                    car <= carbohidratosObjetivo) {
+            if (cal < caloriasObjetivo &&
+                    pro < proteinasObjetivo &&
+                    gra < grasasObjetivo &&
+                    car < carbohidratosObjetivo) {
                 recetasSeleccionadas.add(receta);
             }
         }
