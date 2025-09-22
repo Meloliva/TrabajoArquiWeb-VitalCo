@@ -36,7 +36,18 @@ public class SeguimientoService implements ISeguimientoServices {
         Planreceta planDeReceta = planRecetaRepositorio.findById(seguimientoDTO.getIdplanreceta().getId())
                 .orElseThrow(() -> new RuntimeException("No existe plan de receta con el ID indicado"));
 
+        Optional<Seguimiento> yaExiste = seguimientoRepositorio
+                .buscarPorPacienteYFecha(
+                        planDeReceta.getIdplanalimenticio().getIdpaciente().getId(),
+                        seguimientoDTO.getFecharegistro()
+                )
+                .stream()
+                .filter(s -> s.getIdplanreceta().getId().equals(planDeReceta.getId()))
+                .findFirst();
 
+        if (yaExiste.isPresent()) {
+            throw new RuntimeException("Ya existe un seguimiento para este plan y fecha.");
+        }
         double caloriasDesayuno = 0, caloriasAlmuerzo = 0, caloriasCena = 0, caloriasSnack = 0;
     double caloriasTotales = 0, proteinasTotales = 0, grasasTotales = 0, carbohidratosTotales = 0;
 

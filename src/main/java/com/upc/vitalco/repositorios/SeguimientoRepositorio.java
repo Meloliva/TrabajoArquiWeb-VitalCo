@@ -31,5 +31,17 @@ AND s.idplanreceta.idplanalimenticio.idpaciente.idusuario.username LIKE CONCAT(:
             @Param("inicial") String inicial,
             @Param("fecha") LocalDate fecha
     );
-
+    @Query("""
+            SELECT s FROM Seguimiento s
+            JOIN s.idplanreceta pr
+            JOIN pr.recetas r
+            WHERE pr.idplanalimenticio.idpaciente.id = :idPaciente
+            AND s.fecharegistro = :fecha
+            AND r.id = :idReceta
+            """)
+    Optional<Seguimiento> existeRecetaEnDia(
+            @Param("idPaciente") Integer idPaciente,
+            @Param("fecha") LocalDate fecha,
+            @Param("idReceta") Integer idReceta
+    );
 }
