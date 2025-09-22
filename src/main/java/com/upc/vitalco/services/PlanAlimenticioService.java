@@ -33,30 +33,26 @@ public class PlanAlimenticioService implements IPlanAlimenticioServices {
     @Override
     public PlanAlimenticioDTO registrar(PlanAlimenticioDTO planAlimenticioDTO) {
 
-        Optional<Paciente> pacienteOpt = pacienteRepositorio.findById(planAlimenticioDTO.getIdpaciente().getId());
-        if (!pacienteOpt.isPresent()) {
-            throw new RuntimeException("Paciente no encontrado con ID: " + planAlimenticioDTO.getIdpaciente().getId());
-        }
 
-        Optional<Plannutricional> planNutricionalOpt = planNutricionalRepositorio.findById(planAlimenticioDTO.getIdplanNutricional().getId());
-        if (!planNutricionalOpt.isPresent()) {
-            throw new RuntimeException("Plan nutricional no encontrado con ID: " + planAlimenticioDTO.getIdplanNutricional().getId());
-        }
+        Paciente paciente = pacienteRepositorio.findById(planAlimenticioDTO.getIdpaciente().getId())
+                .orElseThrow(() -> new RuntimeException("Paciente no encontrado con ID: " + planAlimenticioDTO.getIdpaciente().getId()));
 
-        Paciente paciente = pacienteOpt.get();
-        Plannutricional planNutricional = planNutricionalOpt.get();
+        Plannutricional planNutricional = planNutricionalRepositorio.findById(planAlimenticioDTO.getIdplanNutricional().getId())
+                .orElseThrow(() -> new RuntimeException("Plan nutricional no encontrado con ID: " + planAlimenticioDTO.getIdplanNutricional().getId()));
+
+
         String objetivo = planNutricional.getObjetivo();
         String duracion = planNutricional.getDuracion();
 
-        double caloriasDiarias = calcularCalorias(paciente, objetivo, duracion);
 
+        double caloriasDiarias = calcularCalorias(paciente, objetivo, duracion);
         double[] macros = calcularMacronutrientes(caloriasDiarias, objetivo, paciente.getTrigliceridos().doubleValue());
         double carbohidratosDiarios = macros[0];
         double proteinasDiarias = macros[1];
         double grasasDiarias = macros[2];
 
-        Planalimenticio planAlimenticio = new Planalimenticio();
 
+        Planalimenticio planAlimenticio = new Planalimenticio();
         planAlimenticio.setIdpaciente(paciente);
         planAlimenticio.setIdplannutricional(planNutricional);
         planAlimenticio.setCaloriasDiaria(caloriasDiarias);
@@ -64,24 +60,25 @@ public class PlanAlimenticioService implements IPlanAlimenticioServices {
         planAlimenticio.setProteinasDiaria(proteinasDiarias);
         planAlimenticio.setGrasasDiaria(grasasDiarias);
 
-        LocalDate fechaInicio = LocalDate.now();
-        LocalDate fechaFinal;
 
-        if ("3 meses".equalsIgnoreCase(duracion)) {
-            fechaFinal = fechaInicio.plusMonths(3);
-        } else if ("6 meses".equalsIgnoreCase(duracion)) {
-            fechaFinal = fechaInicio.plusMonths(6);
-        } else if ("12 meses".equalsIgnoreCase(duracion)) {
-            fechaFinal = fechaInicio.plusMonths(12);
-        } else {
-            fechaFinal = fechaInicio.plusMonths(6); // Por defecto 6 meses
-        }
+        LocalDate fechaInicio = LocalDate.now();
+        LocalDate fechaFinal = calcularFechaFinal(duracion, fechaInicio);
 
         planAlimenticio.setFechainicio(fechaInicio);
         planAlimenticio.setFechafin(fechaFinal);
 
+
         planAlimenticio = planAlimenticioRepositorio.save(planAlimenticio);
         return modelMapper.map(planAlimenticio, PlanAlimenticioDTO.class);
+    }
+
+    private LocalDate calcularFechaFinal(String duracion, LocalDate fechaInicio) {
+        switch (duracion.toLowerCase()) {
+            case "3 meses": return fechaInicio.plusMonths(3);
+            case "6 meses": return fechaInicio.plusMonths(6);
+            case "12 meses": return fechaInicio.plusMonths(12);
+            default: return fechaInicio.plusMonths(6); // Valor por defecto
+        }
     }
 
 
