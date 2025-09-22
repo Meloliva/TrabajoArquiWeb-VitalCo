@@ -3,6 +3,7 @@ import com.upc.vitalco.dto.PacienteDTO;
 import com.upc.vitalco.entidades.Paciente;
 import com.upc.vitalco.interfaces.IPacienteServices;
 import com.upc.vitalco.repositorios.PacienteRepositorio;
+import com.upc.vitalco.repositorios.PlanAlimenticioRepositorio;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,12 +17,15 @@ public class PacienteService implements IPacienteServices {
     private PacienteRepositorio pacienteRepositorio;
     @Autowired
     private ModelMapper modelMapper;
+    @Autowired
+    private PlanAlimenticioService planAlimenticioService;
 
     @Override
     public PacienteDTO registrar(PacienteDTO pacienteDTO) {
         if (pacienteDTO.getId() == null) {
             Paciente paciente = modelMapper.map(pacienteDTO, Paciente.class);
             paciente = pacienteRepositorio.save(paciente);
+            planAlimenticioService.registrar(paciente.getId());
             return modelMapper.map(paciente, PacienteDTO.class);
         }
         return null;

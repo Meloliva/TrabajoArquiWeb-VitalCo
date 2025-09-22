@@ -33,55 +33,42 @@ public class PlanRecetaService implements IPlanRecetaServices {
     @Autowired
     private RecetaRepositorio recetaRepositorio;
 
-    public String agregarRecetaADia(PlanRecetaDTO planRecetaDTO) {
-        Planalimenticio plan = planAlimenticioRepositorio.findById(planRecetaDTO.getIdplanalimenticio().getId())
-                .orElseThrow(() -> new RuntimeException("No existe el plan alimenticio con ID: " + planRecetaDTO.getIdplanalimenticio().getId()));
+    public String agregarRecetaADia(Integer idPlanAlimenticio) {
+        Planalimenticio plan = planAlimenticioRepositorio.findById(idPlanAlimenticio)
+                .orElseThrow(() -> new RuntimeException("No existe el plan alimenticio con ID: " + idPlanAlimenticio));
 
         Planreceta planreceta = new Planreceta();
         planreceta.setIdplanalimenticio(plan);
         planreceta.setFecharegistro(LocalDate.now());
         planreceta.setRecetas(new ArrayList<>());
 
-        // Objetivos nutricionales del plan alimenticio
         Double caloriasObjetivo = plan.getCaloriasDiaria();
         Double proteinasObjetivo = plan.getProteinasDiaria();
         Double grasasObjetivo = plan.getGrasasDiaria();
         Double carbohidratosObjetivo = plan.getCarbohidratosDiaria();
 
-        // Selección automática de recetas
         List<Receta> todasRecetas = recetaRepositorio.findAll();
         List<Receta> recetasSeleccionadas = new ArrayList<>();
-        Double sumaCal = 0.0, sumaPro = 0.0, sumaGra = 0.0, sumaCar = 0.0;
 
         for (Receta receta : todasRecetas) {
-            Double cal = receta.getCalorias().doubleValue();
-            Double pro = receta.getProteinas().doubleValue();
-            Double gra = receta.getGrasas().doubleValue();
-            Double car = receta.getCarbohidratos().doubleValue();
+            Double cal = receta.getCalorias() != null ? receta.getCalorias() : 0.0;
+            Double pro = receta.getProteinas() != null ? receta.getProteinas() : 0.0;
+            Double gra = receta.getGrasas() != null ? receta.getGrasas() : 0.0;
+            Double car = receta.getCarbohidratos() != null ? receta.getCarbohidratos() : 0.0;
 
-            if (sumaCal + cal <= caloriasObjetivo &&
-                sumaPro + pro <= proteinasObjetivo &&
-                sumaGra + gra <= grasasObjetivo &&
-                sumaCar + car <= carbohidratosObjetivo) {
+            if (cal <= caloriasObjetivo &&
+                    pro <= proteinasObjetivo &&
+                    gra <= grasasObjetivo &&
+                    car <= carbohidratosObjetivo) {
                 recetasSeleccionadas.add(receta);
-                sumaCal += cal;
-                sumaPro += pro;
-                sumaGra += gra;
-                sumaCar += car;
-            }
-            if (sumaCal >= caloriasObjetivo &&
-                sumaPro >= proteinasObjetivo &&
-                sumaGra >= grasasObjetivo &&
-                sumaCar >= carbohidratosObjetivo) {
-                break;
             }
         }
 
         planreceta.setRecetas(recetasSeleccionadas);
-
         planRecetaRepositorio.save(planreceta);
-        return "Recetas automáticas agregadas correctamente según condiciones del paciente.";
+        return "Recetas agregadas correctamente según condiciones del plan alimenticio.";
     }
+
     @Override
     public void eliminar(Integer id) {
         if(planRecetaRepositorio.existsById(id)) {

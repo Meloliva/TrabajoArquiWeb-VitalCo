@@ -25,17 +25,17 @@ public class Receta {
     @Column(name = "tiempo")
     private Integer tiempo;
 
-    @Column(name = "carbohidratos", precision = 6, scale = 2)
-    private BigDecimal carbohidratos;
+    @Column(name = "carbohidratos")
+    private Double carbohidratos;
 
-    @Column(name = "calorias", precision = 6, scale = 2)
-    private BigDecimal calorias;
+    @Column(name = "calorias")
+    private Double calorias;
 
-    @Column(name = "grasas", precision = 6, scale = 2)
-    private BigDecimal grasas;
+    @Column(name = "grasas")
+    private Double grasas;
 
-    @Column(name = "proteinas", precision = 6, scale = 2)
-    private BigDecimal proteinas;
+    @Column(name = "proteinas")
+    private Double proteinas;
 
     @Column(name = "ingredientes", length = 1000)
     private String ingredientes;
@@ -49,6 +49,9 @@ public class Receta {
     @Column(name = "preparacion", length = 2000)
     private String preparacion;
 
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "idhorario", nullable = false)
+    private Horario idhorario;
 
 
     @ManyToOne(fetch = FetchType.LAZY)

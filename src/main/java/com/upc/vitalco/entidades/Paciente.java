@@ -40,7 +40,7 @@ public class Paciente {
     private String actividadFisica;
 
     @OneToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "idplannutricional", nullable = false, unique = true)
+    @JoinColumn(name = "idplannutricional", nullable = false)
     private Plannutricional idPlanNutricional;
 
 
