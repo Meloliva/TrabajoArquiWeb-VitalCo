@@ -88,10 +88,29 @@ public class PlanRecetaService implements IPlanRecetaServices {
     public PlanRecetaDTO actualizar(PlanRecetaDTO planRecetaDTO) {
         return planRecetaRepositorio.findById(planRecetaDTO.getId())
                 .map(existing -> {
-                    Planreceta planReceta = modelMapper.map(planRecetaDTO, Planreceta.class);
-                    Planreceta guardado = planRecetaRepositorio.save(planReceta);
+                    // Validación segura de nulls
+                    boolean esPremium = false;
+                    if (existing.getIdplanalimenticio() != null &&
+                            existing.getIdplanalimenticio().getIdpaciente() != null &&
+                            existing.getIdplanalimenticio().getIdpaciente().getIdplan() != null &&
+                            existing.getIdplanalimenticio().getIdpaciente().getIdplan().getTipo() != null) {
+                        esPremium = "Plan premium".equalsIgnoreCase(
+                                existing.getIdplanalimenticio().getIdpaciente().getIdplan().getTipo()
+                        );
+                    }
+                    if (!esPremium) {
+                        throw new RuntimeException("Solo los usuarios premium pueden actualizar las recetas del día.");
+                    }
+                    existing.setRecetas(
+                            planRecetaDTO.getRecetas().stream()
+                                    .map(dto -> modelMapper.map(dto, Receta.class))
+                                    .collect(Collectors.toList())
+                    );
+                    Planreceta guardado = planRecetaRepositorio.save(existing);
                     return modelMapper.map(guardado, PlanRecetaDTO.class);
                 })
-                .orElseThrow(() -> new RuntimeException("Usuario con ID " + planRecetaDTO.getId() + " no encontrado"));
+                .orElseThrow(() -> new RuntimeException("Plan de receta con ID " + planRecetaDTO.getId() + " no encontrado"));
     }
+
+
 }

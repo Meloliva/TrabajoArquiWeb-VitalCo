@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public interface ISeguimientoServices {
-    public SeguimientoDTO registrar(SeguimientoDTO seguimientoDTO);
+    public SeguimientoDTO agregarRecetaAProgreso(Integer idPlanReceta, Long idReceta, LocalDate fechaRegistro);
     public void actualizarCumplimiento(Integer seguimientoId);
     public List<SeguimientoDTO> listarPorDia(Integer pacienteId, LocalDate fecha);
     public SeguimientoDTO editarRequerimientos(Integer seguimientoId, NutricionistaxRequerimientoDTO requerimientoNutriDTO);

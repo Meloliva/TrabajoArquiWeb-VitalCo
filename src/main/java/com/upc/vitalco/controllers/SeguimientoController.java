@@ -22,10 +22,14 @@ public class SeguimientoController {
     @Autowired
     private SeguimientoService seguimientoService;
 
-    @PostMapping("/registrarSeguimiento")
-    public SeguimientoDTO registrarSeguimiento(@RequestBody SeguimientoDTO seguimientoDTO) {
-        return seguimientoService.registrar(seguimientoDTO);
+    @PostMapping("/agregarRecetaAProgreso")
+    public SeguimientoDTO agregarRecetaAProgreso(
+            @RequestParam Integer idPlanReceta,
+            @RequestParam Long idReceta,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaRegistro) {
+        return seguimientoService.agregarRecetaAProgreso(idPlanReceta, idReceta, fechaRegistro);
     }
+
 
     @GetMapping("/listarSeguimientos")
     public List<SeguimientoDTO> listarPorDia(
