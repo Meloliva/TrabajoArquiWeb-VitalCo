@@ -39,7 +39,7 @@ public class Paciente {
     @Column(name = "actividad_fisica", length = 100)
     private String actividadFisica;
 
-    @OneToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "idplannutricional", nullable = false)
     private Plannutricional idPlanNutricional;
 
