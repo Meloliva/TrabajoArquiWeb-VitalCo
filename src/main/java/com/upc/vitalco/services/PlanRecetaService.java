@@ -41,6 +41,7 @@ public class PlanRecetaService implements IPlanRecetaServices {
         Planreceta planreceta = new Planreceta();
         planreceta.setIdplanalimenticio(plan);
         planreceta.setFecharegistro(LocalDate.now());
+        planreceta.setFavorito(false);
         planreceta.setRecetas(new ArrayList<>());
 
         double caloriasTotal = 0, proteinasTotal = 0, grasasTotal = 0, carbohidratosTotal = 0;
@@ -70,11 +71,58 @@ public class PlanRecetaService implements IPlanRecetaServices {
                 carbohidratosTotal += car;
             }
         }
+        for (Receta receta : recetasSeleccionadas) {
+            receta.setPlanreceta(planreceta);
+            recetaRepositorio.save(receta);
+        }
 
         planreceta.setRecetas(recetasSeleccionadas);
         planRecetaRepositorio.save(planreceta);
         return "Recetas agregadas correctamente según condiciones del plan alimenticio.";
     }
+
+
+    public void actualizarRecetasDePlan(Planreceta planreceta) {
+        List<Receta> recetasActuales = planreceta.getRecetas();
+        List<Receta> todasRecetas = recetaRepositorio.findAll();
+
+        double caloriasTotal = recetasActuales.stream().mapToDouble(r -> r.getCalorias() != null ? r.getCalorias() : 0.0).sum();
+        double proteinasTotal = recetasActuales.stream().mapToDouble(r -> r.getProteinas() != null ? r.getProteinas() : 0.0).sum();
+        double grasasTotal = recetasActuales.stream().mapToDouble(r -> r.getGrasas() != null ? r.getGrasas() : 0.0).sum();
+        double carbohidratosTotal = recetasActuales.stream().mapToDouble(r -> r.getCarbohidratos() != null ? r.getCarbohidratos() : 0.0).sum();
+
+        double caloriasObjetivo = planreceta.getIdplanalimenticio().getCaloriasDiaria();
+        double proteinasObjetivo = planreceta.getIdplanalimenticio().getProteinasDiaria();
+        double grasasObjetivo = planreceta.getIdplanalimenticio().getGrasasDiaria();
+        double carbohidratosObjetivo = planreceta.getIdplanalimenticio().getCarbohidratosDiaria();
+
+        for (Receta receta : todasRecetas) {
+            if (!recetasActuales.contains(receta)) {
+                double cal = receta.getCalorias() != null ? receta.getCalorias() : 0.0;
+                double pro = receta.getProteinas() != null ? receta.getProteinas() : 0.0;
+                double gra = receta.getGrasas() != null ? receta.getGrasas() : 0.0;
+                double car = receta.getCarbohidratos() != null ? receta.getCarbohidratos() : 0.0;
+
+                if (caloriasTotal + cal <= caloriasObjetivo &&
+                        proteinasTotal + pro <= proteinasObjetivo &&
+                        grasasTotal + gra <= grasasObjetivo &&
+                        carbohidratosTotal + car <= carbohidratosObjetivo) {
+
+                    receta.setPlanreceta(planreceta);
+                    recetaRepositorio.save(receta);
+                    recetasActuales.add(receta);
+
+                    caloriasTotal += cal;
+                    proteinasTotal += pro;
+                    grasasTotal += gra;
+                    carbohidratosTotal += car;
+                }
+            }
+        }
+        planreceta.setRecetas(recetasActuales);
+        planRecetaRepositorio.save(planreceta);
+    }
+
 
 
     @Override
@@ -86,38 +134,22 @@ public class PlanRecetaService implements IPlanRecetaServices {
 
     @Override
     public List<PlanRecetaDTO> listarPorPaciente(Integer idPaciente) {
-        return planRecetaRepositorio.buscarPorPaciente(idPaciente)
-                .stream()
-                .map(planReceta -> modelMapper.map(planReceta, PlanRecetaDTO.class))
-                .collect(Collectors.toList());
-    }
+        //falta la condicion de plan premium
+        List<Planreceta> planes = planRecetaRepositorio.buscarPorPaciente(idPaciente);
 
-    @Override
-    public PlanRecetaDTO actualizar(PlanRecetaDTO planRecetaDTO) {
-        return planRecetaRepositorio.findById(planRecetaDTO.getId())
-                .map(existing -> {
-                    // Validación segura de nulls
-                    boolean esPremium = false;
-                    if (existing.getIdplanalimenticio() != null &&
-                            existing.getIdplanalimenticio().getIdpaciente() != null &&
-                            existing.getIdplanalimenticio().getIdpaciente().getIdplan() != null &&
-                            existing.getIdplanalimenticio().getIdpaciente().getIdplan().getTipo() != null) {
-                        esPremium = "Plan premium".equalsIgnoreCase(
-                                existing.getIdplanalimenticio().getIdpaciente().getIdplan().getTipo()
-                        );
-                    }
-                    if (!esPremium) {
-                        throw new RuntimeException("Solo los usuarios premium pueden actualizar las recetas del día.");
-                    }
-                    existing.setRecetas(
-                            planRecetaDTO.getRecetas().stream()
-                                    .map(dto -> modelMapper.map(dto, Receta.class))
-                                    .collect(Collectors.toList())
-                    );
-                    Planreceta guardado = planRecetaRepositorio.save(existing);
-                    return modelMapper.map(guardado, PlanRecetaDTO.class);
-                })
-                .orElseThrow(() -> new RuntimeException("Plan de receta con ID " + planRecetaDTO.getId() + " no encontrado"));
+        for (Planreceta planreceta : planes) {
+            actualizarRecetasDePlan(planreceta);
+        }
+
+        return planes.stream()
+                .map(planReceta -> {
+                    PlanRecetaDTO dto = modelMapper.map(planReceta, PlanRecetaDTO.class);
+                    List<RecetaDTO> recetasDTO = planReceta.getRecetas().stream()
+                            .map(receta -> modelMapper.map(receta, RecetaDTO.class))
+                            .collect(Collectors.toList());
+                    dto.setRecetas(recetasDTO);
+                    return dto;
+                }).collect(Collectors.toList());
     }
 
 

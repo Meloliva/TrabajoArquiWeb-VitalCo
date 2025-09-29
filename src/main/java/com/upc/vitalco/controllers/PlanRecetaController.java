@@ -23,8 +23,4 @@ public class PlanRecetaController {
         planRecetaService.eliminar(id);
     }
 
-    @PutMapping("/editarPlanReceta")
-    public ResponseEntity<PlanRecetaDTO> editar(@RequestBody PlanRecetaDTO dto) {
-        return ResponseEntity.ok(planRecetaService.actualizar(dto));
-    }
 }

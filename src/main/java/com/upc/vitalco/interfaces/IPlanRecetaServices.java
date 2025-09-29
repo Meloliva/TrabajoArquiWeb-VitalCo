@@ -6,5 +6,5 @@ import java.util.List;
 public interface IPlanRecetaServices {
     public void eliminar(Integer id);
     public List<PlanRecetaDTO> listarPorPaciente(Integer idPaciente);
-    public PlanRecetaDTO actualizar(PlanRecetaDTO planRecetaDTO);
+
 }
