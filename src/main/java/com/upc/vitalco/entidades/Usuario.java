@@ -14,8 +14,8 @@ public class Usuario {
     @Column(name = "idusuario", nullable = false)
     private Integer id;
 
-    @Column(name = "username", nullable = false, length = 20)
-    private String username;
+    @Column(name = "dni", nullable = false, length = 20, unique = true)
+    private String dni;
 
     @Column(name = "\"contraseña\"", nullable = false)
     private String contraseña;

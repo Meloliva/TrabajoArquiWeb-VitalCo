@@ -34,6 +34,7 @@ public class SeguimientoService implements ISeguimientoServices {
     @Autowired
     private RecetaRepositorio recetaRepositorio;
 
+    @Override
     public SeguimientoDTO agregarRecetaAProgreso(Integer idPlanReceta, Long idReceta, LocalDate fechaRegistro) {
         if (fechaRegistro == null) {
             fechaRegistro = LocalDate.now();
