@@ -13,6 +13,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.HttpStatus;
+
+import java.util.Map;
 import java.util.NoSuchElementException;
 
 @RestController
@@ -26,7 +28,7 @@ public class SeguimientoController {
     public SeguimientoDTO agregarRecetaAProgreso(
             @RequestParam Integer idPlanReceta,
             @RequestParam Long idReceta,
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaRegistro) {
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaRegistro) {
         return seguimientoService.agregarRecetaAProgreso(idPlanReceta, idReceta, fechaRegistro);
     }
 
@@ -44,8 +46,8 @@ public class SeguimientoController {
             @RequestBody NutricionistaxRequerimientoDTO requerimientoNutriDTO) {
         return seguimientoService.editarRequerimientos(seguimientoId, requerimientoNutriDTO);
     }
-    @GetMapping("/listarSeguimientosPorInicialYFecha")
-    public ResponseEntity<?> listarPorInicialYFecha(
+    @GetMapping("/listarSeguimientosPorDniYFecha")
+    public ResponseEntity<?> listarPorDniYFecha(
             @RequestParam String dni,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fecha
     ) {
@@ -54,6 +56,22 @@ public class SeguimientoController {
             return ResponseEntity.ok("No hay seguimientos registrados para esa fecha.");
         }
         return ResponseEntity.ok(resultados);
+    }
+
+    @GetMapping("/listarCaloriasPorHorario")
+    public ResponseEntity<?> listarCaloriasPorHorario(
+            @RequestParam Integer pacienteId,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fecha) {
+        Map<String, Double> resultado = seguimientoService.listarCaloriasPorHorario(pacienteId, fecha);
+        return ResponseEntity.ok(resultado);
+    }
+
+    @GetMapping("/listarTotalesNutricionales")
+    public ResponseEntity<?> obtenerTotalesNutricionales(
+            @RequestParam Integer pacienteId,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fecha) {
+        Map<String, Double> resultado = seguimientoService.obtenerTotalesNutricionales(pacienteId, fecha);
+        return ResponseEntity.ok(resultado);
     }
 
 }

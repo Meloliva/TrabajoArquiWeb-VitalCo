@@ -8,12 +8,15 @@ import com.upc.vitalco.dto.SeguimientoDTO;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 public interface ISeguimientoServices {
     public SeguimientoDTO agregarRecetaAProgreso(Integer idPlanReceta, Long idReceta, LocalDate fechaRegistro);
+    //Listar cunplimiento
     public void actualizarCumplimiento(Integer seguimientoId);
     public List<SeguimientoDTO> listarPorDia(Integer pacienteId, LocalDate fecha);
+    public Map<String, Double> obtenerTotalesNutricionales(Integer pacienteId, LocalDate fecha);
     public SeguimientoDTO editarRequerimientos(Integer seguimientoId, NutricionistaxRequerimientoDTO requerimientoNutriDTO);
     List<SeguimientoDTO> listarPorDniYFecha(String dni, LocalDate fecha);
-
+    public Map<String, Double> listarCaloriasPorHorario(Integer pacienteId, LocalDate fecha);
 }
