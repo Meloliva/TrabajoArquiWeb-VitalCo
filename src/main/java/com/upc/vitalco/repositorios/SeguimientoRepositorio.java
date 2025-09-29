@@ -25,10 +25,10 @@ public interface SeguimientoRepositorio extends JpaRepository<Seguimiento, Integ
     @Query("""
 SELECT s FROM Seguimiento s
 WHERE FUNCTION('DATE', s.fecharegistro) = :fecha
-AND s.idplanreceta.idplanalimenticio.idpaciente.idusuario.username LIKE CONCAT(:inicial, '%')
+AND s.idplanreceta.idplanalimenticio.idpaciente.idusuario.dni LIKE CONCAT(:dni, '%')
 """)
     List<Seguimiento> buscarPorInicialUsernameYFecha(
-            @Param("inicial") String inicial,
+            @Param("dni") String dni,
             @Param("fecha") LocalDate fecha
     );
     @Query("""

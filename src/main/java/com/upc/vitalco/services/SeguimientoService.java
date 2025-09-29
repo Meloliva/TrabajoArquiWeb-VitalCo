@@ -150,10 +150,10 @@ public class SeguimientoService implements ISeguimientoServices {
         }
         return null;
     }
-    
+
     @Override
-    public List<SeguimientoDTO> listarPorInicialYFecha(String inicial, LocalDate fecha) {
-        List<Seguimiento> seguimientos = seguimientoRepositorio.buscarPorInicialUsernameYFecha(inicial, fecha);
+    public List<SeguimientoDTO> listarPorDniYFecha(String dni, LocalDate fecha) {
+        List<Seguimiento> seguimientos = seguimientoRepositorio.buscarPorInicialUsernameYFecha(dni, fecha);
         return seguimientos.stream()
                 .map(s -> modelMapper.map(s, SeguimientoDTO.class))
                 .collect(Collectors.toList());

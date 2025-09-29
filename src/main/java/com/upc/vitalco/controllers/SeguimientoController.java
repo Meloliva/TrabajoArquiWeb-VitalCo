@@ -46,10 +46,10 @@ public class SeguimientoController {
     }
     @GetMapping("/listarSeguimientosPorInicialYFecha")
     public ResponseEntity<?> listarPorInicialYFecha(
-            @RequestParam String inicial,
+            @RequestParam String dni,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fecha
     ) {
-        List<SeguimientoDTO> resultados = seguimientoService.listarPorInicialYFecha(inicial, fecha);
+        List<SeguimientoDTO> resultados = seguimientoService.listarPorDniYFecha(dni, fecha);
         if (resultados.isEmpty()) {
             return ResponseEntity.ok("No hay seguimientos registrados para esa fecha.");
         }
