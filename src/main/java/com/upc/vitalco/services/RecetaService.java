@@ -1,8 +1,10 @@
 package com.upc.vitalco.services;
 
 import com.upc.vitalco.dto.RecetaDTO;
+import com.upc.vitalco.entidades.Planreceta;
 import com.upc.vitalco.entidades.Receta;
 import com.upc.vitalco.interfaces.IRecetaServices;
+import com.upc.vitalco.repositorios.PlanRecetaRepositorio;
 import com.upc.vitalco.repositorios.RecetaRepositorio;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +17,9 @@ import java.util.stream.Collectors;
 public class RecetaService implements IRecetaServices {
     @Autowired
     private RecetaRepositorio recetaRepositorio;
+    @Autowired
+    private PlanRecetaRepositorio planRecetaRepositorio;
+
 
     @Autowired
     private ModelMapper modelMapper;
@@ -24,6 +29,19 @@ public class RecetaService implements IRecetaServices {
         if (recetaDTO.getIdReceta() == null) {
             Receta receta = modelMapper.map(recetaDTO, Receta.class);
             receta = recetaRepositorio.save(receta);//insert into
+            return modelMapper.map(receta, RecetaDTO.class);
+        }
+        return null;
+    }
+    @Override
+    public RecetaDTO registrarNutri(RecetaDTO recetaDTO) {
+        if (recetaDTO.getIdReceta() == null) {
+            Receta receta = modelMapper.map(recetaDTO, Receta.class);
+            // Asociar el plan de receta
+            Planreceta planReceta = planRecetaRepositorio.findById(Math.toIntExact(recetaDTO.getIdReceta()))
+                    .orElseThrow(() -> new RuntimeException("PlanReceta no encontrado"));
+            receta.setPlanreceta(planReceta);
+            receta = recetaRepositorio.save(receta);
             return modelMapper.map(receta, RecetaDTO.class);
         }
         return null;

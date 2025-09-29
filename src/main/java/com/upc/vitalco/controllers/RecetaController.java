@@ -18,6 +18,10 @@ public class RecetaController {
     public RecetaDTO registrar(@RequestBody RecetaDTO recetaDTO){ //wrapper
         return recetaService.registrar(recetaDTO);
     }
+    @PostMapping("/registrarRecetaNutri")
+    public RecetaDTO registrarRecetaNutri(@RequestBody RecetaDTO recetaDTO) {
+        return recetaService.registrarNutri(recetaDTO);
+    }
     @GetMapping("/listarRecetas")
     public List<RecetaDTO> findAll(){
         return recetaService.findAll();
