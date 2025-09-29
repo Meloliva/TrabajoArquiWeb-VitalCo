@@ -1,7 +1,7 @@
 package com.upc.vitalco.services;
 
+import com.upc.vitalco.dto.CumplimientoDTO;
 import com.upc.vitalco.dto.NutricionistaxRequerimientoDTO;
-import com.upc.vitalco.dto.RecetaDTO;
 import com.upc.vitalco.dto.SeguimientoDTO;
 import com.upc.vitalco.entidades.Planalimenticio;
 import com.upc.vitalco.entidades.Planreceta;
@@ -16,7 +16,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -132,25 +131,43 @@ public class SeguimientoService implements ISeguimientoServices {
         return totales;
     }
 
-    //listar por dia, aca va
-    @Override//
-    public void actualizarCumplimiento(Integer seguimientoId) {
-        Optional<Seguimiento> seguimientoOpt = seguimientoRepositorio.findById(seguimientoId);
-        if (seguimientoOpt.isPresent()) {
-            Seguimiento seguimiento = seguimientoOpt.get();
-            Planreceta planreceta = seguimiento.getIdplanreceta();
-            if (planreceta != null) {
-                Planalimenticio plan = planreceta.getIdplanalimenticio();
-                if (plan != null) {
-                    double caloriasSeguimiento = seguimiento.getCalorias() != null ? seguimiento.getCalorias() : 0.0;
-                    double caloriasMeta = plan.getCaloriasDiaria() != null ? plan.getCaloriasDiaria() : 0.0;
-                    boolean cumplio = caloriasSeguimiento >= caloriasMeta;
-                    seguimiento.setCumplio(cumplio);
-                    seguimientoRepositorio.save(seguimiento);
-                }
+    @Override
+    public List<CumplimientoDTO> listarCumplimientoDiario(String dni, LocalDate fecha) {
+
+
+        List<Seguimiento> seguimientos = seguimientoRepositorio.buscarPorDniYFecha(dni, fecha);
+
+        // Sumar los totales del día
+        double totalCalorias = 0.0;
+        double totalGrasas = 0.0;
+        double totalCarbohidratos = 0.0;
+        double totalProteinas = 0.0;
+
+        Planalimenticio plan = null;
+        for (Seguimiento s : seguimientos) {
+            totalCalorias += s.getCalorias() != null ? s.getCalorias() : 0.0;
+            totalGrasas += s.getGrasas() != null ? s.getGrasas() : 0.0;
+            totalCarbohidratos += s.getCarbohidratos() != null ? s.getCarbohidratos() : 0.0;
+            totalProteinas += s.getProteinas() != null ? s.getProteinas() : 0.0;
+            if (plan == null && s.getIdplanreceta() != null) {
+                plan = s.getIdplanreceta().getIdplanalimenticio();
             }
         }
+
+        boolean cumplio = false;
+        if (plan != null) {
+            cumplio = totalCalorias >= plan.getCaloriasDiaria() &&
+                    totalGrasas >= plan.getGrasasDiaria() &&
+                    totalCarbohidratos >= plan.getCarbohidratosDiaria() &&
+                    totalProteinas >= plan.getProteinasDiaria();
+        }
+
+        List<CumplimientoDTO> resultado = new ArrayList<>();
+        resultado.add(new CumplimientoDTO(dni, cumplio));
+        return resultado;
     }
+
+
     @Override
     public List<SeguimientoDTO> listarPorDia(Integer pacienteId, LocalDate fecha) {
         // Ajusta este método según tu modelo real

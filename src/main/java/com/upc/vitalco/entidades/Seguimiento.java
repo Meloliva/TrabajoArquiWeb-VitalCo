@@ -17,9 +17,6 @@ public class Seguimiento {
     @Column(name = "idseguimiento", nullable = false)
     private Integer id;
 
-    @Column(name = "cumplio") // si cumplio todo el plan nutricional con las calorias indicadas y calculadas esto se convierte en true y va salir en la pantalla felicitaciones completaste tu plan nutricional
-    private Boolean cumplio;
-
     /*@Column(name = "descripcion", length = Integer.MAX_VALUE)
     private String descripcion; si en caso haiga nutricionista*/
 

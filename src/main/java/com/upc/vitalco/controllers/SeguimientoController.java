@@ -1,5 +1,6 @@
 package com.upc.vitalco.controllers;
 
+import com.upc.vitalco.dto.CumplimientoDTO;
 import com.upc.vitalco.dto.NutricionistaxRequerimientoDTO;
 import com.upc.vitalco.dto.RecetaDTO;
 import com.upc.vitalco.dto.SeguimientoDTO;
@@ -71,6 +72,15 @@ public class SeguimientoController {
             @RequestParam Integer pacienteId,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fecha) {
         Map<String, Double> resultado = seguimientoService.obtenerTotalesNutricionales(pacienteId, fecha);
+        return ResponseEntity.ok(resultado);
+    }
+
+    @GetMapping("/listarCumplimientoDiario")
+    public ResponseEntity<List<CumplimientoDTO>> listarCumplimientoDiario(
+            @RequestParam String dniPaciente,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fecha) {
+        List<CumplimientoDTO> resultado = seguimientoService.listarCumplimientoDiario(
+                dniPaciente, fecha);
         return ResponseEntity.ok(resultado);
     }
 
