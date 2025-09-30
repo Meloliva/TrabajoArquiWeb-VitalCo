@@ -21,9 +21,6 @@ public class Nutricionista {
     @Column(name = "asociaciones")
     private String asociaciones;
 
-    @Column(name = "dni", length = 8)
-    private String dni;
-
     @Column(name = "universidad", length = 150)
     private String universidad;
 

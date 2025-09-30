@@ -12,7 +12,6 @@ public class NutricionistaDTO {
     private Integer id;
     private UsuarioDTO idusuario;
     private String asociaciones;
-    private String dni;
     private String universidad;
     private TurnoDTO idturno;
 }
