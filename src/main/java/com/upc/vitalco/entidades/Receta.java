@@ -5,6 +5,8 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Setter
@@ -53,9 +55,7 @@ public class Receta {
     @JoinColumn(name = "idhorario", nullable = false)
     private Horario idhorario;
 
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "idplanreceta")
-    private Planreceta planreceta;
+    @ManyToMany(mappedBy = "recetas", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Planreceta> planrecetas = new ArrayList<>();
 
 }

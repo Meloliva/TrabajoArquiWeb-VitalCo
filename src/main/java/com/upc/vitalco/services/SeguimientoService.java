@@ -93,7 +93,7 @@ public class SeguimientoService implements ISeguimientoServices {
             List<Receta> recetas = s.getIdplanreceta().getRecetas();
             if (recetas != null) {
                 for (Receta receta : recetas) {
-                    String horario = receta.getIdhorario().getNombre();
+                    String horario = receta.getIdhorario().getNombre().toLowerCase();
                     double calorias = receta.getCalorias() != null ? receta.getCalorias() : 0.0;
                     caloriasPorHorario.put(horario, caloriasPorHorario.getOrDefault(horario, 0.0) + calorias);
                 }

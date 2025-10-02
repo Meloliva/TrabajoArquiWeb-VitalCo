@@ -33,16 +33,22 @@ public class PlanRecetaService implements IPlanRecetaServices {
     @Autowired
     private RecetaRepositorio recetaRepositorio;
 
-    // Método para agregar recetas a un plan alimenticio según las condiciones dadas
     public String agregarRecetaADia(Integer idPlanAlimenticio) {
         Planalimenticio plan = planAlimenticioRepositorio.findById(idPlanAlimenticio)
                 .orElseThrow(() -> new RuntimeException("No existe el plan alimenticio con ID: " + idPlanAlimenticio));
 
-        Planreceta planreceta = new Planreceta();
-        planreceta.setIdplanalimenticio(plan);
-        planreceta.setFecharegistro(LocalDate.now());
-        planreceta.setFavorito(false);
-        planreceta.setRecetas(new ArrayList<>());
+        // Buscar solo por plan alimenticio, no por fecha
+        Planreceta planreceta = (Planreceta) planRecetaRepositorio
+                .findByIdplanalimenticio(plan)
+                .orElse(null);
+
+        if (planreceta == null) {
+            planreceta = new Planreceta();
+            planreceta.setIdplanalimenticio(plan);
+            planreceta.setFecharegistro(LocalDate.now());
+            planreceta.setFavorito(false);
+            planreceta.setRecetas(new ArrayList<>());
+        }
 
         double caloriasTotal = 0, proteinasTotal = 0, grasasTotal = 0, carbohidratosTotal = 0;
         double caloriasObjetivo = plan.getCaloriasDiaria();
@@ -51,7 +57,7 @@ public class PlanRecetaService implements IPlanRecetaServices {
         double carbohidratosObjetivo = plan.getCarbohidratosDiaria();
 
         List<Receta> todasRecetas = recetaRepositorio.findAll();
-        List<Receta> recetasSeleccionadas = new ArrayList<>();
+        List<Receta> recetasSeleccionadas = new ArrayList<>(planreceta.getRecetas());
 
         for (Receta receta : todasRecetas) {
             double cal = receta.getCalorias() != null ? receta.getCalorias() : 0.0;
@@ -64,23 +70,31 @@ public class PlanRecetaService implements IPlanRecetaServices {
                     grasasTotal + gra <= grasasObjetivo &&
                     carbohidratosTotal + car <= carbohidratosObjetivo) {
 
-                recetasSeleccionadas.add(receta);
-                caloriasTotal += cal;
-                proteinasTotal += pro;
-                grasasTotal += gra;
-                carbohidratosTotal += car;
+                if (!recetasSeleccionadas.contains(receta)) {
+                    recetasSeleccionadas.add(receta);
+                    caloriasTotal += cal;
+                    proteinasTotal += pro;
+                    grasasTotal += gra;
+                    carbohidratosTotal += car;
+                }
             }
         }
         for (Receta receta : recetasSeleccionadas) {
-            receta.setPlanreceta(planreceta);
-            recetaRepositorio.save(receta);
+            List<Planreceta> planes = receta.getPlanrecetas();
+            if (planes == null) {
+                planes = new ArrayList<>();
+            }
+            if (!planes.contains(planreceta)) {
+                planes.add(planreceta);
+                receta.setPlanrecetas(planes);
+                recetaRepositorio.save(receta);
+            }
         }
 
         planreceta.setRecetas(recetasSeleccionadas);
         planRecetaRepositorio.save(planreceta);
         return "Recetas agregadas correctamente según condiciones del plan alimenticio.";
     }
-
 
     public void actualizarRecetasDePlan(Planreceta planreceta) {
         List<Receta> recetasActuales = planreceta.getRecetas();
@@ -108,8 +122,15 @@ public class PlanRecetaService implements IPlanRecetaServices {
                         grasasTotal + gra <= grasasObjetivo &&
                         carbohidratosTotal + car <= carbohidratosObjetivo) {
 
-                    receta.setPlanreceta(planreceta);
-                    recetaRepositorio.save(receta);
+                    List<Planreceta> planes = receta.getPlanrecetas();
+                    if (planes == null) {
+                        planes = new ArrayList<>();
+                    }
+                    if (!planes.contains(planreceta)) {
+                        planes.add(planreceta);
+                        receta.setPlanrecetas(planes);
+                        recetaRepositorio.save(receta);
+                    }
                     recetasActuales.add(receta);
 
                     caloriasTotal += cal;
@@ -123,8 +144,6 @@ public class PlanRecetaService implements IPlanRecetaServices {
         planRecetaRepositorio.save(planreceta);
     }
 
-
-
     @Override
     public void eliminar(Integer id) {
         if(planRecetaRepositorio.existsById(id)) {
@@ -134,14 +153,24 @@ public class PlanRecetaService implements IPlanRecetaServices {
 
     @Override
     public List<PlanRecetaDTO> listarPorPaciente(Integer idPaciente) {
-        //falta la condicion de plan premium
         List<Planreceta> planes = planRecetaRepositorio.buscarPorPaciente(idPaciente);
 
-        for (Planreceta planreceta : planes) {
+        // Agrupa por idplanalimenticio y toma solo uno por cada plan alimenticio
+        List<Planreceta> unicos = planes.stream()
+                .collect(Collectors.toMap(
+                        p -> p.getIdplanalimenticio().getId(),
+                        p -> p,
+                        (p1, p2) -> p1 // Si hay más de uno, toma el primero
+                ))
+                .values()
+                .stream()
+                .collect(Collectors.toList());
+
+        for (Planreceta planreceta : unicos) {
             actualizarRecetasDePlan(planreceta);
         }
 
-        return planes.stream()
+        return unicos.stream()
                 .map(planReceta -> {
                     PlanRecetaDTO dto = modelMapper.map(planReceta, PlanRecetaDTO.class);
                     List<RecetaDTO> recetasDTO = planReceta.getRecetas().stream()
@@ -151,6 +180,4 @@ public class PlanRecetaService implements IPlanRecetaServices {
                     return dto;
                 }).collect(Collectors.toList());
     }
-
-
 }

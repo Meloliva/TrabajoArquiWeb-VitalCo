@@ -40,7 +40,7 @@ public class RecetaService implements IRecetaServices {
             // Asociar el plan de receta
             Planreceta planReceta = planRecetaRepositorio.findById(Math.toIntExact(recetaDTO.getIdReceta()))
                     .orElseThrow(() -> new RuntimeException("PlanReceta no encontrado"));
-            receta.setPlanreceta(planReceta);
+            receta.setPlanrecetas((List<Planreceta>) planReceta);
             receta = recetaRepositorio.save(receta);
             return modelMapper.map(receta, RecetaDTO.class);
         }

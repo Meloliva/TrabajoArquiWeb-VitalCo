@@ -24,7 +24,14 @@ public class Planreceta {
     @JoinColumn(name = "idplanalimenticio", nullable = false)
     private Planalimenticio idplanalimenticio;
 
-    @OneToMany(mappedBy = "planreceta", cascade = CascadeType.ALL, orphanRemoval = true)
+    /*@ManyToMany(mappedBy = "planreceta", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Receta> recetas = new ArrayList<>();*/
+    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinTable(
+            name = "planreceta_receta",
+            joinColumns = @JoinColumn(name = "idplanreceta"),
+            inverseJoinColumns = @JoinColumn(name = "idreceta")
+    )
     private List<Receta> recetas = new ArrayList<>();
 
     @ColumnDefault("false")

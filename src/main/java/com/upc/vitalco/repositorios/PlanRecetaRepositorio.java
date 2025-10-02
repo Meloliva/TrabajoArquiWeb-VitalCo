@@ -22,5 +22,8 @@ public interface PlanRecetaRepositorio extends JpaRepository<Planreceta, Integer
        WHERE pr.idplanalimenticio.idpaciente.id = :idPaciente
        """)
     List<Planreceta> buscarPorPaciente(@Param("idPaciente") Integer idPaciente);
+    Optional<Planreceta> findByIdplanalimenticioAndFecharegistro(Planalimenticio planalimenticio, LocalDate fecharegistro);
 
+
+    Optional<Object> findByIdplanalimenticio(Planalimenticio idplanalimenticio);
 }
