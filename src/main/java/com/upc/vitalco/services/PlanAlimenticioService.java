@@ -62,7 +62,7 @@ public class PlanAlimenticioService implements IPlanAlimenticioServices {
         planAlimenticio.setFechafin(fechaFinal);
 
         planAlimenticio = planAlimenticioRepositorio.save(planAlimenticio);
-        planRecetaService.agregarRecetaADia(planAlimenticio.getId());
+        planRecetaService.crearPlanReceta(planAlimenticio.getId());
         return modelMapper.map(planAlimenticio, PlanAlimenticioDTO.class);
     }
 

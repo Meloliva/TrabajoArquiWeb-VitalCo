@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -53,8 +52,11 @@ public class Receta {
     @JoinColumn(name = "idhorario", nullable = false)
     private Horario idhorario;
 
-    @ManyToMany(mappedBy = "recetas", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<Planreceta> planrecetas = new ArrayList<>();
+    /*@ManyToMany(mappedBy = "recetas", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Planreceta> planrecetas = new ArrayList<>();*/
+    @OneToMany(mappedBy = "receta", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<PlanRecetaReceta> planrecetas = new ArrayList<>();
+
 
     @Column(name = "foto")
     private String foto;

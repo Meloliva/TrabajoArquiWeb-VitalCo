@@ -33,7 +33,7 @@ public class RecetaService implements IRecetaServices {
         }
         return null;
     }
-    @Override
+    /*@Override
     public RecetaDTO registrarNutri(RecetaDTO recetaDTO) {
         if (recetaDTO.getIdReceta() == null) {
             Receta receta = modelMapper.map(recetaDTO, Receta.class);
@@ -45,7 +45,7 @@ public class RecetaService implements IRecetaServices {
             return modelMapper.map(receta, RecetaDTO.class);
         }
         return null;
-    }
+    }*/
 
     @Override
     public List<RecetaDTO> findAll() {

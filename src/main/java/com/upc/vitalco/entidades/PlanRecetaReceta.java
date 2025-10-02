@@ -12,13 +12,14 @@ public class PlanRecetaReceta {
         @GeneratedValue(strategy = GenerationType.IDENTITY)
         private Long id;
 
-        @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-        @JoinColumn(name = "idplanreceta")
-        private Planreceta planreceta;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "idplanreceta", nullable = false)
+    private Planreceta planreceta;
 
-        @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-        @JoinColumn(name = "idreceta")
-        private Receta receta;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "idreceta", nullable = false)
+    private Receta receta;
+
 }
 
 

@@ -1,23 +1,16 @@
- package com.upc.vitalco.services;
+package com.upc.vitalco.services;
 
 import com.upc.vitalco.dto.PlanRecetaDTO;
 import com.upc.vitalco.dto.RecetaDTO;
-import com.upc.vitalco.entidades.Horario;
-import com.upc.vitalco.entidades.Planalimenticio;
-import com.upc.vitalco.entidades.Planreceta;
-import com.upc.vitalco.entidades.Receta;
+import com.upc.vitalco.entidades.*;
 import com.upc.vitalco.interfaces.IPlanRecetaServices;
-import com.upc.vitalco.repositorios.HorarioRepositorio;
-import com.upc.vitalco.repositorios.PlanAlimenticioRepositorio;
-import com.upc.vitalco.repositorios.PlanRecetaRepositorio;
-import com.upc.vitalco.repositorios.RecetaRepositorio;
+import com.upc.vitalco.repositorios.*;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -32,22 +25,31 @@ public class PlanRecetaService implements IPlanRecetaServices {
     private HorarioRepositorio horarioRepositorio;
     @Autowired
     private RecetaRepositorio recetaRepositorio;
+    @Autowired
+    private PlanRecetaRecetaRepositorio planrecetaRecetaRepositorio;
 
-    public String agregarRecetaADia(Integer idPlanAlimenticio) {
+    public Planreceta crearPlanReceta(Integer idPlanAlimenticio) {
         Planalimenticio plan = planAlimenticioRepositorio.findById(idPlanAlimenticio)
                 .orElseThrow(() -> new RuntimeException("No existe el plan alimenticio con ID: " + idPlanAlimenticio));
 
-        Planreceta planreceta = (Planreceta) planRecetaRepositorio
-                .findByIdplanalimenticio(plan)
-                .orElse(null);
+        // Verificar si ya existe un planreceta para ese plan alimenticio
+        Planreceta planreceta = (Planreceta) planRecetaRepositorio.findByIdplanalimenticio(plan).orElse(null);
 
         if (planreceta == null) {
             planreceta = new Planreceta();
             planreceta.setIdplanalimenticio(plan);
             planreceta.setFecharegistro(LocalDate.now());
             planreceta.setFavorito(false);
-            planreceta.setRecetas(new ArrayList<>());
+            planreceta = planRecetaRepositorio.save(planreceta);
         }
+
+        return planreceta;
+    }
+    public String asignarRecetasAPlan(Integer idPlanReceta) {
+        Planreceta planreceta = planRecetaRepositorio.findById(idPlanReceta)
+                .orElseThrow(() -> new RuntimeException("No existe el plan receta con ID: " + idPlanReceta));
+
+        Planalimenticio plan = planreceta.getIdplanalimenticio();
 
         double caloriasObjetivo = plan.getCaloriasDiaria();
         double proteinasObjetivo = plan.getProteinasDiaria();
@@ -55,7 +57,10 @@ public class PlanRecetaService implements IPlanRecetaServices {
         double carbohidratosObjetivo = plan.getCarbohidratosDiaria();
 
         List<Receta> todasRecetas = recetaRepositorio.findAll();
-        List<Receta> recetasSeleccionadas = new ArrayList<>(planreceta.getRecetas());
+        List<PlanRecetaReceta> relacionesActuales = planrecetaRecetaRepositorio.findByPlanreceta(planreceta);
+        Set<Integer> recetasActualesIds = relacionesActuales.stream()
+                .map(rel -> rel.getReceta().getId())
+                .collect(Collectors.toSet());
 
         for (Receta receta : todasRecetas) {
             double cal = receta.getCalorias() != null ? receta.getCalorias() : 0.0;
@@ -63,36 +68,33 @@ public class PlanRecetaService implements IPlanRecetaServices {
             double gra = receta.getGrasas() != null ? receta.getGrasas() : 0.0;
             double car = receta.getCarbohidratos() != null ? receta.getCarbohidratos() : 0.0;
 
-            // Cambia la condición: solo verifica si la receta individual cumple
-            if (cal <= caloriasObjetivo &&
+            boolean cumple = cal <= caloriasObjetivo &&
                     pro <= proteinasObjetivo &&
                     gra <= grasasObjetivo &&
-                    car <= carbohidratosObjetivo) {
+                    car <= carbohidratosObjetivo;
 
-                if (!recetasSeleccionadas.contains(receta)) {
-                    recetasSeleccionadas.add(receta);
-                }
-            }
-        }
-        for (Receta receta : recetasSeleccionadas) {
-            List<Planreceta> planes = receta.getPlanrecetas();
-            if (planes == null) {
-                planes = new ArrayList<>();
-            }
-            if (!planes.contains(planreceta)) {
-                planes.add(planreceta);
-                receta.setPlanrecetas(planes);
-                recetaRepositorio.save(receta);
+            if (cumple && !recetasActualesIds.contains(receta.getId())) {
+                PlanRecetaReceta nuevaRelacion = new PlanRecetaReceta();
+                nuevaRelacion.setPlanreceta(planreceta);
+                nuevaRelacion.setReceta(receta);
+                planrecetaRecetaRepositorio.save(nuevaRelacion);
             }
         }
 
-        planreceta.setRecetas(recetasSeleccionadas);
-        planRecetaRepositorio.save(planreceta);
-        return "Recetas agregadas correctamente según condiciones del plan alimenticio.";
+        return "Recetas asignadas correctamente al plan.";
     }
 
+
     public void actualizarRecetasDePlan(Planreceta planreceta) {
-        List<Receta> recetasActuales = planreceta.getRecetas();
+        if (planreceta.getId() == null) {
+            planreceta = planRecetaRepositorio.save(planreceta);
+        }
+
+        List<PlanRecetaReceta> relacionesActuales = planrecetaRecetaRepositorio.findByPlanreceta(planreceta);
+        Set<Integer> recetasActualesIds = relacionesActuales.stream()
+                .map(rel -> rel.getReceta().getId())
+                .collect(Collectors.toSet());
+
         List<Receta> todasRecetas = recetaRepositorio.findAll();
 
         double caloriasObjetivo = planreceta.getIdplanalimenticio().getCaloriasDiaria();
@@ -101,38 +103,29 @@ public class PlanRecetaService implements IPlanRecetaServices {
         double carbohidratosObjetivo = planreceta.getIdplanalimenticio().getCarbohidratosDiaria();
 
         for (Receta receta : todasRecetas) {
-            if (!recetasActuales.contains(receta)) {
+            if (!recetasActualesIds.contains(receta.getId())) {
                 double cal = receta.getCalorias() != null ? receta.getCalorias() : 0.0;
                 double pro = receta.getProteinas() != null ? receta.getProteinas() : 0.0;
                 double gra = receta.getGrasas() != null ? receta.getGrasas() : 0.0;
                 double car = receta.getCarbohidratos() != null ? receta.getCarbohidratos() : 0.0;
 
-                // Solo verifica si la receta individual cumple
                 if (cal <= caloriasObjetivo &&
                         pro <= proteinasObjetivo &&
                         gra <= grasasObjetivo &&
                         car <= carbohidratosObjetivo) {
 
-                    List<Planreceta> planes = receta.getPlanrecetas();
-                    if (planes == null) {
-                        planes = new ArrayList<>();
-                    }
-                    if (!planes.contains(planreceta)) {
-                        planes.add(planreceta);
-                        receta.setPlanrecetas(planes);
-                        recetaRepositorio.save(receta);
-                    }
-                    recetasActuales.add(receta);
+                    PlanRecetaReceta nuevaRelacion = new PlanRecetaReceta();
+                    nuevaRelacion.setPlanreceta(planreceta);
+                    nuevaRelacion.setReceta(receta);
+                    planrecetaRecetaRepositorio.save(nuevaRelacion);
                 }
             }
         }
-        planreceta.setRecetas(recetasActuales);
-        planRecetaRepositorio.save(planreceta);
     }
 
     @Override
     public void eliminar(Integer id) {
-        if(planRecetaRepositorio.existsById(id)) {
+        if (planRecetaRepositorio.existsById(id)) {
             planRecetaRepositorio.deleteById(id);
         }
     }
@@ -141,6 +134,7 @@ public class PlanRecetaService implements IPlanRecetaServices {
     public List<PlanRecetaDTO> listarPorPaciente(Integer idPaciente) {
         List<Planreceta> planes = planRecetaRepositorio.buscarPorPaciente(idPaciente);
 
+        // Quitar duplicados por plan alimenticio
         List<Planreceta> unicos = planes.stream()
                 .collect(Collectors.toMap(
                         p -> p.getIdplanalimenticio().getId(),
@@ -151,18 +145,32 @@ public class PlanRecetaService implements IPlanRecetaServices {
                 .stream()
                 .collect(Collectors.toList());
 
-        for (Planreceta planreceta : unicos) {
-            actualizarRecetasDePlan(planreceta);
+        for (int i = 0; i < unicos.size(); i++) {
+            Planreceta planreceta = unicos.get(i);
+
+            // Si no tiene ID, lo guardamos primero
+            if (planreceta.getId() == null) {
+                planreceta = planRecetaRepositorio.save(planreceta);
+                unicos.set(i, planreceta);
+            }
+
+            // 🔹 Aquí llamamos al método asignador
+            asignarRecetasAPlan(planreceta.getId());
         }
 
+        // Convertir a DTO
         return unicos.stream()
                 .map(planReceta -> {
                     PlanRecetaDTO dto = modelMapper.map(planReceta, PlanRecetaDTO.class);
-                    List<RecetaDTO> recetasDTO = planReceta.getRecetas().stream()
-                            .map(receta -> modelMapper.map(receta, RecetaDTO.class))
+
+                    List<PlanRecetaReceta> relaciones = planrecetaRecetaRepositorio.findByPlanreceta(planReceta);
+                    List<RecetaDTO> recetasDTO = relaciones.stream()
+                            .map(rel -> modelMapper.map(rel.getReceta(), RecetaDTO.class))
                             .collect(Collectors.toList());
+
                     dto.setRecetas(recetasDTO);
                     return dto;
                 }).collect(Collectors.toList());
     }
+
 }

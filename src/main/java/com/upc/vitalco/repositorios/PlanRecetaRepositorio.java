@@ -16,12 +16,12 @@ import java.util.Optional;
 
 @Repository
 public interface PlanRecetaRepositorio extends JpaRepository<Planreceta, Integer>{
-    @Query("""
-       SELECT pr
-       FROM Planreceta pr
-       WHERE pr.idplanalimenticio.idpaciente.id = :idPaciente
-       """)
+    @Query("SELECT pr FROM Planreceta pr " +
+            "JOIN pr.idplanalimenticio pa " +
+            "JOIN pa.idpaciente p " +
+            "WHERE p.id = :idPaciente")
     List<Planreceta> buscarPorPaciente(@Param("idPaciente") Integer idPaciente);
+
     Optional<Planreceta> findByIdplanalimenticioAndFecharegistro(Planalimenticio planalimenticio, LocalDate fecharegistro);
 
 
