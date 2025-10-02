@@ -17,16 +17,17 @@ public class Seguimiento {
     @Column(name = "idseguimiento", nullable = false)
     private Integer id;
 
-    /*@Column(name = "descripcion", length = Integer.MAX_VALUE)
-    private String descripcion; si en caso haiga nutricionista*/
-
     @ManyToOne(fetch = FetchType.LAZY, optional = true)
     @JoinColumn(name = "idcita", nullable = true)
     private Cita idcita;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "idplanreceta", nullable = false)
-    private Planreceta idplanreceta;
+    @ManyToOne
+    @JoinColumns({
+            @JoinColumn(name = "idplanreceta", referencedColumnName = "idplanreceta"),
+            @JoinColumn(name = "idreceta", referencedColumnName = "idreceta")
+    })
+    private PlanRecetaReceta planRecetaReceta;
+
 
     @Column(name = "fecharegistro", columnDefinition = "timestamp default current_timestamp")
     private LocalDate fecharegistro = LocalDate.now();
@@ -43,16 +44,5 @@ public class Seguimiento {
     @Column(name = "carbohidratos")
     private Double carbohidratos;
 
-    // Calorías por horario
-    @Column(name = "calorias_desayuno")
-    private Double caloriasDesayuno;
 
-    @Column(name = "calorias_almuerzo")
-    private Double caloriasAlmuerzo;
-
-    @Column(name = "calorias_cena")
-    private Double caloriasCena;
-
-    @Column(name = "calorias_snack")
-    private Double caloriasSnack;
 }

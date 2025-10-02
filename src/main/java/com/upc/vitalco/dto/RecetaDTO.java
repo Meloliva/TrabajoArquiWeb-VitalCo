@@ -12,7 +12,6 @@ import java.math.BigDecimal;
 public class RecetaDTO {
     private Long idReceta;
     private HorarioDTO idhorario;
-    private String icono;
     private String descripcion;
     private Integer tiempo;
     private BigDecimal carbohidratos;
@@ -23,4 +22,5 @@ public class RecetaDTO {
     private String nombre;
     private String preparacion;
     private Double cantidadPorcion;
+    private String foto;
 }

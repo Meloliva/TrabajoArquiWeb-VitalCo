@@ -25,12 +25,11 @@ public class SeguimientoController {
     @Autowired
     private SeguimientoService seguimientoService;
 
-    @PostMapping("/agregarRecetaAProgreso")
+    @PostMapping("/agregarRecetaAProgreso/{idPlanReceta}/{idReceta}")
     public SeguimientoDTO agregarRecetaAProgreso(
-            @RequestParam Integer idPlanReceta,
-            @RequestParam Long idReceta,
-            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaRegistro) {
-        return seguimientoService.agregarRecetaAProgreso(idPlanReceta, idReceta, fechaRegistro);
+            @PathVariable("idPlanReceta") Integer idPlanReceta,
+            @PathVariable("idReceta") Long idReceta) {
+        return seguimientoService.agregarRecetaAProgreso(idPlanReceta, idReceta);
     }
 
 

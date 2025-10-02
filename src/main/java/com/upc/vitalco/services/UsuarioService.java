@@ -1,14 +1,14 @@
-// src/main/java/com/upc/vitalco/services/UsuarioService.java
 package com.upc.vitalco.services;
 import com.upc.vitalco.dto.UsuarioDTO;
-import com.upc.vitalco.entidades.Usuario;
+import com.upc.vitalco.entidades.*;
 import com.upc.vitalco.interfaces.IUsuarioServices;
 import com.upc.vitalco.repositorios.UsuarioRepositorio;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import java.time.LocalDate;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -66,4 +66,6 @@ public class UsuarioService implements IUsuarioServices {
                 })
                 .orElseThrow(() -> new RuntimeException("Usuario con ID " + usuarioDTO.getId() + " no encontrado"));
     }
+
+
 }

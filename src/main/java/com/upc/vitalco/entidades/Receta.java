@@ -18,8 +18,6 @@ public class Receta {
     @Column(name = "idreceta", nullable = false)
     private Integer id;
 
-    @Column(name = "icono")
-    private String icono;
 
     @Column(name = "descripcion", length = Integer.MAX_VALUE)
     private String descripcion;
@@ -42,7 +40,7 @@ public class Receta {
     @Column(name = "ingredientes", length = 1000)
     private String ingredientes;
 
-    @Column(name = "nombre", nullable = false, length = 100)
+    @Column(name = "nombre", nullable = false, length = 100,unique = true)
     private String nombre;
 
     @Column(name = "cantidad_porcion")
@@ -57,5 +55,8 @@ public class Receta {
 
     @ManyToMany(mappedBy = "recetas", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Planreceta> planrecetas = new ArrayList<>();
+
+    @Column(name = "foto")
+    private String foto;
 
 }

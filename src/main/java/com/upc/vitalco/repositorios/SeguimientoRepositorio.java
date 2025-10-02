@@ -15,25 +15,24 @@ import java.util.Optional;
 @Repository
 public interface SeguimientoRepositorio extends JpaRepository<Seguimiento, Integer> {
     @Query("SELECT s FROM Seguimiento s " +
-            "WHERE s.idplanreceta.idplanalimenticio.idpaciente.id = :idPaciente " +
+            "WHERE s.planRecetaReceta.planreceta.idplanalimenticio.idpaciente.id = :idPaciente " +
             "AND s.fecharegistro = :fecha")
     List<Seguimiento> buscarPorPacienteYFecha(
             @Param("idPaciente") Integer idPaciente,
             @Param("fecha") LocalDate fecha
     );
-    Optional<Seguimiento> findByIdplanreceta(Planreceta idplanreceta);
     @Query("""
 SELECT s FROM Seguimiento s
 WHERE FUNCTION('DATE', s.fecharegistro) = :fecha
-AND s.idplanreceta.idplanalimenticio.idpaciente.idusuario.dni LIKE CONCAT(:dni, '%')
+AND s.planRecetaReceta.planreceta.idplanalimenticio.idpaciente.idusuario.dni LIKE CONCAT(:dni, '%')
 """)
     List<Seguimiento> buscarPorInicialUsernameYFecha(
             @Param("dni") String dni,
             @Param("fecha") LocalDate fecha
     );
-    @Query("""
+    /*@Query("""
             SELECT s FROM Seguimiento s
-            JOIN s.idplanreceta pr
+            JOIN s.planRecetaReceta. pr
             JOIN pr.recetas r
             WHERE pr.idplanalimenticio.idpaciente.id = :idPaciente
             AND s.fecharegistro = :fecha
@@ -45,9 +44,9 @@ AND s.idplanreceta.idplanalimenticio.idpaciente.idusuario.dni LIKE CONCAT(:dni, 
             @Param("idReceta") Integer idReceta
     );
     @Query("SELECT s FROM Seguimiento s WHERE s.idplanreceta.id = :idPlanReceta AND s.fecharegistro = :fechaRegistro")
-    Optional<Seguimiento> buscarPorPlanRecetaYFecha(Integer idPlanReceta, LocalDate fechaRegistro);
+    Optional<Seguimiento> buscarPorPlanRecetaYFecha(Integer idPlanReceta, LocalDate fechaRegistro);*/
 
-    @Query("SELECT s FROM Seguimiento s WHERE s.idplanreceta.idplanalimenticio.idpaciente.idusuario.dni = :dni AND s.fecharegistro = :fecha")
+    @Query("SELECT s FROM Seguimiento s WHERE s.planRecetaReceta.planreceta.idplanalimenticio.idpaciente.idusuario.dni = :dni AND s.fecharegistro = :fecha")
     List<Seguimiento> buscarPorDniYFecha(String dni, LocalDate fecha);
 
 }
