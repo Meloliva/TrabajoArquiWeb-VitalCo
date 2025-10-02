@@ -1,4 +1,4 @@
-package com.upc.vitalco.services;
+ package com.upc.vitalco.services;
 
 import com.upc.vitalco.dto.PlanRecetaDTO;
 import com.upc.vitalco.dto.RecetaDTO;
@@ -37,7 +37,6 @@ public class PlanRecetaService implements IPlanRecetaServices {
         Planalimenticio plan = planAlimenticioRepositorio.findById(idPlanAlimenticio)
                 .orElseThrow(() -> new RuntimeException("No existe el plan alimenticio con ID: " + idPlanAlimenticio));
 
-        // Buscar solo por plan alimenticio, no por fecha
         Planreceta planreceta = (Planreceta) planRecetaRepositorio
                 .findByIdplanalimenticio(plan)
                 .orElse(null);
@@ -50,7 +49,6 @@ public class PlanRecetaService implements IPlanRecetaServices {
             planreceta.setRecetas(new ArrayList<>());
         }
 
-        double caloriasTotal = 0, proteinasTotal = 0, grasasTotal = 0, carbohidratosTotal = 0;
         double caloriasObjetivo = plan.getCaloriasDiaria();
         double proteinasObjetivo = plan.getProteinasDiaria();
         double grasasObjetivo = plan.getGrasasDiaria();
@@ -65,17 +63,14 @@ public class PlanRecetaService implements IPlanRecetaServices {
             double gra = receta.getGrasas() != null ? receta.getGrasas() : 0.0;
             double car = receta.getCarbohidratos() != null ? receta.getCarbohidratos() : 0.0;
 
-            if (caloriasTotal + cal <= caloriasObjetivo &&
-                    proteinasTotal + pro <= proteinasObjetivo &&
-                    grasasTotal + gra <= grasasObjetivo &&
-                    carbohidratosTotal + car <= carbohidratosObjetivo) {
+            // Cambia la condición: solo verifica si la receta individual cumple
+            if (cal <= caloriasObjetivo &&
+                    pro <= proteinasObjetivo &&
+                    gra <= grasasObjetivo &&
+                    car <= carbohidratosObjetivo) {
 
                 if (!recetasSeleccionadas.contains(receta)) {
                     recetasSeleccionadas.add(receta);
-                    caloriasTotal += cal;
-                    proteinasTotal += pro;
-                    grasasTotal += gra;
-                    carbohidratosTotal += car;
                 }
             }
         }
@@ -100,11 +95,6 @@ public class PlanRecetaService implements IPlanRecetaServices {
         List<Receta> recetasActuales = planreceta.getRecetas();
         List<Receta> todasRecetas = recetaRepositorio.findAll();
 
-        double caloriasTotal = recetasActuales.stream().mapToDouble(r -> r.getCalorias() != null ? r.getCalorias() : 0.0).sum();
-        double proteinasTotal = recetasActuales.stream().mapToDouble(r -> r.getProteinas() != null ? r.getProteinas() : 0.0).sum();
-        double grasasTotal = recetasActuales.stream().mapToDouble(r -> r.getGrasas() != null ? r.getGrasas() : 0.0).sum();
-        double carbohidratosTotal = recetasActuales.stream().mapToDouble(r -> r.getCarbohidratos() != null ? r.getCarbohidratos() : 0.0).sum();
-
         double caloriasObjetivo = planreceta.getIdplanalimenticio().getCaloriasDiaria();
         double proteinasObjetivo = planreceta.getIdplanalimenticio().getProteinasDiaria();
         double grasasObjetivo = planreceta.getIdplanalimenticio().getGrasasDiaria();
@@ -117,10 +107,11 @@ public class PlanRecetaService implements IPlanRecetaServices {
                 double gra = receta.getGrasas() != null ? receta.getGrasas() : 0.0;
                 double car = receta.getCarbohidratos() != null ? receta.getCarbohidratos() : 0.0;
 
-                if (caloriasTotal + cal <= caloriasObjetivo &&
-                        proteinasTotal + pro <= proteinasObjetivo &&
-                        grasasTotal + gra <= grasasObjetivo &&
-                        carbohidratosTotal + car <= carbohidratosObjetivo) {
+                // Solo verifica si la receta individual cumple
+                if (cal <= caloriasObjetivo &&
+                        pro <= proteinasObjetivo &&
+                        gra <= grasasObjetivo &&
+                        car <= carbohidratosObjetivo) {
 
                     List<Planreceta> planes = receta.getPlanrecetas();
                     if (planes == null) {
@@ -132,11 +123,6 @@ public class PlanRecetaService implements IPlanRecetaServices {
                         recetaRepositorio.save(receta);
                     }
                     recetasActuales.add(receta);
-
-                    caloriasTotal += cal;
-                    proteinasTotal += pro;
-                    grasasTotal += gra;
-                    carbohidratosTotal += car;
                 }
             }
         }
@@ -155,12 +141,11 @@ public class PlanRecetaService implements IPlanRecetaServices {
     public List<PlanRecetaDTO> listarPorPaciente(Integer idPaciente) {
         List<Planreceta> planes = planRecetaRepositorio.buscarPorPaciente(idPaciente);
 
-        // Agrupa por idplanalimenticio y toma solo uno por cada plan alimenticio
         List<Planreceta> unicos = planes.stream()
                 .collect(Collectors.toMap(
                         p -> p.getIdplanalimenticio().getId(),
                         p -> p,
-                        (p1, p2) -> p1 // Si hay más de uno, toma el primero
+                        (p1, p2) -> p1
                 ))
                 .values()
                 .stream()
