@@ -131,7 +131,7 @@ public class PlanRecetaService implements IPlanRecetaServices {
         }
     }
 
-    @Override
+   /* @Override
     public List<PlanRecetaDTO> listarPorPaciente(Integer idPaciente) {
         List<Planreceta> planes = planRecetaRepositorio.buscarPorPaciente(idPaciente);
 
@@ -172,8 +172,61 @@ public class PlanRecetaService implements IPlanRecetaServices {
                     dto.setRecetas(recetasDTO);
                     return dto;
                 }).collect(Collectors.toList());
+    }*/
+    @Override
+    public List<PlanRecetaDTO> listarPorPaciente(Integer idPaciente) {
+        List<Planreceta> planes = planRecetaRepositorio.buscarPorPaciente(idPaciente);
+
+        // Quitar duplicados por plan alimenticio
+        List<Planreceta> unicos = planes.stream()
+                .collect(Collectors.toMap(
+                        p -> p.getIdplanalimenticio().getId(),
+                        p -> p,
+                        (p1, p2) -> p1
+                ))
+                .values()
+                .stream()
+                .collect(Collectors.toList());
+
+        for (int i = 0; i < unicos.size(); i++) {
+            Planreceta planreceta = unicos.get(i);
+
+            // Si no tiene ID, lo guardamos primero
+            if (planreceta.getId() == null) {
+                planreceta = planRecetaRepositorio.save(planreceta);
+                unicos.set(i, planreceta);
+            }
+
+            // 🔹 Aquí llamamos al método asignador
+            asignarRecetasAPlan(planreceta.getId());
+        }
+
+        // Convertir a DTO
+        return unicos.stream()
+                .map(planReceta -> {
+                    PlanRecetaDTO dto = modelMapper.map(planReceta, PlanRecetaDTO.class);
+
+                    List<PlanRecetaReceta> relaciones = planrecetaRecetaRepositorio.findByPlanreceta(planReceta);
+                    List<PlanRecetaRecetaDTO> relacionesDTO = relaciones.stream()
+                            .map(rel -> {
+                                PlanRecetaRecetaDTO relDTO = new PlanRecetaRecetaDTO();
+                                relDTO.setIdPlanRecetaReceta(rel.getIdPlanRecetaReceta()); // id de la tabla intermedia
+                                relDTO.setIdPlanReceta(rel.getPlanreceta().getId());
+
+                                // incluir la receta dentro del DTO
+                                RecetaDTO recetaDTO = modelMapper.map(rel.getReceta(), RecetaDTO.class);
+                                relDTO.setRecetaDTO(recetaDTO);
+
+                                return relDTO;
+                            })
+                            .collect(Collectors.toList());
+
+                    dto.setRecetas(relacionesDTO); // ahora guarda relaciones con receta incluida
+                    return dto;
+                })
+                .collect(Collectors.toList());
+
+
+
     }
-
-
-
 }

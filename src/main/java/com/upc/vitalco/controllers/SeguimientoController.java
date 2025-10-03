@@ -1,9 +1,6 @@
 package com.upc.vitalco.controllers;
 
-import com.upc.vitalco.dto.CumplimientoDTO;
-import com.upc.vitalco.dto.NutricionistaxRequerimientoDTO;
-import com.upc.vitalco.dto.RecetaDTO;
-import com.upc.vitalco.dto.SeguimientoDTO;
+import com.upc.vitalco.dto.*;
 import com.upc.vitalco.services.SeguimientoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -25,12 +22,12 @@ public class SeguimientoController {
     @Autowired
     private SeguimientoService seguimientoService;
 
-    @PostMapping("/agregarRecetaAProgreso/{idPlanReceta}/{idReceta}")
-    public SeguimientoDTO agregarRecetaAProgreso(
-            @PathVariable("idPlanReceta") Integer idPlanReceta,
-            @PathVariable("idReceta") Long idReceta) {
-        return seguimientoService.agregarRecetaAProgreso(idPlanReceta, idReceta);
+    @PostMapping("/agregarProgreso/{idPlanRecetaReceta}")
+    public ResponseEntity<SeguimientoDTO> agregarProgreso(@PathVariable Long idPlanRecetaReceta) {
+        return ResponseEntity.ok(seguimientoService.agregarProgreso(idPlanRecetaReceta));
     }
+
+
 
 
     @GetMapping("/listarSeguimientos/{pacienteId}/{fecha}")

@@ -1,80 +1,96 @@
 package com.upc.vitalco.services;
-import com.upc.vitalco.dto.CumplimientoDTO;
-import com.upc.vitalco.dto.NutricionistaxRequerimientoDTO;
-import com.upc.vitalco.dto.SeguimientoDTO;
-import com.upc.vitalco.entidades.Planalimenticio;
-import com.upc.vitalco.entidades.PlanRecetaReceta;
-import com.upc.vitalco.entidades.Planreceta;
-import com.upc.vitalco.entidades.Receta;
-import com.upc.vitalco.entidades.Seguimiento;
+
+import com.upc.vitalco.dto.*;
+import com.upc.vitalco.entidades.*;
 import com.upc.vitalco.interfaces.ISeguimientoServices;
-import com.upc.vitalco.repositorios.PlanRecetaRecetaRepositorio;
-import com.upc.vitalco.repositorios.PlanRecetaRepositorio;
-import com.upc.vitalco.repositorios.RecetaRepositorio;
-import com.upc.vitalco.repositorios.SeguimientoRepositorio;
+import com.upc.vitalco.repositorios.*;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
 public class SeguimientoService implements ISeguimientoServices {
+
     @Autowired
     private ModelMapper modelMapper;
+
     @Autowired
     private SeguimientoRepositorio seguimientoRepositorio;
+
     @Autowired
     private PlanRecetaRepositorio planRecetaRepositorio;
+
     @Autowired
     private RecetaRepositorio recetaRepositorio;
+
     @Autowired
     private PlanRecetaRecetaRepositorio planRecetaRecetaRepositorio;
 
-
     @Override
-    public SeguimientoDTO agregarRecetaAProgreso(Integer idPlanReceta, Long idReceta) {
-        Planreceta planDeReceta = planRecetaRepositorio.findById(idPlanReceta)
-                .orElseThrow(() -> new RuntimeException("No existe plan de receta con el ID indicado"));
-        Receta receta = recetaRepositorio.findById(idReceta)
-                .orElseThrow(() -> new RuntimeException("No existe receta con el ID indicado"));
+    public SeguimientoDTO agregarProgreso(Long idPlanRecetaReceta) {
+        // 1. Validar existencia de la relación intermedia
+        PlanRecetaReceta rel = planRecetaRecetaRepositorio.findById(idPlanRecetaReceta)
+                .orElseThrow(() -> new RuntimeException("No existe PlanRecetaReceta con id: " + idPlanRecetaReceta));
 
-        if (planDeReceta.getRecetas() == null ||
-                planDeReceta.getRecetas().stream().noneMatch(r -> r.getId().equals(idReceta))) {
-            throw new IllegalArgumentException("La receta no pertenece al plan de receta seleccionado");
-        }
+        // Obtenemos plan y receta desde la relación
+        Planreceta plan = rel.getPlanreceta();
+        Receta receta = rel.getReceta();
 
-        Planalimenticio plan = planDeReceta.getIdplanalimenticio();
         if (plan == null) {
-            throw new RuntimeException("El plan de receta no tiene un plan alimenticio asociado");
+            throw new RuntimeException("El PlanRecetaReceta no tiene un plan asociado");
+        }
+        if (receta == null) {
+            throw new RuntimeException("El PlanRecetaReceta no tiene una receta asociada");
         }
 
-        // Validar condiciones nutricionales
-        if ((receta.getCalorias() != null && receta.getCalorias() > plan.getCaloriasDiaria()) ||
-                (receta.getProteinas() != null && receta.getProteinas() > plan.getProteinasDiaria()) ||
-                (receta.getGrasas() != null && receta.getGrasas() > plan.getGrasasDiaria()) ||
-                (receta.getCarbohidratos() != null && receta.getCarbohidratos() > plan.getCarbohidratosDiaria())) {
+        // 2. Validación de límites (contra el plan alimenticio asociado)
+        if ((receta.getCalorias() != null && receta.getCalorias() > plan.getIdplanalimenticio().getCaloriasDiaria()) ||
+                (receta.getProteinas() != null && receta.getProteinas() > plan.getIdplanalimenticio().getProteinasDiaria()) ||
+                (receta.getGrasas() != null && receta.getGrasas() > plan.getIdplanalimenticio().getGrasasDiaria()) ||
+                (receta.getCarbohidratos() != null && receta.getCarbohidratos() > plan.getIdplanalimenticio().getCarbohidratosDiaria())) {
             throw new IllegalArgumentException("La receta excede los valores nutricionales permitidos por el plan");
         }
 
-        PlanRecetaReceta planRecetaReceta = planRecetaRecetaRepositorio
-                .findByPlanrecetaIdAndRecetaId(idPlanReceta, idReceta)
-                .orElseThrow(() -> new RuntimeException("No existe la relación PlanRecetaReceta para los IDs indicados"));
-
+        // 3. Crear seguimiento con los valores de la receta asociada
         Seguimiento seguimiento = new Seguimiento();
-        seguimiento.setPlanRecetaReceta(planRecetaReceta);
-        seguimiento.setFecharegistro(LocalDate.now());
         seguimiento.setCalorias(receta.getCalorias());
-        seguimiento.setProteinas(receta.getProteinas());
-        seguimiento.setGrasas(receta.getGrasas());
         seguimiento.setCarbohidratos(receta.getCarbohidratos());
+        seguimiento.setGrasas(receta.getGrasas());
+        seguimiento.setProteinas(receta.getProteinas());
+        seguimiento.setCumplio(false); // por defecto
+        seguimiento.setFecharegistro(LocalDate.now());
+        seguimiento.setPlanRecetaReceta(rel);
 
-        seguimiento = seguimientoRepositorio.save(seguimiento);
-        return modelMapper.map(seguimiento, SeguimientoDTO.class);
+        // 4. Guardar en BD
+        Seguimiento saved = seguimientoRepositorio.save(seguimiento);
+
+        // 5. Mapear a DTO
+        SeguimientoDTO result = new SeguimientoDTO();
+        result.setId(saved.getId());
+        result.setCalorias(saved.getCalorias());
+        result.setCarbohidratos(saved.getCarbohidratos());
+        result.setGrasas(saved.getGrasas());
+        result.setProteinas(saved.getProteinas());
+        result.setCumplio(saved.getCumplio());
+        result.setFecharegistro(saved.getFecharegistro());
+        result.setIdPlanRecetaReceta(rel.getIdPlanRecetaReceta());
+
+        RecetaDTO recetaDTO = new RecetaDTO();
+        recetaDTO.setIdReceta(receta.getId().longValue());
+        recetaDTO.setNombre(receta.getNombre());
+        recetaDTO.setCalorias(receta.getCalorias());
+        recetaDTO.setProteinas(receta.getProteinas());
+        recetaDTO.setGrasas(receta.getGrasas());
+        recetaDTO.setCarbohidratos(receta.getCarbohidratos());
+        result.setReceta(recetaDTO);
+
+        return result;
     }
-
 
 
     @Override
@@ -90,12 +106,26 @@ public class SeguimientoService implements ISeguimientoServices {
                 caloriasPorHorario.put(horario, caloriasPorHorario.getOrDefault(horario, 0.0) + calorias);
             }
         }
+        // Asegurar que siempre estén las claves
         for (String h : List.of("desayuno", "snack", "almuerzo", "cena")) {
             caloriasPorHorario.putIfAbsent(h, 0.0);
         }
         return caloriasPorHorario;
     }
 
+    /*        double pctCal = plan.getCaloriasDiaria() != null && plan.getCaloriasDiaria() > 0
+                ? (seguimiento.getCalorias() / plan.getCaloriasDiaria()) * 100 : 0;
+        double pctPro = plan.getProteinasDiaria() != null && plan.getProteinasDiaria() > 0
+                ? (seguimiento.getProteinas() / plan.getProteinasDiaria()) * 100 : 0;
+        double pctGra = plan.getGrasasDiaria() != null && plan.getGrasasDiaria() > 0
+                ? (seguimiento.getGrasas() / plan.getGrasasDiaria()) * 100 : 0;
+        double pctCar = plan.getCarbohidratosDiaria() != null && plan.getCarbohidratosDiaria() > 0
+                ? (seguimiento.getCarbohidratos() / plan.getCarbohidratosDiaria()) * 100 : 0;
+
+        double promedioPct = (pctCal + pctPro + pctGra + pctCar) / 4.0;
+
+        // 5) Determinar si cumplió con el rango aceptable (ejemplo: 90%-110%)
+        seguimiento.setCumplio(promedioPct >= 90 && promedioPct <= 110);*/
     @Override
     public Map<String, Double> obtenerTotalesNutricionales(Integer pacienteId, LocalDate fecha) {
         List<Seguimiento> seguimientos = seguimientoRepositorio.buscarPorPacienteYFecha(pacienteId, fecha);
@@ -106,10 +136,10 @@ public class SeguimientoService implements ISeguimientoServices {
         double totalGrasas = 0.0;
 
         for (Seguimiento s : seguimientos) {
-            totalCalorias += s.getCalorias() != null ? s.getCalorias() : 0.0;
-            totalCarbohidratos += s.getCarbohidratos() != null ? s.getCarbohidratos() : 0.0;
-            totalProteinas += s.getProteinas() != null ? s.getProteinas() : 0.0;
-            totalGrasas += s.getGrasas() != null ? s.getGrasas() : 0.0;
+            totalCalorias += Optional.ofNullable(s.getCalorias()).orElse(0.0);
+            totalCarbohidratos += Optional.ofNullable(s.getCarbohidratos()).orElse(0.0);
+            totalProteinas += Optional.ofNullable(s.getProteinas()).orElse(0.0);
+            totalGrasas += Optional.ofNullable(s.getGrasas()).orElse(0.0);
         }
 
         Map<String, Double> totales = new HashMap<>();
@@ -120,6 +150,7 @@ public class SeguimientoService implements ISeguimientoServices {
 
         return totales;
     }
+
 
     @Override
     public List<CumplimientoDTO> listarCumplimientoDiario(String dni, LocalDate fecha) {
@@ -132,10 +163,11 @@ public class SeguimientoService implements ISeguimientoServices {
 
         Planalimenticio plan = null;
         for (Seguimiento s : seguimientos) {
-            totalCalorias += s.getCalorias() != null ? s.getCalorias() : 0.0;
-            totalGrasas += s.getGrasas() != null ? s.getGrasas() : 0.0;
-            totalCarbohidratos += s.getCarbohidratos() != null ? s.getCarbohidratos() : 0.0;
-            totalProteinas += s.getProteinas() != null ? s.getProteinas() : 0.0;
+            totalCalorias += Optional.ofNullable(s.getCalorias()).orElse(0.0);
+            totalGrasas += Optional.ofNullable(s.getGrasas()).orElse(0.0);
+            totalCarbohidratos += Optional.ofNullable(s.getCarbohidratos()).orElse(0.0);
+            totalProteinas += Optional.ofNullable(s.getProteinas()).orElse(0.0);
+
             if (plan == null && s.getPlanRecetaReceta().getPlanreceta() != null) {
                 plan = s.getPlanRecetaReceta().getPlanreceta().getIdplanalimenticio();
             }
@@ -149,17 +181,34 @@ public class SeguimientoService implements ISeguimientoServices {
                     totalProteinas >= plan.getProteinasDiaria();
         }
 
-        List<CumplimientoDTO> resultado = new ArrayList<>();
-        resultado.add(new CumplimientoDTO(dni, cumplio));
-        return resultado;
+        return List.of(new CumplimientoDTO(dni, cumplio));
     }
 
     @Override
     public List<SeguimientoDTO> listarPorDia(Integer pacienteId, LocalDate fecha) {
         List<Seguimiento> seguimientos = seguimientoRepositorio.buscarPorPacienteYFecha(pacienteId, fecha);
+
         return seguimientos.stream()
-                .map(s -> modelMapper.map(s, SeguimientoDTO.class))
+                .map(s -> {
+                    SeguimientoDTO dto = new SeguimientoDTO();
+
+                    // copiar lo básico con ModelMapper pero ignorar la parte conflictiva
+                    modelMapper.map(s, dto);
+
+                    // setear manualmente solo lo que necesitas
+                    if (s.getPlanRecetaReceta() != null) {
+                        dto.setIdPlanRecetaReceta(s.getPlanRecetaReceta().getIdPlanRecetaReceta());
+
+                        if (s.getPlanRecetaReceta().getReceta() != null) {
+                            dto.setReceta(modelMapper.map(s.getPlanRecetaReceta().getReceta(), RecetaDTO.class));
+                        }
+                    }
+
+                    return dto;
+                })
                 .collect(Collectors.toList());
+
+
     }
 
     @Override
@@ -193,7 +242,6 @@ public class SeguimientoService implements ISeguimientoServices {
         }
         return null;
     }
-
 
     @Override
     public List<SeguimientoDTO> listarPorDniYFecha(String dni, LocalDate fecha) {

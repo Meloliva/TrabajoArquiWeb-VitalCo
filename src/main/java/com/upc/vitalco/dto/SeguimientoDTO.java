@@ -5,6 +5,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -15,7 +16,8 @@ public class SeguimientoDTO {
     private Boolean cumplio=false;
     private CitaDTO idcita;
     private LocalDate fecharegistro;
-    private PlanRecetaRecetaDTO planRecetaReceta;
+    private Long idPlanRecetaReceta;
+    private RecetaDTO receta;
     private Double calorias;
     private Double proteinas;
     private Double grasas;

@@ -52,8 +52,6 @@ public class Receta {
     @JoinColumn(name = "idhorario", nullable = false)
     private Horario idhorario;
 
-    /*@ManyToMany(mappedBy = "recetas", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<Planreceta> planrecetas = new ArrayList<>();*/
     @OneToMany(mappedBy = "receta", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PlanRecetaReceta> planrecetas = new ArrayList<>();
 

@@ -14,10 +14,10 @@ public class RecetaDTO {
     private HorarioDTO idhorario;
     private String descripcion;
     private Integer tiempo;
-    private BigDecimal carbohidratos;
-    private BigDecimal calorias;
-    private BigDecimal grasas;
-    private BigDecimal proteinas;
+    private Double carbohidratos;
+    private Double calorias;
+    private Double grasas;
+    private Double proteinas;
     private String ingredientes;
     private String nombre;
     private String preparacion;

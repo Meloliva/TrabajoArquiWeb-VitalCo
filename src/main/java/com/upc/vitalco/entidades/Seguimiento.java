@@ -21,12 +21,11 @@ public class Seguimiento {
     @JoinColumn(name = "idcita", nullable = true)
     private Cita idcita;
 
-    @ManyToOne
-    @JoinColumns({
-            @JoinColumn(name = "idplanreceta", referencedColumnName = "idplanreceta"),
-            @JoinColumn(name = "idreceta", referencedColumnName = "idreceta")
-    })
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "idplanrecetareceta", nullable = false)
     private PlanRecetaReceta planRecetaReceta;
+
 
 
     @Column(name = "fecharegistro", columnDefinition = "timestamp default current_timestamp")
