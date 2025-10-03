@@ -13,7 +13,6 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class SeguimientoDTO {
     private Integer id;
-    private Boolean cumplio=false;
     private CitaDTO idcita;
     private LocalDate fecharegistro;
     private Long idPlanRecetaReceta;

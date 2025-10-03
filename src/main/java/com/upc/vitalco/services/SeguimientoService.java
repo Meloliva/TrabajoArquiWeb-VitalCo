@@ -256,26 +256,9 @@ public class SeguimientoService implements ISeguimientoServices {
 
     @Override
     public List<SeguimientoDTO> listarPorDniYFecha(String dni, LocalDate fecha) {
-        List<Seguimiento> seguimientos = seguimientoRepositorio.buscarPorDniYFecha(dni, fecha);
+        List<Seguimiento> seguimientos = seguimientoRepositorio.buscarPorInicialUsernameYFecha(dni, fecha);
         return seguimientos.stream()
-                .map(s -> {
-                    SeguimientoDTO dto = new SeguimientoDTO();
-                    dto.setId(s.getId());
-                    dto.setCumplio(s.getCumplio());
-                    dto.setFecharegistro(s.getFecharegistro());
-                    dto.setCalorias(s.getCalorias());
-                    dto.setProteinas(s.getProteinas());
-                    dto.setGrasas(s.getGrasas());
-                    dto.setCarbohidratos(s.getCarbohidratos());
-
-
-                    if (s.getPlanRecetaReceta() != null) {
-                        dto.setIdPlanRecetaReceta(s.getPlanRecetaReceta().getIdPlanRecetaReceta());
-                    }
-
-                    return dto;
-                })
+                .map(s -> modelMapper.map(s, SeguimientoDTO.class))
                 .collect(Collectors.toList());
     }
-
 }

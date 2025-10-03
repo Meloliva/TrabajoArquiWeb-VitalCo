@@ -15,5 +15,5 @@ public class PlanRecetaRecetaDTO {
     private Long idPlanRecetaReceta;
     private Integer idPlanReceta;
     private RecetaDTO recetaDTO;
-    private LocalDate fecharegistro;
+    private LocalDate fecharegistro=LocalDate.now();
 }

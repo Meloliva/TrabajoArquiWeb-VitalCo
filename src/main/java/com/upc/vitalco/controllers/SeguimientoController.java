@@ -27,6 +27,9 @@ public class SeguimientoController {
         return ResponseEntity.ok(seguimientoService.agregarProgreso(idPlanRecetaReceta));
     }
 
+
+
+
     @GetMapping("/listarSeguimientos/{pacienteId}/{fecha}")
     public List<SeguimientoDTO> listarPorDia(
             @PathVariable("pacienteId") Integer pacienteId,
@@ -43,7 +46,7 @@ public class SeguimientoController {
     @GetMapping("/listarSeguimientosPorDniYFecha/{dni}/{fecha}")
     public ResponseEntity<?> listarPorDniYFecha(
             @PathVariable("dni") String dni,
-            @PathVariable("fecha") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fecha
+            @PathVariable("fecha") LocalDate fecha
     ) {
         List<SeguimientoDTO> resultados = seguimientoService.listarPorDniYFecha(dni, fecha);
         if (resultados.isEmpty()) {
