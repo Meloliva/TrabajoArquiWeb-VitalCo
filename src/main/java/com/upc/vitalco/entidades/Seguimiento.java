@@ -26,10 +26,8 @@ public class Seguimiento {
     @JoinColumn(name = "idplanrecetareceta", nullable = false)
     private PlanRecetaReceta planRecetaReceta;
 
-
-
-    @Column(name = "fecharegistro", columnDefinition = "timestamp default current_timestamp")
-    private LocalDate fecharegistro = LocalDate.now();
+    @Column(name = "fecharegistro", columnDefinition = "date default current_date")
+    private LocalDate fecharegistro;
 
     @Column(name = "calorias")
     private Double calorias;
@@ -46,5 +44,8 @@ public class Seguimiento {
     @Column(name = "cumplio")
     private Boolean cumplio=false;
 
-
+    @PrePersist
+    public void prePersist() {
+        this.fecharegistro = LocalDate.now();
+    }
 }

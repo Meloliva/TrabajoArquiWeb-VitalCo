@@ -25,9 +25,12 @@ public class PlanRecetaReceta {
     @JoinColumn(name = "idreceta", nullable = false)
     private Receta receta;
 
-    @Column(name = "fecharegistro", columnDefinition = "timestamp default current_timestamp")
-    private LocalDate fecharegistro = LocalDate.now();
-
+    @Column(name = "fecharegistro", columnDefinition = "date default current_date")
+    private LocalDate fecharegistro;
+    @PrePersist
+    public void prePersist() {
+        this.fecharegistro = LocalDate.now();
+    }
 
 }
 
