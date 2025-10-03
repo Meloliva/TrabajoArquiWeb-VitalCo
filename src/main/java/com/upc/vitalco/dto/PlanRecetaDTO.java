@@ -18,5 +18,5 @@ public class PlanRecetaDTO {
     private PlanAlimenticioDTO idplanalimenticio;
     private Boolean favorito=false;
     private LocalDate fecharegistro;
-    private List<PlanRecetaRecetaDTO> recetas;
+    private List<RecetaDTO> recetas;
 }
