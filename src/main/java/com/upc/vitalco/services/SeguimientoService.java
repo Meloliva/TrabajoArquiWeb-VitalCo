@@ -33,7 +33,7 @@ public class SeguimientoService implements ISeguimientoServices {
     @Autowired
     private PlanRecetaRecetaRepositorio planRecetaRecetaRepositorio;
 
-    // src/main/java/com/upc/vitalco/services/SeguimientoService.java
+
     @Override
     public SeguimientoDTO agregarRecetaAProgreso(Integer idPlanReceta, Long idReceta) {
         Planreceta planDeReceta = planRecetaRepositorio.findById(idPlanReceta)
@@ -51,12 +51,17 @@ public class SeguimientoService implements ISeguimientoServices {
             throw new RuntimeException("El plan de receta no tiene un plan alimenticio asociado");
         }
 
-        // Buscar la relación por los dos campos
+        // Validar condiciones nutricionales
+        if ((receta.getCalorias() != null && receta.getCalorias() > plan.getCaloriasDiaria()) ||
+                (receta.getProteinas() != null && receta.getProteinas() > plan.getProteinasDiaria()) ||
+                (receta.getGrasas() != null && receta.getGrasas() > plan.getGrasasDiaria()) ||
+                (receta.getCarbohidratos() != null && receta.getCarbohidratos() > plan.getCarbohidratosDiaria())) {
+            throw new IllegalArgumentException("La receta excede los valores nutricionales permitidos por el plan");
+        }
+
         PlanRecetaReceta planRecetaReceta = planRecetaRecetaRepositorio
                 .findByPlanrecetaIdAndRecetaId(idPlanReceta, idReceta)
                 .orElseThrow(() -> new RuntimeException("No existe la relación PlanRecetaReceta para los IDs indicados"));
-
-        // Aquí puedes validar si ya existe un seguimiento para esta relación y fecha, según tu lógica
 
         Seguimiento seguimiento = new Seguimiento();
         seguimiento.setPlanRecetaReceta(planRecetaReceta);
@@ -69,6 +74,7 @@ public class SeguimientoService implements ISeguimientoServices {
         seguimiento = seguimientoRepositorio.save(seguimiento);
         return modelMapper.map(seguimiento, SeguimientoDTO.class);
     }
+
 
 
     @Override

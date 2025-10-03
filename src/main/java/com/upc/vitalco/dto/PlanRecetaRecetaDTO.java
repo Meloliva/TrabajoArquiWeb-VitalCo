@@ -11,5 +11,5 @@ import lombok.Setter;
 public class PlanRecetaRecetaDTO {
     private Long id;
     private Integer idplanreceta;
-    private Long idreceta;
+    private Integer idreceta;
 }

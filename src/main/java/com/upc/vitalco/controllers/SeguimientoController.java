@@ -33,10 +33,10 @@ public class SeguimientoController {
     }
 
 
-    @GetMapping("/listarSeguimientos")
+    @GetMapping("/listarSeguimientos/{pacienteId}/{fecha}")
     public List<SeguimientoDTO> listarPorDia(
-            @RequestParam Integer pacienteId,
-            @RequestParam LocalDate fecha) {
+            @PathVariable("pacienteId") Integer pacienteId,
+            @PathVariable("fecha") LocalDate fecha) {
         return seguimientoService.listarPorDia(pacienteId, fecha);
     }
 

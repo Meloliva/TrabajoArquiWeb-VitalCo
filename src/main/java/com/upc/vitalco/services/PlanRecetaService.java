@@ -1,6 +1,7 @@
 package com.upc.vitalco.services;
 
 import com.upc.vitalco.dto.PlanRecetaDTO;
+import com.upc.vitalco.dto.PlanRecetaRecetaDTO;
 import com.upc.vitalco.dto.RecetaDTO;
 import com.upc.vitalco.entidades.*;
 import com.upc.vitalco.interfaces.IPlanRecetaServices;
@@ -148,27 +149,32 @@ public class PlanRecetaService implements IPlanRecetaServices {
         for (int i = 0; i < unicos.size(); i++) {
             Planreceta planreceta = unicos.get(i);
 
-            // Si no tiene ID, lo guardamos primero
             if (planreceta.getId() == null) {
                 planreceta = planRecetaRepositorio.save(planreceta);
                 unicos.set(i, planreceta);
             }
 
-            // 🔹 Aquí llamamos al método asignador
             asignarRecetasAPlan(planreceta.getId());
         }
 
-        // Convertir a DTO
         return unicos.stream()
                 .map(planReceta -> {
                     PlanRecetaDTO dto = modelMapper.map(planReceta, PlanRecetaDTO.class);
 
                     List<PlanRecetaReceta> relaciones = planrecetaRecetaRepositorio.findByPlanreceta(planReceta);
-                    List<RecetaDTO> recetasDTO = relaciones.stream()
-                            .map(rel -> modelMapper.map(rel.getReceta(), RecetaDTO.class))
+
+                    // Aquí se mapea cada relación a su DTO y se asignan los IDs manualmente
+                    List<PlanRecetaRecetaDTO> relacionesDTO = relaciones.stream()
+                            .map(rel -> {
+                                PlanRecetaRecetaDTO relDTO = modelMapper.map(rel, PlanRecetaRecetaDTO.class);
+                                relDTO.setIdplanreceta(rel.getPlanreceta().getId());
+                                relDTO.setIdreceta(rel.getReceta().getId());
+                                return relDTO;
+                            })
                             .collect(Collectors.toList());
 
-                    dto.setRecetas(recetasDTO);
+                    dto.setRecetas(relacionesDTO); // Ajusta el nombre del setter según tu DTO
+
                     return dto;
                 }).collect(Collectors.toList());
     }

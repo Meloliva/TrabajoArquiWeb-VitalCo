@@ -44,5 +44,8 @@ public class Seguimiento {
     @Column(name = "carbohidratos")
     private Double carbohidratos;
 
+    @Column(name = "cumplio")
+    private Boolean cumplio=false;
+
 
 }
