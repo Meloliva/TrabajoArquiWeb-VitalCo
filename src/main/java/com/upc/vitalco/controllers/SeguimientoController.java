@@ -31,7 +31,7 @@ public class SeguimientoController {
 
 
     @GetMapping("/listarSeguimientos/{pacienteId}/{fecha}")
-    public List<SeguimientoDTO> listarPorDia(
+    public List<RecetaDTO> listarPorDia(
             @PathVariable("pacienteId") Integer pacienteId,
             @PathVariable("fecha") LocalDate fecha) {
         return seguimientoService.listarPorDia(pacienteId, fecha);
@@ -55,30 +55,40 @@ public class SeguimientoController {
         return ResponseEntity.ok(resultados);
     }
 
-    @GetMapping("/listarCaloriasPorHorario")
+    @GetMapping("/listarCaloriasPorHorario/{idpaciente}/{fecha}")
     public ResponseEntity<?> listarCaloriasPorHorario(
-            @RequestParam Integer pacienteId,
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fecha) {
+            @PathVariable("idpaciente") Integer pacienteId,
+            @PathVariable("fecha") LocalDate fecha) {
         Map<String, Double> resultado = seguimientoService.listarCaloriasPorHorario(pacienteId, fecha);
         return ResponseEntity.ok(resultado);
     }
 
-    @GetMapping("/listarTotalesNutricionales")
+    @GetMapping("/listarTotalesNutricionales/{idpaciente}/{fecha}")
     public ResponseEntity<?> obtenerTotalesNutricionales(
-            @RequestParam Integer pacienteId,
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fecha) {
+            @PathVariable("idpaciente") Integer pacienteId,
+            @PathVariable("fecha") LocalDate fecha) {
         Map<String, Double> resultado = seguimientoService.obtenerTotalesNutricionales(pacienteId, fecha);
         return ResponseEntity.ok(resultado);
     }
 
-    @GetMapping("/listarCumplimientoDiario")
-    public ResponseEntity<List<CumplimientoDTO>> listarCumplimientoDiario(
-            @RequestParam String dniPaciente,
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fecha) {
-        List<CumplimientoDTO> resultado = seguimientoService.listarCumplimientoDiario(
-                dniPaciente, fecha);
+    @GetMapping("/cumplimiento-diario/{dni}/{fecha}")
+    public ResponseEntity<Map<String, Object>> verificarCumplimientoDiario(
+            @PathVariable("dni") String dni,
+            @PathVariable("fecha") LocalDate fecha) {
+
+        Map<String, Object> resultado = seguimientoService.verificarCumplimientoDiario(dni, fecha);
         return ResponseEntity.ok(resultado);
     }
+    @DeleteMapping("/{seguimientoId}/receta/{recetaId}")
+    public ResponseEntity<Void> eliminarRecetaDeSeguimiento(
+            @PathVariable Integer seguimientoId,
+            @PathVariable Integer recetaId,
+            @RequestParam Integer pacienteId) {
+
+        seguimientoService.eliminarRecetaDeSeguimiento(pacienteId, seguimientoId, recetaId);
+        return ResponseEntity.noContent().build();
+    }
+
 
 }
 

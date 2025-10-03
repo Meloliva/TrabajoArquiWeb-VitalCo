@@ -30,21 +30,16 @@ AND s.planRecetaReceta.planreceta.idplanalimenticio.idpaciente.idusuario.dni LIK
             @Param("dni") String dni,
             @Param("fecha") LocalDate fecha
     );
-    /*@Query("""
-            SELECT s FROM Seguimiento s
-            JOIN s.planRecetaReceta. pr
-            JOIN pr.recetas r
-            WHERE pr.idplanalimenticio.idpaciente.id = :idPaciente
-            AND s.fecharegistro = :fecha
-            AND r.id = :idReceta
-            """)
-    Optional<Seguimiento> existeRecetaEnDia(
-            @Param("idPaciente") Integer idPaciente,
-            @Param("fecha") LocalDate fecha,
-            @Param("idReceta") Integer idReceta
-    );
-    @Query("SELECT s FROM Seguimiento s WHERE s.idplanreceta.id = :idPlanReceta AND s.fecharegistro = :fechaRegistro")
-    Optional<Seguimiento> buscarPorPlanRecetaYFecha(Integer idPlanReceta, LocalDate fechaRegistro);*/
+
+    @Query("""
+    DELETE FROM Seguimiento s
+    WHERE s.id = :seguimientoId
+      AND s.planRecetaReceta.receta.id = :recetaId
+      AND s.planRecetaReceta.planreceta.idplanalimenticio.idpaciente.id = :pacienteId
+""")
+    void eliminarRecetaDeSeguimiento(@Param("seguimientoId") Integer seguimientoId,
+                                     @Param("recetaId") Integer recetaId,
+                                     @Param("pacienteId") Integer pacienteId);
 
     @Query("""
        SELECT s FROM Seguimiento s
