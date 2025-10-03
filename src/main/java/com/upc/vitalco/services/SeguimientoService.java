@@ -31,13 +31,13 @@ public class SeguimientoService implements ISeguimientoServices {
     @Autowired
     private PlanRecetaRecetaRepositorio planRecetaRecetaRepositorio;
 
+    //registrar funciona bien
     @Override
     public SeguimientoDTO agregarProgreso(Long idPlanRecetaReceta) {
-        // 1. Validar existencia de la relación intermedia
+
         PlanRecetaReceta rel = planRecetaRecetaRepositorio.findById(idPlanRecetaReceta)
                 .orElseThrow(() -> new RuntimeException("No existe PlanRecetaReceta con id: " + idPlanRecetaReceta));
 
-        // Obtenemos plan y receta desde la relación
         Planreceta plan = rel.getPlanreceta();
         Receta receta = rel.getReceta();
 
@@ -48,7 +48,6 @@ public class SeguimientoService implements ISeguimientoServices {
             throw new RuntimeException("El PlanRecetaReceta no tiene una receta asociada");
         }
 
-        // 2. Validación de límites (contra el plan alimenticio asociado)
         if ((receta.getCalorias() != null && receta.getCalorias() > plan.getIdplanalimenticio().getCaloriasDiaria()) ||
                 (receta.getProteinas() != null && receta.getProteinas() > plan.getIdplanalimenticio().getProteinasDiaria()) ||
                 (receta.getGrasas() != null && receta.getGrasas() > plan.getIdplanalimenticio().getGrasasDiaria()) ||
@@ -56,7 +55,6 @@ public class SeguimientoService implements ISeguimientoServices {
             throw new IllegalArgumentException("La receta excede los valores nutricionales permitidos por el plan");
         }
 
-        // 3. Crear seguimiento con los valores de la receta asociada
         Seguimiento seguimiento = new Seguimiento();
         seguimiento.setCalorias(receta.getCalorias());
         seguimiento.setCarbohidratos(receta.getCarbohidratos());
@@ -66,10 +64,8 @@ public class SeguimientoService implements ISeguimientoServices {
         seguimiento.setFecharegistro(LocalDate.now());
         seguimiento.setPlanRecetaReceta(rel);
 
-        // 4. Guardar en BD
         Seguimiento saved = seguimientoRepositorio.save(seguimiento);
 
-        // 5. Mapear a DTO
         SeguimientoDTO result = new SeguimientoDTO();
         result.setId(saved.getId());
         result.setCalorias(saved.getCalorias());
@@ -87,12 +83,25 @@ public class SeguimientoService implements ISeguimientoServices {
         recetaDTO.setProteinas(receta.getProteinas());
         recetaDTO.setGrasas(receta.getGrasas());
         recetaDTO.setCarbohidratos(receta.getCarbohidratos());
+        recetaDTO.setIngredientes(receta.getIngredientes());
+        recetaDTO.setPreparacion(receta.getPreparacion());
+        recetaDTO.setCantidadPorcion(receta.getCantidadPorcion());
+        recetaDTO.setTiempo(receta.getTiempo());
+        recetaDTO.setFoto(receta.getFoto());
+        if (receta.getIdhorario() != null) {
+            HorarioDTO horarioDTO = new HorarioDTO();
+            horarioDTO.setId(receta.getIdhorario().getId().longValue());
+            horarioDTO.setNombre(receta.getIdhorario().getNombre());
+            recetaDTO.setIdhorario(horarioDTO);
+        }
         result.setReceta(recetaDTO);
 
         return result;
     }
 
 
+
+    //security
     @Override
     public Map<String, Double> listarCaloriasPorHorario(Integer pacienteId, LocalDate fecha) {
         List<Seguimiento> seguimientos = seguimientoRepositorio.buscarPorPacienteYFecha(pacienteId, fecha);
@@ -126,6 +135,7 @@ public class SeguimientoService implements ISeguimientoServices {
 
         // 5) Determinar si cumplió con el rango aceptable (ejemplo: 90%-110%)
         seguimiento.setCumplio(promedioPct >= 90 && promedioPct <= 110);*/
+    //security
     @Override
     public Map<String, Double> obtenerTotalesNutricionales(Integer pacienteId, LocalDate fecha) {
         List<Seguimiento> seguimientos = seguimientoRepositorio.buscarPorPacienteYFecha(pacienteId, fecha);
@@ -152,6 +162,7 @@ public class SeguimientoService implements ISeguimientoServices {
     }
 
 
+    //security
     @Override
     public List<CumplimientoDTO> listarCumplimientoDiario(String dni, LocalDate fecha) {
         List<Seguimiento> seguimientos = seguimientoRepositorio.buscarPorDniYFecha(dni, fecha);

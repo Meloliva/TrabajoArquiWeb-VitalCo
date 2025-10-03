@@ -43,10 +43,10 @@ public class SeguimientoController {
             @RequestBody NutricionistaxRequerimientoDTO requerimientoNutriDTO) {
         return seguimientoService.editarRequerimientos(seguimientoId, requerimientoNutriDTO);
     }
-    @GetMapping("/listarSeguimientosPorDniYFecha")
+    @GetMapping("/listarSeguimientosPorDniYFecha/{dni}/{fecha}")
     public ResponseEntity<?> listarPorDniYFecha(
-            @RequestParam String dni,
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fecha
+            @PathVariable("dni") String dni,
+            @PathVariable("fecha") LocalDate fecha
     ) {
         List<SeguimientoDTO> resultados = seguimientoService.listarPorDniYFecha(dni, fecha);
         if (resultados.isEmpty()) {
