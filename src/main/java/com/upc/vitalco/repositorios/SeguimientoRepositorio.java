@@ -2,7 +2,9 @@ package com.upc.vitalco.repositorios;
 
 import com.upc.vitalco.entidades.Planreceta;
 import com.upc.vitalco.entidades.Seguimiento;
+import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.stereotype.Repository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -31,6 +33,9 @@ AND s.planRecetaReceta.planreceta.idplanalimenticio.idpaciente.idusuario.dni LIK
             @Param("fecha") LocalDate fecha
     );
 
+
+    @Modifying
+    @Transactional
     @Query("""
     DELETE FROM Seguimiento s
     WHERE s.id = :seguimientoId
