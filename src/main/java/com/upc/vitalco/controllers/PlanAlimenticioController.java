@@ -77,13 +77,11 @@ public class PlanAlimenticioController {
         }
     }
 
-    @PutMapping("/editarNutrientes/{idplan}")
+    @PutMapping("/editarNutrientes/{idpaciente}")
     public ResponseEntity<PlanAlimenticioDTO> editarPlanAlimenticio(
-            @PathVariable("idplan") Integer idplan,@RequestBody PlanAlimenticioDTO planAlimenticioDTO) {
-        // Edita el plan alimenticio
-        PlanAlimenticioDTO actualizado = planAlimenticioService.editarPlanAlimenticio(idplan,planAlimenticioDTO);
+            @PathVariable("idpaciente") Integer idPaciente,@RequestBody PlanAlimenticioDTO planAlimenticioDTO) {
+        PlanAlimenticioDTO actualizado = planAlimenticioService.editarPlanAlimenticio(idPaciente,planAlimenticioDTO);
 
-        // Cascada → recalcular planReceta y seguimiento
         Integer idPlan = actualizado.getId();
         planRecetaService.recalcularPlanRecetas(idPlan);
         seguimientoService.recalcularSeguimientos(idPlan);

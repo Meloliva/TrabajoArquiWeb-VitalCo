@@ -4,12 +4,10 @@ import com.upc.vitalco.dto.PlanAlimenticioDTO;
 import com.upc.vitalco.entidades.Paciente;
 import com.upc.vitalco.entidades.Planalimenticio;
 import com.upc.vitalco.entidades.Plannutricional;
+import com.upc.vitalco.entidades.Seguimiento;
 import com.upc.vitalco.interfaces.IPlanAlimenticioServices;
-import com.upc.vitalco.repositorios.CitaRepositorio;
-import com.upc.vitalco.repositorios.PacienteRepositorio;
-import com.upc.vitalco.repositorios.PlanAlimenticioRepositorio;
+import com.upc.vitalco.repositorios.*;
 
-import com.upc.vitalco.repositorios.PlanNutricionalRepositorio;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -35,6 +33,8 @@ public class PlanAlimenticioService implements IPlanAlimenticioServices {
     private CitaRepositorio citaRepositorio;
     @Autowired
     private SeguimientoService seguimientoService;
+    @Autowired
+    private SeguimientoRepositorio seguimientoRepositorio;
     @Autowired
     private ModelMapper modelMapper;
 
@@ -90,25 +90,54 @@ public class PlanAlimenticioService implements IPlanAlimenticioServices {
         }
     }
 
+
     @Override
-    public PlanAlimenticioDTO editarPlanAlimenticio(Integer idPlan, PlanAlimenticioDTO dto) {
-        Planalimenticio plan = planAlimenticioRepositorio.findById(idPlan)
-                .orElseThrow(() -> new RuntimeException("Plan no encontrado"));
+    public PlanAlimenticioDTO editarPlanAlimenticio(Integer idPaciente, PlanAlimenticioDTO dto) {
+        Planalimenticio plan = planAlimenticioRepositorio.findByIdpacienteId(idPaciente);
+        if (plan == null) {
+            throw new RuntimeException("No se encontró el plan alimenticio asociado al paciente");
+        }
+
+        Paciente paciente = plan.getIdpaciente();
+        Plannutricional planNutricionalActual = paciente.getIdPlanNutricional();
+        Integer idPlanNutricionalActual = planNutricionalActual != null ? planNutricionalActual.getId() : null;
+
+// Extraer el id del plan nutricional del DTO
+        Integer idPlanNutricionalNuevo = null;
+        if (dto.getIdpaciente() != null &&
+                dto.getIdpaciente().getIdPlanNutricional() != null) {
+            idPlanNutricionalNuevo = dto.getIdpaciente().getIdPlanNutricional().getId();
+        }
+
+
+        //Integer idPlanNutricionalActual = paciente.getIdPlanNutricional().getId();
+        //Integer idPlanNutricionalNuevo = dto.getId();
+
+        // Si el plan nutricional cambia
+        if (idPlanNutricionalNuevo != null && !idPlanNutricionalNuevo.equals(idPlanNutricionalActual)) {
+            Plannutricional nuevoPlanNutricional = planNutricionalRepositorio.findById(idPlanNutricionalNuevo)
+                    .orElseThrow(() -> new RuntimeException("Plan nutricional no encontrado"));
+            paciente.setIdPlanNutricional(nuevoPlanNutricional);
+            pacienteRepositorio.save(paciente);
+
+            // Recalcular fechas
+            LocalDate fechaInicio = LocalDate.now();
+            LocalDate fechaFinal = calcularFechaFinal(nuevoPlanNutricional.getDuracion(), fechaInicio);
+            plan.setFechainicio(fechaInicio);
+            plan.setFechafin(fechaFinal);
+        }
 
         // Validar Plan Premium
-        if (plan.getIdpaciente() == null
-                || plan.getIdpaciente().getIdplan() == null
-                || !"plan premium".equalsIgnoreCase(plan.getIdpaciente().getIdplan().getTipo())) {
+        if (paciente.getIdplan() == null
+                || !"plan premium".equalsIgnoreCase(paciente.getIdplan().getTipo())) {
             throw new IllegalStateException("Solo pacientes con 'Plan Premium' pueden editar su plan alimenticio.");
         }
 
-        // Validar que el paciente tenga al menos una cita con un nutricionista
-        boolean tieneCitas = citaRepositorio.existsByPacienteId(plan.getIdpaciente().getId());
+        boolean tieneCitas = citaRepositorio.existsByPacienteId(paciente.getId());
         if (!tieneCitas) {
             throw new IllegalStateException("El paciente no tiene ninguna cita registrada con un nutricionista.");
         }
 
-        // Validar y asignar los nuevos valores
         if (dto.getCaloriasDiaria() == null || dto.getCaloriasDiaria() < 0 ||
                 dto.getProteinasDiaria() == null || dto.getProteinasDiaria() < 0 ||
                 dto.getGrasasDiaria() == null || dto.getGrasasDiaria() < 0 ||
@@ -123,12 +152,11 @@ public class PlanAlimenticioService implements IPlanAlimenticioServices {
 
         Planalimenticio guardado = planAlimenticioRepositorio.save(plan);
 
-        // 🔹 Recalcular en cascada
         planRecetaService.recalcularPlanRecetas(guardado.getId());
-        seguimientoService.recalcularSeguimientos(guardado.getId());
 
         return modelMapper.map(guardado, PlanAlimenticioDTO.class);
     }
+
 
     public PlanAlimenticioDTO recalcularPlanAlimenticio(Integer idPlan) {
         Planalimenticio plan = planAlimenticioRepositorio.findById(idPlan)
@@ -193,7 +221,7 @@ public class PlanAlimenticioService implements IPlanAlimenticioServices {
     }
 
 
-    @Override
+    /*@Override
     public PlanAlimenticioDTO consultarPlanAlimenticioConDatosActualizados(Integer idPaciente) {
         Planalimenticio planAlimenticio = planAlimenticioRepositorio.findByIdpacienteId(idPaciente);
         if (planAlimenticio == null) {
@@ -201,7 +229,17 @@ public class PlanAlimenticioService implements IPlanAlimenticioServices {
         }
 
         return actualizarDatosCalculados(planAlimenticio);
+    }*/
+    @Override
+    public PlanAlimenticioDTO consultarPlanAlimenticioConDatosActualizados(Integer idPaciente) {
+        Planalimenticio planAlimenticio = planAlimenticioRepositorio.findByIdpacienteId(idPaciente);
+        if (planAlimenticio == null) {
+            throw new RuntimeException("Plan alimenticio no encontrado para el paciente con ID: " + idPaciente);
+        }
+
+        return modelMapper.map(planAlimenticio, PlanAlimenticioDTO.class);
     }
+
 
 
     private PlanAlimenticioDTO actualizarDatosCalculados(Planalimenticio planAlimenticio) {

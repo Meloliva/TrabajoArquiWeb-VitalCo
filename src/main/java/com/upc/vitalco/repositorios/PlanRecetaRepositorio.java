@@ -5,9 +5,11 @@ import com.upc.vitalco.entidades.Horario;
 import com.upc.vitalco.entidades.Planalimenticio;
 import com.upc.vitalco.entidades.Planreceta;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.stereotype.Repository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -29,7 +31,8 @@ public interface PlanRecetaRepositorio extends JpaRepository<Planreceta, Integer
 
     List<Planreceta> findByIdplanalimenticioId(Integer idPlanAlimenticio);
 
-    
+    @Modifying
+    @Transactional
     @Query("DELETE FROM Planreceta p WHERE p.idplanalimenticio.id = :idPlan")
     void deleteByIdplanalimenticio(@Param("idPlan") Integer idPlan);
 

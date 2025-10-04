@@ -35,9 +35,6 @@ public class Cita {
     @Column(name = "descripcion")
     private String descripcion;
 
-    @Column(name = "estado", length = 50)
-    private String estado;
-
     @Column(name = "link")
     private String link;
 

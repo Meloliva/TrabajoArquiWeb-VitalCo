@@ -32,18 +32,25 @@ public class PlanRecetaService implements IPlanRecetaServices {
     public Planreceta crearPlanReceta(Integer idPlanAlimenticio) {
         Planalimenticio plan = planAlimenticioRepositorio.findById(idPlanAlimenticio)
                 .orElseThrow(() -> new RuntimeException("No existe el plan alimenticio con ID: " + idPlanAlimenticio));
-
+        /** opcion 1
         // Verificar si ya existe un planreceta para ese plan alimenticio
-        Planreceta planreceta = planRecetaRepositorio.findByIdplanalimenticio(plan);
+        //Planreceta planreceta = planRecetaRepositorio.findByIdplanalimenticio(plan);
 
 
-        if (planreceta == null) {
+         (planreceta == null) {
             planreceta = new Planreceta();
             planreceta.setIdplanalimenticio(plan);
             planreceta.setFecharegistro(LocalDate.now());
             planreceta.setFavorito(false);
             planreceta = planRecetaRepositorio.save(planreceta);
-        }
+        }*/
+        // opcion 2--funciona con el editar
+        Planreceta planreceta = new Planreceta();
+        planreceta.setIdplanalimenticio(plan);
+        planreceta.setFecharegistro(LocalDate.now());
+        planreceta.setFavorito(false);
+        planreceta = planRecetaRepositorio.save(planreceta);
+
 
         return planreceta;
     }
@@ -89,12 +96,14 @@ public class PlanRecetaService implements IPlanRecetaServices {
 
 
     public void recalcularPlanRecetas(Integer idPlan) {
-        // Borrar las recetas antiguas
-        planRecetaRepositorio.deleteByIdplanalimenticio(idPlan);
+        // NO eliminar los planrecetas existentes
+        // Crear un nuevo planreceta para la nueva versión del plan
+        Planreceta nuevoPlanreceta = crearPlanReceta(idPlan);
 
-        // Volver a crear según la lógica que ya tienes
-        crearPlanReceta(idPlan);
+        // Asignar recetas al nuevo planreceta
+        asignarRecetasAPlan(nuevoPlanreceta.getId());
     }
+
 
     @Override
     public void eliminar(Integer id) {
@@ -107,11 +116,12 @@ public class PlanRecetaService implements IPlanRecetaServices {
     public List<PlanRecetaDTO> listarPorPaciente(Integer idPaciente) {
         List<Planreceta> planes = planRecetaRepositorio.buscarPorPaciente(idPaciente);
 
+        // Tomar el plan más reciente (último creado) por cada plan alimenticio
         List<Planreceta> unicos = planes.stream()
                 .collect(Collectors.toMap(
                         p -> p.getIdplanalimenticio().getId(),
                         p -> p,
-                        (p1, p2) -> p1
+                        (p1, p2) -> p1.getFecharegistro().isAfter(p2.getFecharegistro()) ? p1 : p2  // ← Tomar el más reciente
                 ))
                 .values()
                 .stream()
@@ -139,7 +149,6 @@ public class PlanRecetaService implements IPlanRecetaServices {
                                 relDTO.setIdPlanRecetaReceta(rel.getIdPlanRecetaReceta());
                                 relDTO.setIdPlanReceta(rel.getPlanreceta().getId());
 
-
                                 RecetaDTO recetaDTO = modelMapper.map(rel.getReceta(), RecetaDTO.class);
                                 relDTO.setRecetaDTO(recetaDTO);
 
@@ -151,10 +160,8 @@ public class PlanRecetaService implements IPlanRecetaServices {
                     return dto;
                 })
                 .collect(Collectors.toList());
-
-
-
     }
+
 
 
 

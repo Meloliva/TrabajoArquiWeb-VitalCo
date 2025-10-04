@@ -13,7 +13,6 @@ public class CitaDTO {
     private LocalDate dia;
     private LocalTime hora;
     private String descripcion;
-    private String estado;
     private String link;
     private Integer idPaciente;
     private Integer idNutricionista;

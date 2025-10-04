@@ -105,6 +105,7 @@ public class SeguimientoService implements ISeguimientoServices {
         List<Seguimiento> seguimientos = seguimientoRepositorio.buscarPorPacienteYFecha(pacienteId, fecha);
 
         return seguimientos.stream()
+                .filter(s -> s.getId() != null) // Solo seguimientos que existen (no eliminados)
                 .map(Seguimiento::getPlanRecetaReceta)
                 .filter(Objects::nonNull)
                 .map(PlanRecetaReceta::getReceta)
@@ -129,24 +130,28 @@ public class SeguimientoService implements ISeguimientoServices {
                 .toList();
     }
 
-
     @Override
     public Map<String, Double> obtenerTotalesNutricionales(Integer pacienteId, LocalDate fecha) {
         List<Seguimiento> seguimientos = seguimientoRepositorio.buscarPorPacienteYFecha(pacienteId, fecha);
 
-        double totalCalorias = seguimientos.stream()
+        // Filtrar solo seguimientos activos
+        List<Seguimiento> seguimientosActivos = seguimientos.stream()
+                .filter(s -> s.getId() != null)
+                .collect(Collectors.toList());
+
+        double totalCalorias = seguimientosActivos.stream()
                 .mapToDouble(s -> Optional.ofNullable(s.getCalorias()).orElse(0.0))
                 .sum();
 
-        double totalCarbohidratos = seguimientos.stream()
+        double totalCarbohidratos = seguimientosActivos.stream()
                 .mapToDouble(s -> Optional.ofNullable(s.getCarbohidratos()).orElse(0.0))
                 .sum();
 
-        double totalProteinas = seguimientos.stream()
+        double totalProteinas = seguimientosActivos.stream()
                 .mapToDouble(s -> Optional.ofNullable(s.getProteinas()).orElse(0.0))
                 .sum();
 
-        double totalGrasas = seguimientos.stream()
+        double totalGrasas = seguimientosActivos.stream()
                 .mapToDouble(s -> Optional.ofNullable(s.getGrasas()).orElse(0.0))
                 .sum();
 
@@ -159,13 +164,55 @@ public class SeguimientoService implements ISeguimientoServices {
         return totales;
     }
 
+    @Override
+    public Map<String, Double> listarCaloriasPorHorario(Integer pacienteId, LocalDate fecha) {
+        List<Seguimiento> seguimientos = seguimientoRepositorio.buscarPorPacienteYFecha(pacienteId, fecha);
+
+        Map<String, Double> caloriasPorHorario = new HashMap<>();
+
+        seguimientos.stream()
+                .filter(s -> s.getId() != null) // Solo seguimientos activos
+                .forEach(s -> {
+                    Receta receta = s.getPlanRecetaReceta().getReceta();
+                    if (receta != null && receta.getIdhorario() != null) {
+                        String horario = receta.getIdhorario().getNombre().toLowerCase();
+                        double calorias = Optional.ofNullable(receta.getCalorias()).orElse(0.0);
+                        caloriasPorHorario.merge(horario, calorias, Double::sum);
+                    }
+                });
+
+        for (String h : List.of("desayuno", "snack", "almuerzo", "cena")) {
+            caloriasPorHorario.putIfAbsent(h, 0.0);
+        }
+
+        return caloriasPorHorario;
+    }
+
 
     @Override
     public Map<String, Object> verificarCumplimientoDiario(String dni, LocalDate fecha) {
         Paciente paciente = pacienteRepositorio.findByDni(dni)
                 .orElseThrow(() -> new RuntimeException("Paciente con DNI " + dni + " no encontrado"));
 
-        Map<String, Double> consumidos = obtenerTotalesNutricionales(paciente.getId(), fecha);
+        // Obtener seguimientos filtrados (sin eliminados)
+        List<Seguimiento> seguimientos = seguimientoRepositorio.buscarPorPacienteYFecha(paciente.getId(), fecha)
+                .stream()
+                .filter(s -> s.getId() != null) // Solo seguimientos activos (no eliminados)
+                .collect(Collectors.toList());
+
+        // Calcular totales desde seguimientos filtrados
+        double conCal = seguimientos.stream()
+                .mapToDouble(s -> Optional.ofNullable(s.getCalorias()).orElse(0.0))
+                .sum();
+        double conProt = seguimientos.stream()
+                .mapToDouble(s -> Optional.ofNullable(s.getProteinas()).orElse(0.0))
+                .sum();
+        double conGrasas = seguimientos.stream()
+                .mapToDouble(s -> Optional.ofNullable(s.getGrasas()).orElse(0.0))
+                .sum();
+        double conCarb = seguimientos.stream()
+                .mapToDouble(s -> Optional.ofNullable(s.getCarbohidratos()).orElse(0.0))
+                .sum();
 
         Planalimenticio plan = planAlimenticioRepositorio.buscarPorPaciente(paciente.getId());
         if (plan == null) {
@@ -176,11 +223,6 @@ public class SeguimientoService implements ISeguimientoServices {
         double reqProt = Optional.ofNullable(plan.getProteinasDiaria()).orElse(0.0);
         double reqGrasas = Optional.ofNullable(plan.getGrasasDiaria()).orElse(0.0);
         double reqCarb = Optional.ofNullable(plan.getCarbohidratosDiaria()).orElse(0.0);
-
-        double conCal = consumidos.getOrDefault("calorias", 0.0);
-        double conProt = consumidos.getOrDefault("proteinas", 0.0);
-        double conGrasas = consumidos.getOrDefault("grasas", 0.0);
-        double conCarb = consumidos.getOrDefault("carbohidratos", 0.0);
 
         double porcCal = reqCal > 0 ? (conCal / reqCal) * 100 : 0;
         double porcProt = reqProt > 0 ? (conProt / reqProt) * 100 : 0;
@@ -200,26 +242,17 @@ public class SeguimientoService implements ISeguimientoServices {
     }
 
 
+
     @Override
     public void eliminarRecetaDeSeguimiento(Integer pacienteId, Integer seguimientoId, Integer recetaId) {
-        seguimientoRepositorio.eliminarRecetaDeSeguimiento(seguimientoId, recetaId, pacienteId);
-    }
+        Seguimiento seguimiento = seguimientoRepositorio.findById(seguimientoId)
+                .orElseThrow(() -> new RuntimeException("Seguimiento no encontrado"));
 
-
-    public void recalcularSeguimientos(Integer idPlanAlimenticio) {
-        Planalimenticio plan = planAlimenticioRepositorio.findById(idPlanAlimenticio)
-                .orElseThrow(() -> new RuntimeException("Plan alimenticio no encontrado"));
-
-        List<Seguimiento> seguimientos = seguimientoRepositorio.findByPlanRecetaReceta_Planreceta_Idplanalimenticio_Id(idPlanAlimenticio);
-
-        for (Seguimiento seg : seguimientos) {
-            seg.setCalorias(plan.getCaloriasDiaria());
-            seg.setProteinas(plan.getProteinasDiaria());
-            seg.setGrasas(plan.getGrasasDiaria());
-            seg.setCarbohidratos(plan.getCarbohidratosDiaria());
-            seg.setFecharegistro(LocalDate.now());
-            seguimientoRepositorio.save(seg);
+        LocalDate hoy = LocalDate.now();
+        if (!seguimiento.getFecharegistro().equals(hoy)) {
+            throw new RuntimeException("Solo se pueden eliminar recetas registradas en el día actual");
         }
+        seguimientoRepositorio.eliminarRecetaDeSeguimiento(seguimientoId, recetaId, pacienteId);
     }
 
     //listar plan alimenticio por paciente y fecha, falta eso en plan alimenticio y hacer match con el actualizado
@@ -229,6 +262,7 @@ public class SeguimientoService implements ISeguimientoServices {
         List<Seguimiento> seguimientos = seguimientoRepositorio.buscarPorInicialUsernameYFecha(dni, fecha);
 
         return seguimientos.stream()
+                .filter(s -> s.getId() != null) // Solo seguimientos activos (no eliminados)
                 .map(s -> {
                     SeguimientoDTO dto = new SeguimientoDTO();
 
@@ -273,30 +307,6 @@ public class SeguimientoService implements ISeguimientoServices {
                     return dto;
                 })
                 .collect(Collectors.toList());
-    }
-
-
-    @Override
-    public Map<String, Double> listarCaloriasPorHorario(Integer pacienteId, LocalDate fecha) {
-        List<Seguimiento> seguimientos = seguimientoRepositorio.buscarPorPacienteYFecha(pacienteId, fecha);
-
-        Map<String, Double> caloriasPorHorario = new HashMap<>();
-
-        for (Seguimiento s : seguimientos) {
-            Receta receta = s.getPlanRecetaReceta().getReceta();
-            if (receta != null && receta.getIdhorario() != null) {
-                String horario = receta.getIdhorario().getNombre().toLowerCase();
-                double calorias = Optional.ofNullable(receta.getCalorias()).orElse(0.0);
-
-                caloriasPorHorario.merge(horario, calorias, Double::sum);
-            }
-        }
-
-        for (String h : List.of("desayuno", "snack", "almuerzo", "cena")) {
-            caloriasPorHorario.putIfAbsent(h, 0.0);
-        }
-
-        return caloriasPorHorario;
     }
 
 }

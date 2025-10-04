@@ -36,7 +36,6 @@ public class CitaService implements ICitaServices {
         cita.setDia(citaDTO.getDia());
         cita.setHora(citaDTO.getHora());
         cita.setDescripcion(citaDTO.getDescripcion());
-        cita.setEstado(citaDTO.getEstado());
         cita.setLink(citaDTO.getLink());
 
         // Buscar paciente por ID
@@ -65,7 +64,6 @@ public class CitaService implements ICitaServices {
         dto.setDia(cita.getDia());
         dto.setHora(cita.getHora());
         dto.setDescripcion(cita.getDescripcion());
-        dto.setEstado(cita.getEstado());
         dto.setLink(cita.getLink());
         dto.setIdPaciente(cita.getPaciente().getId());
         dto.setIdNutricionista(cita.getNutricionista().getId());
@@ -83,7 +81,6 @@ public class CitaService implements ICitaServices {
                     dto.setDia(cita.getDia());
                     dto.setHora(cita.getHora());
                     dto.setDescripcion(cita.getDescripcion());
-                    dto.setEstado(cita.getEstado());
                     dto.setLink(cita.getLink());
                     dto.setIdPaciente(cita.getPaciente().getId());
                     dto.setIdNutricionista(cita.getNutricionista().getId());
@@ -102,7 +99,6 @@ public class CitaService implements ICitaServices {
                     dto.setDia(cita.getDia());
                     dto.setHora(cita.getHora());
                     dto.setDescripcion(cita.getDescripcion());
-                    dto.setEstado(cita.getEstado());
                     dto.setLink(cita.getLink());
                     dto.setIdPaciente(cita.getPaciente().getId());
                     dto.setIdNutricionista(cita.getNutricionista().getId());
