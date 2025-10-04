@@ -31,6 +31,10 @@ public class SeguimientoService implements ISeguimientoServices {
     @Autowired
     private PlanAlimenticioRepositorio planAlimenticioRepositorio;
 
+    @Autowired
+    private CitaRepositorio citaRepositorio;
+
+
     //registrar funciona bien
     @Override
     public SeguimientoDTO agregarProgreso(Long idPlanRecetaReceta) {
@@ -254,15 +258,23 @@ public class SeguimientoService implements ISeguimientoServices {
         }
         seguimientoRepositorio.eliminarRecetaDeSeguimiento(seguimientoId, recetaId, pacienteId);
     }
-
-    //listar plan alimenticio por paciente y fecha, falta eso en plan alimenticio y hacer match con el actualizado
-
+    //metodo de nutricionista
     @Override
     public List<SeguimientoDTO> listarPorDniYFecha(String dni, LocalDate fecha) {
+        // Buscar el paciente por DNI
+        Paciente paciente = pacienteRepositorio.findByDni(dni)
+                .orElseThrow(() -> new RuntimeException("Paciente con DNI " + dni + " no encontrado"));
+
+        // Verificar que existe al menos una cita ACEPTADA para este paciente
+        boolean tieneCitaAceptada = citaRepositorio.existsByPacienteIdAndEstado(paciente.getId(), "ACEPTADA".toLowerCase());
+        if (!tieneCitaAceptada) {
+            throw new RuntimeException("El paciente no tiene citas aceptadas. Solo se puede ver el progreso de pacientes con citas aceptadas");
+        }
+
         List<Seguimiento> seguimientos = seguimientoRepositorio.buscarPorInicialUsernameYFecha(dni, fecha);
 
         return seguimientos.stream()
-                .filter(s -> s.getId() != null) // Solo seguimientos activos (no eliminados)
+                .filter(s -> s.getId() != null)
                 .map(s -> {
                     SeguimientoDTO dto = new SeguimientoDTO();
 
@@ -308,5 +320,6 @@ public class SeguimientoService implements ISeguimientoServices {
                 })
                 .collect(Collectors.toList());
     }
+
 
 }

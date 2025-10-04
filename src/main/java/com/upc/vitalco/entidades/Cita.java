@@ -38,4 +38,8 @@ public class Cita {
     @Column(name = "link")
     private String link;
 
+    //Aceptada o Cancelada
+    @Column(name = "estado")
+    private String estado="Aceptada";
+
 }

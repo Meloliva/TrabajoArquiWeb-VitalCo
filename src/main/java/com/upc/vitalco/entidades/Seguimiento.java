@@ -17,10 +17,6 @@ public class Seguimiento {
     @Column(name = "idseguimiento", nullable = false)
     private Integer id;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = true)
-    @JoinColumn(name = "idcita", nullable = true)
-    private Cita idcita;
-
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "idplanrecetareceta", nullable = false)

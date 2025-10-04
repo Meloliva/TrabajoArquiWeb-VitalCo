@@ -106,4 +106,6 @@ public class CitaService implements ICitaServices {
                 })
                 .collect(Collectors.toList());
     }
+    //tiene que eliminar cita y saldria cancelada
+    //Editar cita y saldria aceptada en estado
 }
