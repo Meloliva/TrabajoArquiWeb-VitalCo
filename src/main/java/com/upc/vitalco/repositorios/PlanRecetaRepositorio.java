@@ -25,5 +25,14 @@ public interface PlanRecetaRepositorio extends JpaRepository<Planreceta, Integer
     Optional<Planreceta> findByIdplanalimenticioAndFecharegistro(Planalimenticio planalimenticio, LocalDate fecharegistro);
 
 
-    Optional<Object> findByIdplanalimenticio(Planalimenticio idplanalimenticio);
+
+
+    List<Planreceta> findByIdplanalimenticioId(Integer idPlanAlimenticio);
+
+    
+    @Query("DELETE FROM Planreceta p WHERE p.idplanalimenticio.id = :idPlan")
+    void deleteByIdplanalimenticio(@Param("idPlan") Integer idPlan);
+
+    Planreceta findByIdplanalimenticio(Planalimenticio planalimenticio);
+
 }

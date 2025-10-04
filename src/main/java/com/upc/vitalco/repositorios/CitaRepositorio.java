@@ -8,5 +8,7 @@ import java.util.List;
 public interface CitaRepositorio extends JpaRepository<Cita, Integer> {
     List<Cita> findByNutricionistaId(Integer idNutricionista);
     List<Cita> findByPacienteId(Integer idPaciente);
+    boolean existsByPacienteId(Integer pacienteId);
+
 
 }

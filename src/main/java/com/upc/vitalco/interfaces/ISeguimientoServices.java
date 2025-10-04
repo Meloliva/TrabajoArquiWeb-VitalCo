@@ -14,7 +14,6 @@ public interface ISeguimientoServices {
     public Map<String, Object> verificarCumplimientoDiario(String dni, LocalDate fecha);
     public List<RecetaDTO> listarPorDia(Integer pacienteId, LocalDate fecha);
     public Map<String, Double> obtenerTotalesNutricionales(Integer pacienteId, LocalDate fecha);
-    public SeguimientoDTO editarRequerimientos(Integer seguimientoId, NutricionistaxRequerimientoDTO requerimientoNutriDTO);
     List<SeguimientoDTO> listarPorDniYFecha(String dni, LocalDate fecha);
     public Map<String, Double> listarCaloriasPorHorario(Integer pacienteId, LocalDate fecha);
     public void eliminarRecetaDeSeguimiento(Integer seguimientoId, Integer recetaId, Integer pacienteId);

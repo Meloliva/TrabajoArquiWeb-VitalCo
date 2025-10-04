@@ -5,6 +5,7 @@ import com.upc.vitalco.entidades.Paciente;
 import com.upc.vitalco.entidades.Planalimenticio;
 import com.upc.vitalco.entidades.Plannutricional;
 import com.upc.vitalco.interfaces.IPlanAlimenticioServices;
+import com.upc.vitalco.repositorios.CitaRepositorio;
 import com.upc.vitalco.repositorios.PacienteRepositorio;
 import com.upc.vitalco.repositorios.PlanAlimenticioRepositorio;
 
@@ -29,6 +30,11 @@ public class PlanAlimenticioService implements IPlanAlimenticioServices {
     private PlanNutricionalRepositorio planNutricionalRepositorio;
     @Autowired
     private PlanRecetaService planRecetaService;
+
+    @Autowired
+    private CitaRepositorio citaRepositorio;
+    @Autowired
+    private SeguimientoService seguimientoService;
     @Autowired
     private ModelMapper modelMapper;
 
@@ -84,9 +90,70 @@ public class PlanAlimenticioService implements IPlanAlimenticioServices {
         }
     }
 
+    @Override
+    public PlanAlimenticioDTO editarPlanAlimenticio(Integer idPlan, PlanAlimenticioDTO dto) {
+        Planalimenticio plan = planAlimenticioRepositorio.findById(idPlan)
+                .orElseThrow(() -> new RuntimeException("Plan no encontrado"));
 
+        // Validar Plan Premium
+        if (plan.getIdpaciente() == null
+                || plan.getIdpaciente().getIdplan() == null
+                || !"plan premium".equalsIgnoreCase(plan.getIdpaciente().getIdplan().getTipo())) {
+            throw new IllegalStateException("Solo pacientes con 'Plan Premium' pueden editar su plan alimenticio.");
+        }
 
+        // Validar que el paciente tenga al menos una cita con un nutricionista
+        boolean tieneCitas = citaRepositorio.existsByPacienteId(plan.getIdpaciente().getId());
+        if (!tieneCitas) {
+            throw new IllegalStateException("El paciente no tiene ninguna cita registrada con un nutricionista.");
+        }
 
+        // Validar y asignar los nuevos valores
+        if (dto.getCaloriasDiaria() == null || dto.getCaloriasDiaria() < 0 ||
+                dto.getProteinasDiaria() == null || dto.getProteinasDiaria() < 0 ||
+                dto.getGrasasDiaria() == null || dto.getGrasasDiaria() < 0 ||
+                dto.getCarbohidratosDiaria() == null || dto.getCarbohidratosDiaria() < 0) {
+            throw new IllegalArgumentException("Los valores de nutrientes deben ser no nulos y mayores o iguales a 0");
+        }
+
+        plan.setCaloriasDiaria(dto.getCaloriasDiaria());
+        plan.setProteinasDiaria(dto.getProteinasDiaria());
+        plan.setGrasasDiaria(dto.getGrasasDiaria());
+        plan.setCarbohidratosDiaria(dto.getCarbohidratosDiaria());
+
+        Planalimenticio guardado = planAlimenticioRepositorio.save(plan);
+
+        // 🔹 Recalcular en cascada
+        planRecetaService.recalcularPlanRecetas(guardado.getId());
+        seguimientoService.recalcularSeguimientos(guardado.getId());
+
+        return modelMapper.map(guardado, PlanAlimenticioDTO.class);
+    }
+
+    public PlanAlimenticioDTO recalcularPlanAlimenticio(Integer idPlan) {
+        Planalimenticio plan = planAlimenticioRepositorio.findById(idPlan)
+                .orElseThrow(() -> new RuntimeException("Plan alimenticio no encontrado"));
+
+        Paciente paciente = pacienteRepositorio.findById(plan.getIdpaciente().getId())
+                .orElseThrow(() -> new RuntimeException("Paciente no encontrado"));
+
+        Plannutricional planNutricional = planNutricionalRepositorio.findById(
+                        paciente.getIdPlanNutricional().getId())
+                .orElseThrow(() -> new RuntimeException("Plan nutricional no encontrado"));
+
+        // Recalcular valores
+        double calorias = calcularCalorias(paciente, planNutricional.getObjetivo(), planNutricional.getDuracion());
+        double[] macros = calcularMacronutrientes(calorias, planNutricional.getObjetivo(), paciente.getTrigliceridos().doubleValue());
+
+        plan.setCaloriasDiaria(calorias);
+        plan.setCarbohidratosDiaria(macros[0]);
+        plan.setProteinasDiaria(macros[1]);
+        plan.setGrasasDiaria(macros[2]);
+
+        planAlimenticioRepositorio.save(plan);
+
+        return modelMapper.map(plan, PlanAlimenticioDTO.class);
+    }
 
     @Override
     public List<PlanAlimenticioDTO> findAll() {

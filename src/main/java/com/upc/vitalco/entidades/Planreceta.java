@@ -35,4 +35,5 @@ public class Planreceta {
 
     @Column(name = "fecharegistro")
     private LocalDate fecharegistro;
+
 }

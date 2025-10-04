@@ -1,6 +1,9 @@
 package com.upc.vitalco.services;
 import com.upc.vitalco.dto.PacienteDTO;
+import com.upc.vitalco.dto.PlanAlimenticioDTO;
+import com.upc.vitalco.dto.UsuarioDTO;
 import com.upc.vitalco.entidades.Paciente;
+import com.upc.vitalco.entidades.Planalimenticio;
 import com.upc.vitalco.interfaces.IPacienteServices;
 import com.upc.vitalco.repositorios.PacienteRepositorio;
 import com.upc.vitalco.repositorios.PlanAlimenticioRepositorio;
@@ -19,6 +22,12 @@ public class PacienteService implements IPacienteServices {
     private ModelMapper modelMapper;
     @Autowired
     private PlanAlimenticioService planAlimenticioService;
+    @Autowired
+    private PlanAlimenticioRepositorio planAlimenticioRepositorio;
+    @Autowired
+    private PlanRecetaService planRecetaService;
+    @Autowired
+    private SeguimientoService seguimientoService;
 
     @Override
     public PacienteDTO registrar(PacienteDTO pacienteDTO) {
@@ -48,12 +57,26 @@ public class PacienteService implements IPacienteServices {
 
     @Override
     public PacienteDTO actualizar(PacienteDTO pacienteDTO) {
-        return pacienteRepositorio.findById(pacienteDTO.getId())
-                .map(existing -> {
-                    Paciente paciente = modelMapper.map(pacienteDTO, Paciente.class);
-                    Paciente guardado = pacienteRepositorio.save(paciente);
-                    return modelMapper.map(guardado, PacienteDTO.class);
-                })
-                .orElseThrow(() -> new RuntimeException("Usuario con ID " + pacienteDTO.getId() + " no encontrado"));
+        Paciente paciente = pacienteRepositorio.findById(pacienteDTO.getId())
+                .orElseThrow(() -> new RuntimeException("Paciente no encontrado"));
+
+        // solo actualizar datos generales (NO plan nutricional ni fechas)
+        if(paciente.getIdusuario() != null) {
+            UsuarioDTO usuarioDTO = new UsuarioDTO();
+            usuarioDTO.setNombre(paciente.getIdusuario().getNombre());
+            usuarioDTO.setApellido(paciente.getIdusuario().getApellido());
+        }
+        paciente.setEdad(pacienteDTO.getEdad());
+        paciente.setPeso(pacienteDTO.getPeso());
+        paciente.setAltura(pacienteDTO.getAltura());
+
+        Paciente guardado = pacienteRepositorio.save(paciente);
+
+        // 🔹 recalcular plan en cascada
+        planAlimenticioService.recalcularPlanAlimenticio(guardado.getId());
+
+        return modelMapper.map(guardado, PacienteDTO.class);
     }
+
+
 }

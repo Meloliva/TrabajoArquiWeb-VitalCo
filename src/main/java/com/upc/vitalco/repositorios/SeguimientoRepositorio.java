@@ -41,16 +41,7 @@ AND s.planRecetaReceta.planreceta.idplanalimenticio.idpaciente.idusuario.dni LIK
                                      @Param("recetaId") Integer recetaId,
                                      @Param("pacienteId") Integer pacienteId);
 
-    @Query("""
-       SELECT s FROM Seguimiento s
-       JOIN s.planRecetaReceta prr
-       JOIN prr.planreceta pr
-       JOIN pr.idplanalimenticio pa
-       JOIN pa.idpaciente p
-       JOIN p.idusuario u
-       WHERE u.dni = :dni AND s.fecharegistro = :fecha
-       """)
-    List<Seguimiento> buscarPorDniYFecha(@Param("dni") String dni,
-                                         @Param("fecha") LocalDate fecha);
+    List<Seguimiento> findByPlanRecetaReceta_Planreceta_Idplanalimenticio_Id(Integer id);
+
 
 }

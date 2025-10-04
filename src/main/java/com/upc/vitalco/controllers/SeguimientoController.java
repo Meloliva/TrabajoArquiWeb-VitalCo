@@ -37,12 +37,6 @@ public class SeguimientoController {
         return seguimientoService.listarPorDia(pacienteId, fecha);
     }
 
-    @PutMapping("/editarSeguimiento/{seguimientoId}")
-    public SeguimientoDTO editarRequerimientos(
-            @PathVariable Integer seguimientoId,
-            @RequestBody NutricionistaxRequerimientoDTO requerimientoNutriDTO) {
-        return seguimientoService.editarRequerimientos(seguimientoId, requerimientoNutriDTO);
-    }
     @GetMapping("/listarSeguimientosPorDniYFecha/{dni}/{fecha}")
     public ResponseEntity<?> listarPorDniYFecha(
             @PathVariable("dni") String dni,
@@ -79,11 +73,11 @@ public class SeguimientoController {
         Map<String, Object> resultado = seguimientoService.verificarCumplimientoDiario(dni, fecha);
         return ResponseEntity.ok(resultado);
     }
-    @DeleteMapping("/{seguimientoId}/receta/{recetaId}")
+    @DeleteMapping("/eliminarSeguimiento/{seguimientoId}/{recetaId}/{pacienteId}")
     public ResponseEntity<Void> eliminarRecetaDeSeguimiento(
-            @PathVariable Integer seguimientoId,
-            @PathVariable Integer recetaId,
-            @RequestParam Integer pacienteId) {
+            @PathVariable("seguimientoId") Integer seguimientoId,
+            @PathVariable("recetaId") Integer recetaId,
+            @PathVariable("pacienteId") Integer pacienteId) {
 
         seguimientoService.eliminarRecetaDeSeguimiento(pacienteId, seguimientoId, recetaId);
         return ResponseEntity.noContent().build();

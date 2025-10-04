@@ -3,6 +3,8 @@ import com.upc.vitalco.dto.NutricionistaDTO;
 import com.upc.vitalco.dto.PlanAlimenticioDTO;
 import com.upc.vitalco.services.NutricionistaService;
 import com.upc.vitalco.services.PlanAlimenticioService;
+import com.upc.vitalco.services.PlanRecetaService;
+import com.upc.vitalco.services.SeguimientoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,6 +16,10 @@ import java.util.List;
 public class PlanAlimenticioController {
     @Autowired
     private PlanAlimenticioService planAlimenticioService;
+    @Autowired
+    private SeguimientoService seguimientoService;
+    @Autowired
+    private PlanRecetaService planRecetaService;
 
     @GetMapping("/listarPlanesAlimenticios")
     public ResponseEntity<List<PlanAlimenticioDTO>> findAll() {
@@ -51,6 +57,11 @@ public class PlanAlimenticioController {
             return ResponseEntity.status(500).body(null);
         }
     }
+    @PutMapping("/editar/{idPlanAlimenticio}")
+    public ResponseEntity<PlanAlimenticioDTO> editar(@PathVariable Integer idPlanAlimenticio,
+                                                     @RequestBody PlanAlimenticioDTO planDTO) {
+        return ResponseEntity.ok(planAlimenticioService.editarPlanAlimenticio(idPlanAlimenticio, planDTO));
+    }
 
 
     @GetMapping("/consultarPlanAlimenticio/{idPaciente}")
@@ -65,4 +76,20 @@ public class PlanAlimenticioController {
             return ResponseEntity.status(500).body(null);
         }
     }
+
+    @PutMapping("/editarNutrientes/{idplan}")
+    public ResponseEntity<PlanAlimenticioDTO> editarPlanAlimenticio(
+            @PathVariable("idplan") Integer idplan,@RequestBody PlanAlimenticioDTO planAlimenticioDTO) {
+        // Edita el plan alimenticio
+        PlanAlimenticioDTO actualizado = planAlimenticioService.editarPlanAlimenticio(idplan,planAlimenticioDTO);
+
+        // Cascada → recalcular planReceta y seguimiento
+        Integer idPlan = actualizado.getId();
+        planRecetaService.recalcularPlanRecetas(idPlan);
+        seguimientoService.recalcularSeguimientos(idPlan);
+
+        return ResponseEntity.ok(actualizado);
+    }
+
+
 }
