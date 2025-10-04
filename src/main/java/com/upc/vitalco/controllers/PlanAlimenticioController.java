@@ -84,7 +84,6 @@ public class PlanAlimenticioController {
 
         Integer idPlan = actualizado.getId();
         planRecetaService.recalcularPlanRecetas(idPlan);
-        seguimientoService.recalcularSeguimientos(idPlan);
 
         return ResponseEntity.ok(actualizado);
     }
