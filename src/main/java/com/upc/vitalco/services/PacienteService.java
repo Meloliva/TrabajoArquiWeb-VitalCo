@@ -7,8 +7,11 @@ import com.upc.vitalco.entidades.Planalimenticio;
 import com.upc.vitalco.interfaces.IPacienteServices;
 import com.upc.vitalco.repositorios.PacienteRepositorio;
 import com.upc.vitalco.repositorios.PlanAlimenticioRepositorio;
+import com.upc.vitalco.repositorios.UsuarioRepositorio;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -28,9 +31,26 @@ public class PacienteService implements IPacienteServices {
     private PlanRecetaService planRecetaService;
     @Autowired
     private SeguimientoService seguimientoService;
+    @Autowired
+    private UsuarioRepositorio usuarioRepositorio;
 
     @Override
     public PacienteDTO registrar(PacienteDTO pacienteDTO) {
+        // Validación: JSON malformado o campos obligatorios vacíos
+        if (pacienteDTO == null || pacienteDTO.getIdusuario() == null ||
+                pacienteDTO.getIdusuario().getDni() == null || pacienteDTO.getIdusuario().getDni().isBlank()) {
+            throw new HttpMessageNotReadableException("Datos de Paciente incompletos o malformados");
+        }
+
+        // Validación de DNI duplicado
+        String dni = pacienteDTO.getIdusuario().getDni();
+        if (usuarioRepositorio.findAll().stream()
+                .anyMatch(u -> u.getDni().equalsIgnoreCase(dni))) {
+            throw new DataIntegrityViolationException(
+                    "El DNI " + dni + " ya existe en la base de datos."
+            );
+        }
+
         if (pacienteDTO.getId() == null) {
             Paciente paciente = modelMapper.map(pacienteDTO, Paciente.class);
             paciente = pacienteRepositorio.save(paciente);
@@ -39,6 +59,7 @@ public class PacienteService implements IPacienteServices {
         }
         return null;
     }
+
 
     @Override
     public void eliminar(Integer id) {
