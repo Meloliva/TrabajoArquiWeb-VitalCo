@@ -17,15 +17,18 @@ public class TurnoController {
     public TurnoDTO registrar(@RequestBody TurnoDTO turnoDTO) {
         return turnoService.registrar(turnoDTO);
     }
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/editarTurno")
     public ResponseEntity<TurnoDTO> actualizar(@RequestBody TurnoDTO turnoDTO) {
         return ResponseEntity.ok(turnoService.actualizar(turnoDTO));
     }
     @DeleteMapping("/eliminarTurno/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public void eliminar(@PathVariable Integer id) {
         turnoService.eliminar(id);
     }
     @GetMapping("/listarTurnos")
+    @PreAuthorize("hasRole('ADMIN')")
     public List<TurnoDTO> findAll() {
         return turnoService.findAll();
     }
