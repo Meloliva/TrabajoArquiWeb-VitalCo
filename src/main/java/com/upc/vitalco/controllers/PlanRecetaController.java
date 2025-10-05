@@ -16,7 +16,7 @@ public class PlanRecetaController {
     @Autowired
     private PlanRecetaService planRecetaService;
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('NUTRICIONISTA')")
     @GetMapping("/listarPlanRecetas/{idPaciente}")
     public List<PlanRecetaDTO> listarPorPaciente(@PathVariable Integer idPaciente) {
         return planRecetaService.listarPorPaciente(idPaciente);
