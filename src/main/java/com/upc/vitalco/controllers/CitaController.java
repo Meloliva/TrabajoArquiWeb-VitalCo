@@ -14,6 +14,7 @@ public class CitaController {
     private CitaService citaService;
 
     @PostMapping("/registrarCita")
+    @PreAuthorize("hasRole('PACIENTE')")
     public CitaDTO registrar(@RequestBody CitaDTO citaDTO){
         return citaService.registrar(citaDTO);
     }
