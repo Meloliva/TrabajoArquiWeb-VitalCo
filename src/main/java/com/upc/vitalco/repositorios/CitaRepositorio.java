@@ -3,7 +3,10 @@ package com.upc.vitalco.repositorios;
 import com.upc.vitalco.entidades.Cita;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
+import java.util.Optional;
 
 public interface CitaRepositorio extends JpaRepository<Cita, Integer> {
     List<Cita> findByNutricionistaId(Integer idNutricionista);
@@ -12,4 +15,5 @@ public interface CitaRepositorio extends JpaRepository<Cita, Integer> {
     boolean existsByPacienteIdAndEstado(Integer pacienteId, String estado);
 
 
+    Optional<Object> findByNutricionistaIdAndDiaAndHora(Integer id, LocalDate dia, LocalTime hora);
 }

@@ -31,4 +31,15 @@ public class CitaController {
     public List<CitaDTO> listarPorPaciente(@PathVariable Integer idPaciente){
         return citaService.listarPorPaciente(idPaciente);
     }
+    @PutMapping("/actualizarCita")
+    @PreAuthorize("hasRole('NUTRICIONISTA') or hasRole('PACIENTE')")
+    public CitaDTO actualizar(@RequestBody CitaDTO citaDTO) {
+        return citaService.actualizar(citaDTO);
+    }
+
+    @DeleteMapping("/eliminarCita/{id}")
+    @PreAuthorize("hasRole('NUTRICIONISTA') or hasRole('PACIENTE')")
+    public void eliminar(@PathVariable Integer id) {
+        citaService.eliminar(id);
+    }
 }

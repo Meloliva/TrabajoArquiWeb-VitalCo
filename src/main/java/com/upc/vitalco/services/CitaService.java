@@ -38,27 +38,35 @@ public class CitaService implements ICitaServices {
         cita.setDescripcion(citaDTO.getDescripcion());
         cita.setLink(citaDTO.getLink());
 
-        // Buscar paciente por ID
         Paciente paciente = pacienteRepositorio.findById(citaDTO.getIdPaciente())
                 .orElseThrow(() -> new RuntimeException("Paciente no encontrado"));
         cita.setPaciente(paciente);
 
-        // Validar que el paciente tenga plan premium
         if (paciente.getIdplan() == null ||
                 !"Plan premium".equalsIgnoreCase(paciente.getIdplan().getTipo())) {
             throw new RuntimeException("Solo los pacientes con plan premium pueden registrar citas.");
         }
         cita.setPaciente(paciente);
 
-        // Buscar nutricionista por ID
         Nutricionista nutricionista = nutricionistaRepositorio.findById(citaDTO.getIdNutricionista())
                 .orElseThrow(() -> new RuntimeException("Nutricionista no encontrado"));
+// Validar que la hora de la cita esté dentro del turno del nutricionista
+        if (citaDTO.getHora().isBefore(nutricionista.getIdturno().getInicioturno()) || citaDTO.getHora().isAfter(nutricionista.getIdturno().getFinturno())) {
+            throw new RuntimeException("La hora de la cita está fuera del turno del nutricionista.");
+        }
+
+// Validar que el nutricionista no tenga otra cita ese día y hora
+        boolean existeCita = citaRepositorio
+                .findByNutricionistaIdAndDiaAndHora(nutricionista.getId(), citaDTO.getDia(), citaDTO.getHora())
+                .isPresent();
+        if (existeCita) {
+            throw new RuntimeException("El nutricionista ya tiene una cita registrada para ese día y hora.");
+        }
+
         cita.setNutricionista(nutricionista);
 
-        // Guardar cita
         cita = citaRepositorio.save(cita);
 
-        // Mapear a DTO
         CitaDTO dto = new CitaDTO();
         dto.setId(cita.getId());
         dto.setDia(cita.getDia());
@@ -107,5 +115,28 @@ public class CitaService implements ICitaServices {
                 .collect(Collectors.toList());
     }
     //tiene que eliminar cita y saldria cancelada
-    //Editar cita y saldria aceptada en estado
+    @Override
+    public void eliminar(Integer id) {
+        citaRepositorio.findById(id).ifPresent(usuario -> {
+            usuario.setEstado("Cancelada");
+            citaRepositorio.save(usuario);
+        });
+    }
+    //Editar cita y saldria pendiente en estado
+    @Override
+    public CitaDTO actualizar(CitaDTO citaDTO) {
+        return citaRepositorio.findById(citaDTO.getId())
+                .map(existing -> {
+                    existing.setDia(citaDTO.getDia());
+                    existing.setHora(citaDTO.getHora());
+                    existing.setDescripcion(citaDTO.getDescripcion());
+                    existing.setLink(citaDTO.getLink());
+                    existing.setEstado("Aceptada");
+                    Cita guardado = citaRepositorio.save(existing);
+                    return modelMapper.map(guardado, CitaDTO.class);
+                })
+                .orElseThrow(() -> new RuntimeException("Cita con ID " + citaDTO.getId() + " no encontrada"));
+    }
+
+
 }
