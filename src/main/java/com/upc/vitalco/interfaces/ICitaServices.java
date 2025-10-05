@@ -10,4 +10,5 @@ public interface ICitaServices {
     List<CitaDTO> listarPorPaciente(Integer idPaciente);
     CitaDTO actualizar(CitaDTO citaDTO);
     void eliminar(Integer id);
+    String unirseACita(Integer idCita);
 }

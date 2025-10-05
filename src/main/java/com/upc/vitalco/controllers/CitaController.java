@@ -3,6 +3,7 @@ package com.upc.vitalco.controllers;
 import com.upc.vitalco.dto.CitaDTO;
 import com.upc.vitalco.services.CitaService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.security.access.prepost.PreAuthorize;
 
@@ -42,4 +43,11 @@ public class CitaController {
     public void eliminar(@PathVariable Integer id) {
         citaService.eliminar(id);
     }
+
+    @GetMapping("/unirseACita/{id}")
+    public ResponseEntity<String> unirseACita(@PathVariable Integer id) {
+        String link = citaService.unirseACita(id);
+        return ResponseEntity.ok(link);
+    }
+
 }

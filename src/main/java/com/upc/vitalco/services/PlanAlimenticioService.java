@@ -137,6 +137,10 @@ public class PlanAlimenticioService implements IPlanAlimenticioServices {
         if (!tieneCitas) {
             throw new IllegalStateException("El paciente no tiene ninguna cita registrada con un nutricionista.");
         }
+        boolean tieneCitaAceptada = citaRepositorio.existsByPacienteIdAndEstado(paciente.getId(), "Aceptada");
+        if (!tieneCitaAceptada) {
+            throw new IllegalStateException("El paciente no tiene ninguna cita aceptada con un nutricionista.");
+        }
 
         if (dto.getCaloriasDiaria() == null || dto.getCaloriasDiaria() < 0 ||
                 dto.getProteinasDiaria() == null || dto.getProteinasDiaria() < 0 ||

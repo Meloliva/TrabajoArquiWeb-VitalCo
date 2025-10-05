@@ -37,6 +37,7 @@ public class CitaService implements ICitaServices {
         cita.setHora(citaDTO.getHora());
         cita.setDescripcion(citaDTO.getDescripcion());
         cita.setLink(citaDTO.getLink());
+        cita.setEstado("Pendiente");
 
         Paciente paciente = pacienteRepositorio.findById(citaDTO.getIdPaciente())
                 .orElseThrow(() -> new RuntimeException("Paciente no encontrado"));
@@ -131,12 +132,25 @@ public class CitaService implements ICitaServices {
                     existing.setHora(citaDTO.getHora());
                     existing.setDescripcion(citaDTO.getDescripcion());
                     existing.setLink(citaDTO.getLink());
-                    existing.setEstado("Aceptada");
+                    existing.setEstado("Pendiente");
                     Cita guardado = citaRepositorio.save(existing);
                     return modelMapper.map(guardado, CitaDTO.class);
                 })
                 .orElseThrow(() -> new RuntimeException("Cita con ID " + citaDTO.getId() + " no encontrada"));
     }
+
+    @Override
+    public String unirseACita(Integer idCita) {
+        Cita cita = citaRepositorio.findById(idCita)
+                .orElseThrow(() -> new RuntimeException("Cita no encontrada"));
+        if (!"Pendiente".equalsIgnoreCase(cita.getEstado())) {
+            throw new RuntimeException("Solo puedes unirte a citas pendientes.");
+        }
+        cita.setEstado("Aceptada");
+        citaRepositorio.save(cita);
+        return cita.getLink();
+    }
+    //faltan listas personalizadas
 
 
 }

@@ -4,6 +4,7 @@ import com.upc.vitalco.dto.RecetaDTO;
 import com.upc.vitalco.entidades.Planreceta;
 import com.upc.vitalco.entidades.Receta;
 import com.upc.vitalco.interfaces.IRecetaServices;
+import com.upc.vitalco.repositorios.CitaRepositorio;
 import com.upc.vitalco.repositorios.PlanRecetaRepositorio;
 import com.upc.vitalco.repositorios.RecetaRepositorio;
 import org.modelmapper.ModelMapper;
@@ -18,7 +19,7 @@ public class RecetaService implements IRecetaServices {
     @Autowired
     private RecetaRepositorio recetaRepositorio;
     @Autowired
-    private PlanRecetaRepositorio planRecetaRepositorio;
+    private CitaRepositorio citaRepositorio;
 
 
     @Autowired
@@ -33,19 +34,18 @@ public class RecetaService implements IRecetaServices {
         }
         return null;
     }
-    /*@Override
-    public RecetaDTO registrarNutri(RecetaDTO recetaDTO) {
-        if (recetaDTO.getIdReceta() == null) {
-            Receta receta = modelMapper.map(recetaDTO, Receta.class);
-            // Asociar el plan de receta
-            Planreceta planReceta = planRecetaRepositorio.findById(Math.toIntExact(recetaDTO.getIdReceta()))
-                    .orElseThrow(() -> new RuntimeException("PlanReceta no encontrado"));
-            receta.setPlanrecetas((List<Planreceta>) planReceta);
-            receta = recetaRepositorio.save(receta);
-            return modelMapper.map(receta, RecetaDTO.class);
-        }
-        return null;
-    }*/
+    @Override
+    public RecetaDTO agregarRecetaAPaciente(RecetaDTO recetaDTO, Integer pacienteId, Integer nutricionistaId) {
+    boolean tieneCitaAceptada = citaRepositorio.existsByPacienteIdAndNutricionistaIdAndEstado(
+            pacienteId, nutricionistaId, "Aceptada");
+    if (!tieneCitaAceptada) {
+        throw new IllegalStateException("No existe una cita aceptada entre el paciente y el nutricionista.");
+    }
+    Receta receta = modelMapper.map(recetaDTO, Receta.class);
+    // Aquí puedes asociar paciente y nutricionista a la receta si tu modelo lo permite
+    receta = recetaRepositorio.save(receta);
+    return modelMapper.map(receta, RecetaDTO.class);
+}
 
     @Override
     public List<RecetaDTO> findAll() {
@@ -91,4 +91,5 @@ public class RecetaService implements IRecetaServices {
                 .limit(10)
                 .collect(Collectors.toList());
     }
+    //falta filtro de listar por horario
 }

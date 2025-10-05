@@ -16,4 +16,6 @@ public interface CitaRepositorio extends JpaRepository<Cita, Integer> {
 
 
     Optional<Object> findByNutricionistaIdAndDiaAndHora(Integer id, LocalDate dia, LocalTime hora);
+
+    boolean existsByPacienteIdAndNutricionistaIdAndEstado(Integer pacienteId, Integer nutricionistaId, String aceptada);
 }
