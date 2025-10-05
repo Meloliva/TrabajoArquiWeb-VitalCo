@@ -26,15 +26,18 @@ public class UsuarioService implements IUsuarioServices {
                 usuarioExistente.setEstado("Activo");
                 usuarioExistente.setNombre(usuarioDTO.getNombre());
                 usuarioExistente.setApellido(usuarioDTO.getApellido());
-                // Actualiza otros campos necesarios
                 usuarioExistente = usuarioRepositorio.save(usuarioExistente);
                 return modelMapper.map(usuarioExistente, UsuarioDTO.class);
             } else {
                 throw new RuntimeException("El correo ya está registrado y activo.");
             }
         }
+
         Usuario usuario = modelMapper.map(usuarioDTO, Usuario.class);
         usuario.setEstado("Activo");
+
+        usuario.setContraseña(passwordEncoder.encode(usuario.getContraseña()));
+
         usuario = usuarioRepositorio.save(usuario);
         return modelMapper.map(usuario, UsuarioDTO.class);
     }
