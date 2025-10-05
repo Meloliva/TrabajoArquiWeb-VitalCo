@@ -5,6 +5,8 @@ import com.upc.vitalco.services.SeguimientoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.security.access.prepost.PreAuthorize;
+
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -22,14 +24,13 @@ public class SeguimientoController {
     @Autowired
     private SeguimientoService seguimientoService;
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/agregarProgreso/{idPlanRecetaReceta}")
     public ResponseEntity<SeguimientoDTO> agregarProgreso(@PathVariable Long idPlanRecetaReceta) {
         return ResponseEntity.ok(seguimientoService.agregarProgreso(idPlanRecetaReceta));
     }
 
-
-
-
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/listarSeguimientos/{pacienteId}/{fecha}")
     public List<RecetaDTO> listarPorDia(
             @PathVariable("pacienteId") Integer pacienteId,
@@ -37,6 +38,7 @@ public class SeguimientoController {
         return seguimientoService.listarPorDia(pacienteId, fecha);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/listarSeguimientosPorDniYFecha/{dni}/{fecha}")
     public ResponseEntity<?> listarPorDniYFecha(
             @PathVariable("dni") String dni,
@@ -49,6 +51,7 @@ public class SeguimientoController {
         return ResponseEntity.ok(resultados);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/listarCaloriasPorHorario/{idpaciente}/{fecha}")
     public ResponseEntity<?> listarCaloriasPorHorario(
             @PathVariable("idpaciente") Integer pacienteId,
@@ -57,6 +60,7 @@ public class SeguimientoController {
         return ResponseEntity.ok(resultado);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/listarTotalesNutricionales/{idpaciente}/{fecha}")
     public ResponseEntity<?> obtenerTotalesNutricionales(
             @PathVariable("idpaciente") Integer pacienteId,
@@ -65,6 +69,7 @@ public class SeguimientoController {
         return ResponseEntity.ok(resultado);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/cumplimiento-diario/{dni}/{fecha}")
     public ResponseEntity<Map<String, Object>> verificarCumplimientoDiario(
             @PathVariable("dni") String dni,
@@ -73,6 +78,8 @@ public class SeguimientoController {
         Map<String, Object> resultado = seguimientoService.verificarCumplimientoDiario(dni, fecha);
         return ResponseEntity.ok(resultado);
     }
+
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/eliminarSeguimiento/{seguimientoId}/{recetaId}/{pacienteId}")
     public ResponseEntity<Void> eliminarRecetaDeSeguimiento(
             @PathVariable("seguimientoId") Integer seguimientoId,
