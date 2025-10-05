@@ -20,18 +20,21 @@ public class UsuarioController {
     }
 
     @GetMapping("/listarUsuarios")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<UsuarioDTO>> listar() {
         List<UsuarioDTO> lista = usuarioService.findAll();
         return ResponseEntity.ok(lista);
     }
 
     @DeleteMapping("/eliminarUsuario/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> eliminar(@PathVariable Integer id) {
         usuarioService.eliminar(id);
         return ResponseEntity.noContent().build();
     }
 
     @PutMapping("/editarUsuario/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<UsuarioDTO> editar(@RequestBody UsuarioDTO dto) {
         UsuarioDTO actualizado = usuarioService.actualizar(dto);
         return ResponseEntity.ok(actualizado);
