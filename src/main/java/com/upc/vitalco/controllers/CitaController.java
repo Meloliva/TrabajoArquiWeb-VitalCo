@@ -3,10 +3,12 @@ package com.upc.vitalco.controllers;
 import com.upc.vitalco.dto.CitaDTO;
 import com.upc.vitalco.services.CitaService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.security.access.prepost.PreAuthorize;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -48,6 +50,12 @@ public class CitaController {
     public ResponseEntity<String> unirseACita(@PathVariable Integer id) {
         String link = citaService.unirseACita(id);
         return ResponseEntity.ok(link);
+    }
+
+    @GetMapping("/ListarCitasPorFecha/{fecha}")
+    public List<CitaDTO> listarPorFecha(
+            @PathVariable("fecha") LocalDate fecha) {
+        return citaService.listarPorFecha(fecha);
     }
 
 }

@@ -12,6 +12,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -150,7 +151,23 @@ public class CitaService implements ICitaServices {
         citaRepositorio.save(cita);
         return cita.getLink();
     }
-    //faltan listas personalizadas
+    public List<CitaDTO> listarPorFecha(LocalDate fecha) {
+        return citaRepositorio.findByDia(fecha)
+                .stream()
+                .map(cita -> {
+                    CitaDTO dto = new CitaDTO();
+                    dto.setId(cita.getId());
+                    dto.setDia(cita.getDia());
+                    dto.setHora(cita.getHora());
+                    dto.setDescripcion(cita.getDescripcion());
+                    dto.setLink(cita.getLink());
+                    dto.setIdPaciente(cita.getPaciente().getId());
+                    dto.setIdNutricionista(cita.getNutricionista().getId());
+                    return dto;
+                })
+                .collect(Collectors.toList());
+    }
+
 
 
 }

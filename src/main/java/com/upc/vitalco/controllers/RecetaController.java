@@ -20,10 +20,7 @@ public class RecetaController {
     public RecetaDTO registrar(@RequestBody RecetaDTO recetaDTO){ //wrapper
         return recetaService.registrar(recetaDTO);
     }
-   /* @PostMapping("/registrarRecetaNutri")
-    public RecetaDTO registrarRecetaNutri(@RequestBody RecetaDTO recetaDTO) {
-        return recetaService.registrarNutri(recetaDTO);
-    }*/
+
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/listarRecetas")
     public List<RecetaDTO> findAll(){
@@ -38,16 +35,6 @@ public class RecetaController {
     @PutMapping("/editarReceta")
     public ResponseEntity<RecetaDTO> editarReceta(@RequestBody RecetaDTO recetaDTO){
         return ResponseEntity.ok(recetaService.actualizar(recetaDTO));
-    }
-    @PreAuthorize("hasRole('ADMIN')")
-    @GetMapping("/buscarRecetasPorNombre")
-    public List<RecetaDTO> buscarPorNombre(@RequestParam String nombre) {
-        return recetaService.buscarRecetasPorNombre(nombre);
-    }
-    @PreAuthorize("hasRole('ADMIN')")
-    @GetMapping("/autocompletarNombresRecetas")
-    public List<String> autocompletarNombres(@RequestParam String texto) {
-        return recetaService.autocompletarNombresRecetas(texto);
     }
 
 

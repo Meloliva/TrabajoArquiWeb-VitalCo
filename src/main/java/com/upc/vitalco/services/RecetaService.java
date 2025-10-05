@@ -18,8 +18,6 @@ import java.util.stream.Collectors;
 public class RecetaService implements IRecetaServices {
     @Autowired
     private RecetaRepositorio recetaRepositorio;
-    @Autowired
-    private CitaRepositorio citaRepositorio;
 
 
     @Autowired
@@ -34,18 +32,6 @@ public class RecetaService implements IRecetaServices {
         }
         return null;
     }
-    /*@Override
-    public RecetaDTO agregarRecetaAPaciente(RecetaDTO recetaDTO, Integer pacienteId, Integer nutricionistaId) {
-    boolean tieneCitaAceptada = citaRepositorio.existsByPacienteIdAndNutricionistaIdAndEstado(
-            pacienteId, nutricionistaId, "Aceptada");
-    if (!tieneCitaAceptada) {
-        throw new IllegalStateException("No existe una cita aceptada entre el paciente y el nutricionista.");
-    }
-    Receta receta = modelMapper.map(recetaDTO, Receta.class);
-    // Aquí puedes asociar paciente y nutricionista a la receta si tu modelo lo permite
-    receta = recetaRepositorio.save(receta);
-    return modelMapper.map(receta, RecetaDTO.class);
-}*/
 
     @Override
     public List<RecetaDTO> findAll() {
@@ -73,23 +59,4 @@ public class RecetaService implements IRecetaServices {
                 .orElseThrow(() -> new RuntimeException("Receta con ID " + recetaDTO.getIdReceta() +
                         " no encontrado"));
     }
-
-    @Override
-    public List<RecetaDTO> buscarRecetasPorNombre(String nombre) {
-        return recetaRepositorio.findByNombreContainingIgnoreCase(nombre)
-                .stream()
-                .map(receta -> modelMapper.map(receta, RecetaDTO.class))
-                .collect(Collectors.toList());
-    }
-
-    @Override
-    public List<String> autocompletarNombresRecetas(String texto) {
-        return recetaRepositorio.findByNombreContainingIgnoreCase(texto)
-                .stream()
-                .map(Receta::getNombre)
-                .distinct()
-                .limit(10)
-                .collect(Collectors.toList());
-    }
-    //falta filtro de listar por horario
 }

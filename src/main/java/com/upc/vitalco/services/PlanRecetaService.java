@@ -96,11 +96,8 @@ public class PlanRecetaService implements IPlanRecetaServices {
 
 
     public void recalcularPlanRecetas(Integer idPlan) {
-        // NO eliminar los planrecetas existentes
-        // Crear un nuevo planreceta para la nueva versión del plan
         Planreceta nuevoPlanreceta = crearPlanReceta(idPlan);
 
-        // Asignar recetas al nuevo planreceta
         asignarRecetasAPlan(nuevoPlanreceta.getId());
     }
 
@@ -143,6 +140,10 @@ public class PlanRecetaService implements IPlanRecetaServices {
                     PlanRecetaDTO dto = modelMapper.map(planReceta, PlanRecetaDTO.class);
 
                     List<PlanRecetaReceta> relaciones = planrecetaRecetaRepositorio.findByPlanreceta(planReceta);
+                    String tipoPlan = planReceta.getIdplanalimenticio().getIdpaciente().getIdplan().getTipo();
+                    if ("Plan free".equalsIgnoreCase(tipoPlan) && relaciones.size() > 15) {
+                        relaciones = relaciones.subList(0, 15);
+                    }
                     List<PlanRecetaRecetaDTO> relacionesDTO = relaciones.stream()
                             .map(rel -> {
                                 PlanRecetaRecetaDTO relDTO = new PlanRecetaRecetaDTO();
@@ -162,8 +163,23 @@ public class PlanRecetaService implements IPlanRecetaServices {
                 .collect(Collectors.toList());
     }
 
+    @Override
+    public List<RecetaDTO> listarRecetasPorHorarioEnPlanRecienteDePaciente(Integer idPaciente, String nombreHorario) {
 
+        List<Planreceta> planes = planRecetaRepositorio.buscarPorPaciente(idPaciente);
+        if (planes.isEmpty()) {
+            return Collections.emptyList();
+        }
+        Planreceta planreceta = planes.stream()
+                .max(Comparator.comparing(Planreceta::getFecharegistro))
+                .orElseThrow(() -> new RuntimeException("No hay plan receta para el paciente"));
 
-
+        List<PlanRecetaReceta> relaciones = planrecetaRecetaRepositorio.findByPlanreceta(planreceta);
+        return relaciones.stream()
+                .map(PlanRecetaReceta::getReceta)
+                .filter(receta -> receta.getIdhorario().getNombre().equalsIgnoreCase(nombreHorario))
+                .map(receta -> modelMapper.map(receta, RecetaDTO.class))
+                .collect(Collectors.toList());
+    }
 
 }
