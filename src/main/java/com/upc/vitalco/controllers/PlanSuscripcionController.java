@@ -21,7 +21,7 @@ public class PlanSuscripcionController {
         return planSuscripcionService.registrar(planSuscripcionDTO);
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('NUTRICIONISTA') or hasRole('PACIENTE') or hasRole('ADMIN')")
     @GetMapping("/listarPlanesSuscripcion")
     public List<PlanSuscripcionDTO> findAll(){
         return planSuscripcionService.findAll();

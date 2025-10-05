@@ -34,7 +34,7 @@ public class HorarioController {
     }
 
     @DeleteMapping("/eliminarHorario/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('NUTRICIONISTA') or hasRole('PACIENTE')")
     public void borrar(@PathVariable Long id){
         horarioService.borrar(id);
     }

@@ -30,7 +30,7 @@ public class TurnoController {
         turnoService.eliminar(id);
     }
     @GetMapping("/listarTurnos")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('PACIENTE') or hasRole('NUTRICIONISTA')")
     public List<TurnoDTO> findAll() {
         return turnoService.findAll();
     }
