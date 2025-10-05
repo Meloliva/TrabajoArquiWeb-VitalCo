@@ -7,6 +7,7 @@ import com.upc.vitalco.services.PlanRecetaService;
 import com.upc.vitalco.services.SeguimientoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -21,6 +22,7 @@ public class PlanAlimenticioController {
     @Autowired
     private PlanRecetaService planRecetaService;
 
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/listarPlanesAlimenticios")
     public ResponseEntity<List<PlanAlimenticioDTO>> findAll() {
         try {
@@ -32,6 +34,7 @@ public class PlanAlimenticioController {
         }
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/eliminarPlanAlimenticio/{id}")
     public ResponseEntity<String> eliminar(@PathVariable Integer id) {
         try {
@@ -42,6 +45,7 @@ public class PlanAlimenticioController {
         }
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/editarPlanAlimenticio")
     public ResponseEntity<PlanAlimenticioDTO> editar(@RequestBody PlanAlimenticioDTO dto) {
         try {
@@ -57,13 +61,15 @@ public class PlanAlimenticioController {
             return ResponseEntity.status(500).body(null);
         }
     }
+
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/editar/{idPlanAlimenticio}")
     public ResponseEntity<PlanAlimenticioDTO> editar(@PathVariable Integer idPlanAlimenticio,
                                                      @RequestBody PlanAlimenticioDTO planDTO) {
         return ResponseEntity.ok(planAlimenticioService.editarPlanAlimenticio(idPlanAlimenticio, planDTO));
     }
 
-
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/consultarPlanAlimenticio/{idPaciente}")
     public ResponseEntity<PlanAlimenticioDTO> consultarPlanAlimenticio(@PathVariable Integer idPaciente) {
         try {
@@ -77,6 +83,7 @@ public class PlanAlimenticioController {
         }
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/editarNutrientes/{idpaciente}")
     public ResponseEntity<PlanAlimenticioDTO> editarPlanAlimenticio(
             @PathVariable("idpaciente") Integer idPaciente,@RequestBody PlanAlimenticioDTO planAlimenticioDTO) {
@@ -87,6 +94,4 @@ public class PlanAlimenticioController {
 
         return ResponseEntity.ok(actualizado);
     }
-
-
 }
