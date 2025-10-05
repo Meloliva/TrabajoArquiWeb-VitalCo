@@ -8,4 +8,6 @@ public interface IPlanRecetaServices {
     void eliminar(Integer id);
     List<PlanRecetaDTO> listarPorPaciente(Integer idPaciente);
     List<RecetaDTO> listarRecetasPorHorarioEnPlanRecienteDePaciente(Integer idPaciente, String nombreHorario) ;
+    List<String> autocompletarNombreRecetaEnPlanReciente(Integer idPaciente, String texto);
+    List<RecetaDTO> buscarRecetasEnPlanReciente(Integer idPaciente, String texto);
 }

@@ -35,4 +35,18 @@ public class PlanRecetaController {
         return planRecetaService.listarRecetasPorHorarioEnPlanRecienteDePaciente(idPaciente, nombreHorario);
     }
 
+    @GetMapping("/autocompletarRecetas/{idPaciente}")
+    public List<String> autocompletarNombreRecetaEnPlanReciente(
+            @PathVariable Integer idPaciente,
+            @RequestParam String texto) {
+        return planRecetaService.autocompletarNombreRecetaEnPlanReciente(idPaciente, texto);
+    }
+
+    @GetMapping("/buscarRecetas/{idPaciente}")
+    public List<RecetaDTO> buscarRecetasEnPlanReciente(
+            @PathVariable Integer idPaciente,
+            @RequestParam String texto) {
+        return planRecetaService.buscarRecetasEnPlanReciente(idPaciente, texto);
+    }
+
 }

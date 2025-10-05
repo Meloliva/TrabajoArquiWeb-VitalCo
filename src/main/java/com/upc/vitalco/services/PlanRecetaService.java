@@ -182,4 +182,48 @@ public class PlanRecetaService implements IPlanRecetaServices {
                 .collect(Collectors.toList());
     }
 
+    @Override
+    // Autocompletar nombres de recetas dentro del plan receta más reciente del paciente
+    public List<String> autocompletarNombreRecetaEnPlanReciente(Integer idPaciente, String texto) {
+        List<Planreceta> planes = planRecetaRepositorio.buscarPorPaciente(idPaciente);
+        if (planes.isEmpty()) return Collections.emptyList();
+        Planreceta planreceta = planes.stream()
+                .max(Comparator.comparing(Planreceta::getFecharegistro))
+                .orElseThrow(() -> new RuntimeException("No hay plan receta para el paciente"));
+
+        List<PlanRecetaReceta> relaciones = planrecetaRecetaRepositorio.findByPlanreceta(planreceta);
+        return relaciones.stream()
+                .map(PlanRecetaReceta::getReceta)
+                .map(Receta::getNombre)
+                .filter(nombre -> nombre != null && nombre.toLowerCase().contains(texto.toLowerCase()))
+                .distinct()
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    // Buscar recetas por múltiples campos dentro del plan receta más reciente del paciente
+    public List<RecetaDTO> buscarRecetasEnPlanReciente(Integer idPaciente, String texto) {
+        List<Planreceta> planes = planRecetaRepositorio.buscarPorPaciente(idPaciente);
+        if (planes.isEmpty()) return Collections.emptyList();
+        Planreceta planreceta = planes.stream()
+                .max(Comparator.comparing(Planreceta::getFecharegistro))
+                .orElseThrow(() -> new RuntimeException("No hay plan receta para el paciente"));
+
+        String textoLower = texto.toLowerCase();
+        List<PlanRecetaReceta> relaciones = planrecetaRecetaRepositorio.findByPlanreceta(planreceta);
+        return relaciones.stream()
+                .map(PlanRecetaReceta::getReceta)
+                .filter(receta ->
+                        (receta.getNombre() != null && receta.getNombre().toLowerCase().contains(textoLower)) ||
+                                (receta.getPreparacion() != null && receta.getPreparacion().toLowerCase().contains(textoLower)) ||
+                                (receta.getDescripcion() != null && receta.getDescripcion().toLowerCase().contains(textoLower)) ||
+                                (receta.getIdhorario() != null && receta.getIdhorario().getNombre() != null &&
+                                        receta.getIdhorario().getNombre().toLowerCase().contains(textoLower)) ||
+                                (receta.getIngredientes() != null && receta.getIngredientes().toLowerCase().contains(textoLower))
+                )
+                .map(receta -> modelMapper.map(receta, RecetaDTO.class))
+                .collect(Collectors.toList());
+    }
+
+
 }
