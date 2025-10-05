@@ -5,6 +5,8 @@ import com.upc.vitalco.interfaces.IUsuarioServices;
 import com.upc.vitalco.repositorios.UsuarioRepositorio;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.stereotype.Service;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -25,6 +27,24 @@ public class UsuarioService implements IUsuarioServices {
 
     @Override
     public UsuarioDTO registrar(UsuarioDTO usuarioDTO) {
+        // Validación: JSON malformado o campos obligatorios vacíos
+        if (usuarioDTO == null ||
+                usuarioDTO.getDni() == null || usuarioDTO.getDni().isBlank() ||
+                usuarioDTO.getCorreo() == null || usuarioDTO.getCorreo().isBlank() ||
+                usuarioDTO.getNombre() == null || usuarioDTO.getNombre().isBlank() ||
+                usuarioDTO.getApellido() == null || usuarioDTO.getApellido().isBlank()) {
+            throw new HttpMessageNotReadableException("Datos de Usuario incompletos o malformados");
+        }
+
+        // Validación duplicado de DNI
+        if (usuarioRepositorio.findAll().stream()
+                .anyMatch(u -> u.getDni().equalsIgnoreCase(usuarioDTO.getDni()))) {
+            throw new DataIntegrityViolationException(
+                    "El DNI " + usuarioDTO.getDni() + " ya existe en la base de datos."
+            );
+        }
+
+        // Validación duplicado de correo
         Usuario usuarioExistente = usuarioRepositorio.findByCorreo(usuarioDTO.getCorreo());
         if (usuarioExistente != null) {
             if ("Desactivado".equalsIgnoreCase(usuarioExistente.getEstado())) {
@@ -42,10 +62,10 @@ public class UsuarioService implements IUsuarioServices {
         usuario.setEstado("Activo");
 
         usuario.setContraseña(passwordEncoder.encode(usuario.getContraseña()));
-
         usuario = usuarioRepositorio.save(usuario);
         return modelMapper.map(usuario, UsuarioDTO.class);
     }
+
 
 
     @Override
