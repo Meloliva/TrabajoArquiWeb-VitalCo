@@ -19,6 +19,9 @@ public class UsuarioService implements IUsuarioServices {
     private UsuarioRepositorio usuarioRepositorio;
     @Autowired
     private ModelMapper modelMapper;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
 
     @Override
     public UsuarioDTO registrar(UsuarioDTO usuarioDTO) {
