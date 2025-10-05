@@ -4,6 +4,8 @@ import com.upc.vitalco.services.PlanNutricionalService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.security.access.prepost.PreAuthorize;
+
 
 import java.util.List;
 
@@ -13,24 +15,28 @@ public class PlanNutricionalController {
     @Autowired
     private PlanNutricionalService plannutricionalService;
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/registrarPlannutricional")
     public ResponseEntity<PlanNutricionalDTO> registrar(@RequestBody PlanNutricionalDTO dto) {
         PlanNutricionalDTO registrado = plannutricionalService.registrar(dto);
         return ResponseEntity.ok(registrado);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/listarPlanesNutricionales")
     public ResponseEntity<List<PlanNutricionalDTO>> listar() {
         List<PlanNutricionalDTO> lista = plannutricionalService.findAll();
         return ResponseEntity.ok(lista);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/eliminarPlannutricional/{id}")
     public ResponseEntity<Void> eliminar(@PathVariable Integer id) {
         plannutricionalService.eliminar(id);
         return ResponseEntity.noContent().build();
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/editarPlannutricional/{id}")
     public ResponseEntity<PlanNutricionalDTO> editar(@PathVariable Integer id, @RequestBody PlanNutricionalDTO dto) {
         PlanNutricionalDTO actualizado = plannutricionalService.actualizar(id, dto);
