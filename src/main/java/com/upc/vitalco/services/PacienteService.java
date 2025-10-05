@@ -38,9 +38,8 @@ public class PacienteService implements IPacienteServices {
     @Override
     public PacienteDTO registrar(PacienteDTO pacienteDTO) {
         // Validación: JSON malformado o campos obligatorios vacíos
-        if (pacienteDTO == null || pacienteDTO.getIdusuario() == null ||
-                pacienteDTO.getIdusuario().getDni() == null || pacienteDTO.getIdusuario().getDni().isBlank()) {
-            throw new HttpMessageNotReadableException("Datos de Paciente incompletos o malformados");
+        if (pacienteDTO == null || pacienteDTO.getIdusuario() == null || pacienteDTO.getIdusuario().getId() == null) {
+            throw new HttpMessageNotReadableException("Debe indicar el id del usuario");
         }
 
         // Validación de DNI duplicado

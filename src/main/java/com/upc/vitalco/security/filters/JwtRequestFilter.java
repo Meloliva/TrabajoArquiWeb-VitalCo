@@ -41,8 +41,6 @@ public class JwtRequestFilter extends OncePerRequestFilter {
             System.out.println("USERNAME:" + username);
         }
 
-        // Este es el punto clave donde se verifica si el token JWT es válido y se establece
-        // la autenticación del usuario en el contexto de seguridad de Spring Security.
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
 
             UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
@@ -54,9 +52,8 @@ public class JwtRequestFilter extends OncePerRequestFilter {
                 usernamePasswordAuthenticationToken
                         .setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
-                //siempre por ser stateless, se debe establecer el contexto de seguridad
             }
         }
-        chain.doFilter(request, response);//ya va al controller o al siguiente filtro en la cadena
+        chain.doFilter(request, response);
     }
 }

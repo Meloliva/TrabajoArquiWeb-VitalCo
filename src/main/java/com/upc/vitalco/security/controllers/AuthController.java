@@ -16,9 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-//@CrossOrigin(origins = "${ip.frontend}")
 @CrossOrigin(origins = "${ip.frontend}", allowCredentials = "true", exposedHeaders = "Authorization") //para cloud
-//@CrossOrigin(origins = "*", allowedHeaders = "*", exposedHeaders = "Authorization")
 @RestController
 @RequestMapping("/api")
 public class AuthController {
@@ -50,7 +48,7 @@ public class AuthController {
         HttpHeaders responseHeaders = new HttpHeaders();
         responseHeaders.set("Authorization", token);
 
-        AuthResponseDTO authResponseDTO = new AuthResponseDTO(token, roles); // usar constructor con parámetros
+        AuthResponseDTO authResponseDTO = new AuthResponseDTO(token, roles);
         return ResponseEntity.ok().headers(responseHeaders).body(authResponseDTO);
     }
 
