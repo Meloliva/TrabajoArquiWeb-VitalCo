@@ -5,6 +5,7 @@ import com.upc.vitalco.entidades.*;
 import com.upc.vitalco.interfaces.IUsuarioServices;
 import com.upc.vitalco.repositorios.PacienteRepositorio;
 import com.upc.vitalco.repositorios.PlanSuscripcionRepositorio;
+import com.upc.vitalco.repositorios.RolRepositorio;
 import com.upc.vitalco.repositorios.UsuarioRepositorio;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,9 +28,7 @@ public class UsuarioService implements IUsuarioServices {
     @Autowired
     private PasswordEncoder passwordEncoder;
     @Autowired
-    private PlanSuscripcionRepositorio planSuscripcionRepositorio;
-    @Autowired
-    private PacienteRepositorio pacienteRepositorio;
+    private RolRepositorio rolRepositorio;
 
 
 
@@ -70,6 +69,9 @@ public class UsuarioService implements IUsuarioServices {
         usuario.setEstado("Activo");
 
         usuario.setContraseña(passwordEncoder.encode(usuario.getContraseña()));
+        Role rol = rolRepositorio.findById(usuarioDTO.getRol().getId())
+                .orElseThrow(() -> new RuntimeException("Rol no encontrado"));
+        usuario.setRol(rol);
         usuario = usuarioRepositorio.save(usuario);
         return modelMapper.map(usuario, UsuarioDTO.class);
     }
