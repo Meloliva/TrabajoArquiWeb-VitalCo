@@ -14,4 +14,5 @@ public class NutricionistaDTO {
     private String asociaciones;
     private String universidad;
     private TurnoDTO idturno;
+    private String gradoAcademico;
 }

@@ -1,6 +1,7 @@
 package com.upc.vitalco.services;
 import com.upc.vitalco.dto.PacienteDTO;
 import com.upc.vitalco.dto.PlanAlimenticioDTO;
+import com.upc.vitalco.dto.PlanSuscripcionDTO;
 import com.upc.vitalco.dto.UsuarioDTO;
 import com.upc.vitalco.entidades.Paciente;
 import com.upc.vitalco.entidades.Planalimenticio;
@@ -63,7 +64,7 @@ public class PacienteService implements IPacienteServices {
 
     @Override
     public void eliminar(Integer id) {
-        if(pacienteRepositorio.existsById(id)) {
+        if (pacienteRepositorio.existsById(id)) {
             pacienteRepositorio.deleteById(id);
         }
     }
@@ -81,15 +82,17 @@ public class PacienteService implements IPacienteServices {
         Paciente paciente = pacienteRepositorio.findById(pacienteDTO.getId())
                 .orElseThrow(() -> new RuntimeException("Paciente no encontrado"));
 
-        // solo actualizar datos generales (NO plan nutricional ni fechas)
-        if(paciente.getIdusuario() != null) {
-            UsuarioDTO usuarioDTO = new UsuarioDTO();
-            usuarioDTO.setNombre(paciente.getIdusuario().getNombre());
-            usuarioDTO.setApellido(paciente.getIdusuario().getApellido());
+        // Solo actualizar sexo, edad, altura, triglicéridos y plan de suscripción
+        if (paciente.getIdusuario() != null && pacienteDTO.getIdusuario() != null) {
+            paciente.getIdusuario().setGenero(pacienteDTO.getIdusuario().getGenero());
         }
         paciente.setEdad(pacienteDTO.getEdad());
-        paciente.setPeso(pacienteDTO.getPeso());
         paciente.setAltura(pacienteDTO.getAltura());
+        paciente.setTrigliceridos(pacienteDTO.getTrigliceridos());
+
+        if (pacienteDTO.getIdplan() != null) {
+            paciente.setIdplan(modelMapper.map(pacienteDTO.getIdplan(), com.upc.vitalco.entidades.Plansuscripcion.class));
+        }
 
         Paciente guardado = pacienteRepositorio.save(paciente);
 
@@ -97,6 +100,8 @@ public class PacienteService implements IPacienteServices {
 
         return modelMapper.map(guardado, PacienteDTO.class);
     }
-
-
 }
+
+
+
+

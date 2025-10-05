@@ -2,8 +2,10 @@ package com.upc.vitalco.services;
 
 import com.upc.vitalco.dto.NutricionistaDTO;
 import com.upc.vitalco.entidades.Nutricionista;
+import com.upc.vitalco.entidades.Turno;
 import com.upc.vitalco.interfaces.INutricionistaServices;
 import com.upc.vitalco.repositorios.NutricionistaRepositorio;
+import com.upc.vitalco.repositorios.TurnoRepositorio;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,6 +17,8 @@ import java.util.stream.Collectors;
 public class NutricionistaService implements INutricionistaServices {
     @Autowired
     private NutricionistaRepositorio nutricionistaRepositorio;
+    @Autowired
+    private TurnoRepositorio turnoRepositorio;
     @Autowired
     private ModelMapper modelMapper;
 
@@ -45,12 +49,23 @@ public class NutricionistaService implements INutricionistaServices {
 
     @Override
     public NutricionistaDTO actualizar(NutricionistaDTO nutricionistaDTO) {
-        return nutricionistaRepositorio.findById(nutricionistaDTO.getId())
-                .map(existing -> {
-                    Nutricionista nutricionista = modelMapper.map(nutricionistaDTO, Nutricionista.class);
-                    Nutricionista guardado = nutricionistaRepositorio.save(nutricionista);
-                    return modelMapper.map(guardado, NutricionistaDTO.class);
-                })
+        Nutricionista nutricionista = nutricionistaRepositorio.findById(nutricionistaDTO.getId())
                 .orElseThrow(() -> new RuntimeException("Usuario con ID " + nutricionistaDTO.getId() + " no encontrado"));
+
+        // Actualizar solo los campos permitidos
+        nutricionista.setAsociaciones(nutricionistaDTO.getAsociaciones());
+        nutricionista.setGradoAcademico(nutricionistaDTO.getGradoAcademico());
+        nutricionista.setUniversidad(nutricionistaDTO.getUniversidad());
+
+        // Actualizar turno si viene en el DTO
+        if (nutricionistaDTO.getIdturno() != null && nutricionistaDTO.getIdturno().getId() != null) {
+            Turno turno = turnoRepositorio.findById(nutricionistaDTO.getIdturno().getId())
+                    .orElseThrow(() -> new RuntimeException("Turno no encontrado"));
+            nutricionista.setIdturno(turno);
+        }
+
+        Nutricionista guardado = nutricionistaRepositorio.save(nutricionista);
+        return modelMapper.map(guardado, NutricionistaDTO.class);
     }
+
 }
