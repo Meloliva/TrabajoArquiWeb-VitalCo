@@ -15,18 +15,19 @@ public class CitaController {
     private CitaService citaService;
 
     @PostMapping("/registrarCita")
-    @PreAuthorize("hasRole('PACIENTE')")
+    @PreAuthorize("hasRole('ADMIN')")
     public CitaDTO registrar(@RequestBody CitaDTO citaDTO){
         return citaService.registrar(citaDTO);
     }
 
-
     @GetMapping("/listarCitasPorNutricionista/{idNutricionista}")
+    @PreAuthorize("hasRole('ADMIN')")
     public List<CitaDTO> listarPorNutricionista(@PathVariable Integer idNutricionista){
         return citaService.listarPorNutricionista(idNutricionista);
     }
 
     @GetMapping("/listarCitasPorPaciente/{idPaciente}")
+    @PreAuthorize("hasRole('ADMIN')")
     public List<CitaDTO> listarPorPaciente(@PathVariable Integer idPaciente){
         return citaService.listarPorPaciente(idPaciente);
     }
