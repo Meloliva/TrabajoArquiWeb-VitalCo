@@ -16,6 +16,6 @@ public class UsuarioDTO {
     private String apellido;
     private String correo;
     private String genero;
-    private RolDTO idrol;
+    private RolDTO rol;
 
 }
