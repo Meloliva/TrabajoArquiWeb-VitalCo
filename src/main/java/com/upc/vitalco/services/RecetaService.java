@@ -34,7 +34,7 @@ public class RecetaService implements IRecetaServices {
         }
         return null;
     }
-    @Override
+    /*@Override
     public RecetaDTO agregarRecetaAPaciente(RecetaDTO recetaDTO, Integer pacienteId, Integer nutricionistaId) {
     boolean tieneCitaAceptada = citaRepositorio.existsByPacienteIdAndNutricionistaIdAndEstado(
             pacienteId, nutricionistaId, "Aceptada");
@@ -45,7 +45,7 @@ public class RecetaService implements IRecetaServices {
     // Aquí puedes asociar paciente y nutricionista a la receta si tu modelo lo permite
     receta = recetaRepositorio.save(receta);
     return modelMapper.map(receta, RecetaDTO.class);
-}
+}*/
 
     @Override
     public List<RecetaDTO> findAll() {
