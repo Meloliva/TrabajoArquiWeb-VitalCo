@@ -21,7 +21,7 @@ public class PacienteController {
     }
 
     @GetMapping("/listarPacientes")
-    //@PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     public List<PacienteDTO> findAll(){
         return pacienteService.findAll();
     }
@@ -33,7 +33,7 @@ public class PacienteController {
     }
 
     @PutMapping("/editarPaciente")
-    //@PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('PACIENTE')")
     public ResponseEntity<PacienteDTO> editar(@RequestBody PacienteDTO dto) {
         return ResponseEntity.ok(pacienteService.actualizar(dto));
     }

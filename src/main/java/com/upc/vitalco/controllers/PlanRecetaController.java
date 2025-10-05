@@ -35,6 +35,7 @@ public class PlanRecetaController {
         return planRecetaService.listarRecetasPorHorarioEnPlanRecienteDePaciente(idPaciente, nombreHorario);
     }
 
+    @PreAuthorize("hasRole('PACIENTE')")
     @GetMapping("/autocompletarRecetas/{idPaciente}")
     public List<String> autocompletarNombreRecetaEnPlanReciente(
             @PathVariable Integer idPaciente,
@@ -42,6 +43,7 @@ public class PlanRecetaController {
         return planRecetaService.autocompletarNombreRecetaEnPlanReciente(idPaciente, texto);
     }
 
+    @PreAuthorize("hasRole('PACIENTE')")
     @GetMapping("/buscarRecetas/{idPaciente}")
     public List<RecetaDTO> buscarRecetasEnPlanReciente(
             @PathVariable Integer idPaciente,

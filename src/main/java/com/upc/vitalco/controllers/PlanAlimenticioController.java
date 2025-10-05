@@ -62,14 +62,8 @@ public class PlanAlimenticioController {
         }
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
-    @PutMapping("/editar/{idPlanAlimenticio}")
-    public ResponseEntity<PlanAlimenticioDTO> editar(@PathVariable Integer idPlanAlimenticio,
-                                                     @RequestBody PlanAlimenticioDTO planDTO) {
-        return ResponseEntity.ok(planAlimenticioService.editarPlanAlimenticio(idPlanAlimenticio, planDTO));
-    }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('PACIENTE') or hasRole('NUTRICIONISTA')")
     @GetMapping("/consultarPlanAlimenticio/{idPaciente}")
     public ResponseEntity<PlanAlimenticioDTO> consultarPlanAlimenticio(@PathVariable Integer idPaciente) {
         try {
@@ -83,7 +77,7 @@ public class PlanAlimenticioController {
         }
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('NUTRICIONISTA')")
     @PutMapping("/editarNutrientes/{idpaciente}")
     public ResponseEntity<PlanAlimenticioDTO> editarPlanAlimenticio(
             @PathVariable("idpaciente") Integer idPaciente,@RequestBody PlanAlimenticioDTO planAlimenticioDTO) {

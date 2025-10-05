@@ -33,7 +33,7 @@ public class NutricionistaController {
     }
 
     @PutMapping("/editarNutricionista")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('NUTRICIONISTA')")
     public ResponseEntity<NutricionistaDTO> editar(@RequestBody NutricionistaDTO dto) {
         return ResponseEntity.ok(nutricionistaService.actualizar(dto));
     }

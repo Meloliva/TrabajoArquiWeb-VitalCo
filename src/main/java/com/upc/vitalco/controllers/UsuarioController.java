@@ -36,7 +36,7 @@ public class UsuarioController {
     }
 
     @PutMapping("/editarUsuario/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('NUTRICIONISTA') or hasRole('PACIENTE')")
     public ResponseEntity<UsuarioDTO> editar(@RequestBody UsuarioDTO dto) {
         UsuarioDTO actualizado = usuarioService.actualizar(dto);
         return ResponseEntity.ok(actualizado);

@@ -1,7 +1,10 @@
 package com.upc.vitalco.services;
+import com.upc.vitalco.dto.PacienteDTO;
 import com.upc.vitalco.dto.UsuarioDTO;
 import com.upc.vitalco.entidades.*;
 import com.upc.vitalco.interfaces.IUsuarioServices;
+import com.upc.vitalco.repositorios.PacienteRepositorio;
+import com.upc.vitalco.repositorios.PlanSuscripcionRepositorio;
 import com.upc.vitalco.repositorios.UsuarioRepositorio;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +26,11 @@ public class UsuarioService implements IUsuarioServices {
     private ModelMapper modelMapper;
     @Autowired
     private PasswordEncoder passwordEncoder;
+    @Autowired
+    private PlanSuscripcionRepositorio planSuscripcionRepositorio;
+    @Autowired
+    private PacienteRepositorio pacienteRepositorio;
+
 
 
     @Override
@@ -84,16 +92,26 @@ public class UsuarioService implements IUsuarioServices {
                 .collect(Collectors.toList());
     }
 
+
     @Override
     public UsuarioDTO actualizar(UsuarioDTO usuarioDTO) {
         return usuarioRepositorio.findById(usuarioDTO.getId())
                 .map(existing -> {
-                    Usuario usuarioEntidad = modelMapper.map(usuarioDTO, Usuario.class);
-                    Usuario guardado = usuarioRepositorio.save(usuarioEntidad);
+                    if (!"Activo".equalsIgnoreCase(existing.getEstado())) {
+                        throw new RuntimeException("Solo usuarios activos pueden actualizar sus datos.");
+                    }
+                    if (usuarioDTO.getCorreo() != null && !usuarioDTO.getCorreo().isBlank()) {
+                        existing.setCorreo(usuarioDTO.getCorreo());
+                    }
+                    if (usuarioDTO.getContraseña() != null && !usuarioDTO.getContraseña().isBlank()) {
+                        existing.setContraseña(passwordEncoder.encode(usuarioDTO.getContraseña()));
+                    }
+                    Usuario guardado = usuarioRepositorio.save(existing);
                     return modelMapper.map(guardado, UsuarioDTO.class);
-                })
-                .orElseThrow(() -> new RuntimeException("Usuario con ID " + usuarioDTO.getId() + " no encontrado"));
+                }).orElseThrow(() -> new RuntimeException("Usuario con ID " + usuarioDTO.getId() + " no encontrado"));
     }
+
+
 
 
 }

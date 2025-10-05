@@ -18,19 +18,19 @@ public class CitaController {
     private CitaService citaService;
 
     @PostMapping("/registrarCita")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('NUTRICIONISTA') or hasRole('PACIENTE')")
     public CitaDTO registrar(@RequestBody CitaDTO citaDTO){
         return citaService.registrar(citaDTO);
     }
 
     @GetMapping("/listarCitasPorNutricionista/{idNutricionista}")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('PACIENTE')")
     public List<CitaDTO> listarPorNutricionista(@PathVariable Integer idNutricionista){
         return citaService.listarPorNutricionista(idNutricionista);
     }
 
     @GetMapping("/listarCitasPorPaciente/{idPaciente}")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('NUTRICIONISTA')")
     public List<CitaDTO> listarPorPaciente(@PathVariable Integer idPaciente){
         return citaService.listarPorPaciente(idPaciente);
     }
@@ -47,12 +47,14 @@ public class CitaController {
     }
 
     @GetMapping("/unirseACita/{id}")
+    @PreAuthorize("hasRole('NUTRICIONISTA') or hasRole('PACIENTE')")
     public ResponseEntity<String> unirseACita(@PathVariable Integer id) {
         String link = citaService.unirseACita(id);
         return ResponseEntity.ok(link);
     }
 
     @GetMapping("/ListarCitasPorFecha/{fecha}")
+    @PreAuthorize("hasRole('NUTRICIONISTA') or hasRole('PACIENTE')")
     public List<CitaDTO> listarPorFecha(
             @PathVariable("fecha") LocalDate fecha) {
         return citaService.listarPorFecha(fecha);

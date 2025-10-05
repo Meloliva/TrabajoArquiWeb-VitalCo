@@ -15,13 +15,13 @@ public class RecetaController {
     @Autowired
     private RecetaService recetaService;
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('NUTRICIONISTA')")
     @PostMapping("/registrarReceta")
     public RecetaDTO registrar(@RequestBody RecetaDTO recetaDTO){ //wrapper
         return recetaService.registrar(recetaDTO);
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('NUTRICIONISTA')")
     @GetMapping("/listarRecetas")
     public List<RecetaDTO> findAll(){
         return recetaService.findAll();
@@ -31,7 +31,7 @@ public class RecetaController {
     public void eliminar(@PathVariable Long id){
         recetaService.eliminarReceta(id);
     }
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('NUTRICIONISTA')")
     @PutMapping("/editarReceta")
     public ResponseEntity<RecetaDTO> editarReceta(@RequestBody RecetaDTO recetaDTO){
         return ResponseEntity.ok(recetaService.actualizar(recetaDTO));
