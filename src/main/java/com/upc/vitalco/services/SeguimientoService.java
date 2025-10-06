@@ -266,7 +266,7 @@ public class SeguimientoService implements ISeguimientoServices {
                 .orElseThrow(() -> new RuntimeException("Paciente con DNI " + dni + " no encontrado"));
 
         // Verificar que existe al menos una cita ACEPTADA para este paciente
-        boolean tieneCitaAceptada = citaRepositorio.existsByPacienteIdAndEstado(paciente.getId(), "ACEPTADA".toLowerCase());
+        boolean tieneCitaAceptada = citaRepositorio.existsByPacienteIdAndEstado(paciente.getId(), "aceptada");
         if (!tieneCitaAceptada) {
             throw new RuntimeException("El paciente no tiene citas aceptadas. Solo se puede ver el progreso de pacientes con citas aceptadas");
         }
