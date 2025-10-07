@@ -161,18 +161,19 @@ public class PlanAlimenticioService implements IPlanAlimenticioServices {
 
 
 
-    public PlanAlimenticioDTO recalcularPlanAlimenticio(Integer idPlan) {
-        Planalimenticio plan = planAlimenticioRepositorio.findById(idPlan)
-                .orElseThrow(() -> new RuntimeException("Plan alimenticio no encontrado"));
+    public PlanAlimenticioDTO recalcularPlanAlimenticioPorPaciente(Integer idPaciente) {
+        Planalimenticio plan = planAlimenticioRepositorio.findByIdpacienteId(idPaciente);
+        if (plan == null) {
+            throw new RuntimeException("Plan alimenticio no encontrado para el paciente con ID: " + idPaciente);
+        }
 
-        Paciente paciente = pacienteRepositorio.findById(plan.getIdpaciente().getId())
+        Paciente paciente = pacienteRepositorio.findById(idPaciente)
                 .orElseThrow(() -> new RuntimeException("Paciente no encontrado"));
 
         Plannutricional planNutricional = planNutricionalRepositorio.findById(
                         paciente.getIdPlanNutricional().getId())
                 .orElseThrow(() -> new RuntimeException("Plan nutricional no encontrado"));
 
-        // Recalcular valores
         double calorias = calcularCalorias(paciente, planNutricional.getObjetivo(), planNutricional.getDuracion());
         double[] macros = calcularMacronutrientes(calorias, planNutricional.getObjetivo(), paciente.getTrigliceridos().doubleValue());
 
@@ -185,6 +186,7 @@ public class PlanAlimenticioService implements IPlanAlimenticioServices {
 
         return modelMapper.map(plan, PlanAlimenticioDTO.class);
     }
+
 
     @Override
     public List<PlanAlimenticioDTO> findAll() {

@@ -95,7 +95,7 @@ public class PacienteService implements IPacienteServices {
 
         Paciente guardado = pacienteRepositorio.save(paciente);
 
-        planAlimenticioService.recalcularPlanAlimenticio(guardado.getId());
+        planAlimenticioService.recalcularPlanAlimenticioPorPaciente(guardado.getId());
 
         return modelMapper.map(guardado, PacienteDTO.class);
     }
