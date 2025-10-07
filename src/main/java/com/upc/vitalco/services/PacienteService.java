@@ -85,6 +85,7 @@ public class PacienteService implements IPacienteServices {
         if (paciente.getIdusuario() != null && pacienteDTO.getIdusuario() != null) {
             paciente.getIdusuario().setGenero(pacienteDTO.getIdusuario().getGenero());
         }
+        paciente.setPeso(pacienteDTO.getPeso());
         paciente.setEdad(pacienteDTO.getEdad());
         paciente.setAltura(pacienteDTO.getAltura());
         paciente.setTrigliceridos(pacienteDTO.getTrigliceridos());
