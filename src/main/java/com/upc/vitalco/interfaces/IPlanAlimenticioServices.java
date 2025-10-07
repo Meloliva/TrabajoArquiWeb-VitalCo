@@ -1,5 +1,6 @@
 package com.upc.vitalco.interfaces;
 
+import com.upc.vitalco.dto.NutricionistaRequerimientoDTO;
 import com.upc.vitalco.dto.PlanAlimenticioDTO;
 import com.upc.vitalco.entidades.Planalimenticio;
 
@@ -12,6 +13,6 @@ public interface IPlanAlimenticioServices {
     PlanAlimenticioDTO consultarPlanAlimenticio(Integer idPaciente);
     PlanAlimenticioDTO consultarPlanAlimenticioConDatosActualizados(Integer idPaciente);
     PlanAlimenticioDTO registrar(Integer idPaciente);
-    PlanAlimenticioDTO editarPlanAlimenticio(Integer idPlanAlimenticio, PlanAlimenticioDTO nuevoPlan);
+    NutricionistaRequerimientoDTO editarPlanAlimenticio(Integer idPlanAlimenticio, NutricionistaRequerimientoDTO nuevoPlan);
     PlanAlimenticioDTO eliminarPlanAlimenticio(Integer id);
 }

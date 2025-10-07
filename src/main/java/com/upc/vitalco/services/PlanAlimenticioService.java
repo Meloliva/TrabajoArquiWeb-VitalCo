@@ -1,5 +1,6 @@
 package com.upc.vitalco.services;
 
+import com.upc.vitalco.dto.NutricionistaRequerimientoDTO;
 import com.upc.vitalco.dto.PlanAlimenticioDTO;
 import com.upc.vitalco.entidades.Paciente;
 import com.upc.vitalco.entidades.Planalimenticio;
@@ -92,7 +93,7 @@ public class PlanAlimenticioService implements IPlanAlimenticioServices {
 
 
     @Override
-    public PlanAlimenticioDTO editarPlanAlimenticio(Integer idPaciente, PlanAlimenticioDTO dto) {
+    public NutricionistaRequerimientoDTO editarPlanAlimenticio(Integer idPaciente, NutricionistaRequerimientoDTO dto) {
         Planalimenticio plan = planAlimenticioRepositorio.findByIdpacienteId(idPaciente);
         if (plan == null) {
             throw new RuntimeException("No se encontró el plan alimenticio asociado al paciente");
@@ -102,16 +103,7 @@ public class PlanAlimenticioService implements IPlanAlimenticioServices {
         Plannutricional planNutricionalActual = paciente.getIdPlanNutricional();
         Integer idPlanNutricionalActual = planNutricionalActual != null ? planNutricionalActual.getId() : null;
 
-// Extraer el id del plan nutricional del DTO
-        Integer idPlanNutricionalNuevo = null;
-        if (dto.getIdpaciente() != null &&
-                dto.getIdpaciente().getIdPlanNutricional() != null) {
-            idPlanNutricionalNuevo = dto.getIdpaciente().getIdPlanNutricional().getId();
-        }
-
-
-        //Integer idPlanNutricionalActual = paciente.getIdPlanNutricional().getId();
-        //Integer idPlanNutricionalNuevo = dto.getId();
+        Integer idPlanNutricionalNuevo = dto.getIdPlanNutricional();
 
         // Si el plan nutricional cambia
         if (idPlanNutricionalNuevo != null && !idPlanNutricionalNuevo.equals(idPlanNutricionalActual)) {
@@ -157,9 +149,16 @@ public class PlanAlimenticioService implements IPlanAlimenticioServices {
         Planalimenticio guardado = planAlimenticioRepositorio.save(plan);
 
         planRecetaService.recalcularPlanRecetas(guardado.getId());
+        NutricionistaRequerimientoDTO respuesta = new NutricionistaRequerimientoDTO();
+        respuesta.setIdPlanNutricional(dto.getIdPlanNutricional());
+        respuesta.setCaloriasDiaria(dto.getCaloriasDiaria());
+        respuesta.setGrasasDiaria(dto.getGrasasDiaria());
+        respuesta.setCarbohidratosDiaria(dto.getCarbohidratosDiaria());
+        respuesta.setProteinasDiaria(dto.getProteinasDiaria());
 
-        return modelMapper.map(guardado, PlanAlimenticioDTO.class);
+        return respuesta;
     }
+
 
 
     public PlanAlimenticioDTO recalcularPlanAlimenticio(Integer idPlan) {
@@ -342,5 +341,9 @@ public class PlanAlimenticioService implements IPlanAlimenticioServices {
 
         return new double[]{carbohidratos, proteinas, grasas};
     }
+    public Planalimenticio obtenerPlanAlimenticioPorPaciente(Integer idPaciente) {
+        return planAlimenticioRepositorio.findByIdpacienteId(idPaciente);
+    }
+
 
 }

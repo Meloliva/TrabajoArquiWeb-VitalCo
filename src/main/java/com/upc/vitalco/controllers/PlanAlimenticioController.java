@@ -1,6 +1,8 @@
 package com.upc.vitalco.controllers;
 import com.upc.vitalco.dto.NutricionistaDTO;
+import com.upc.vitalco.dto.NutricionistaRequerimientoDTO;
 import com.upc.vitalco.dto.PlanAlimenticioDTO;
+import com.upc.vitalco.entidades.Planalimenticio;
 import com.upc.vitalco.services.NutricionistaService;
 import com.upc.vitalco.services.PlanAlimenticioService;
 import com.upc.vitalco.services.PlanRecetaService;
@@ -79,11 +81,12 @@ public class PlanAlimenticioController {
 
     @PreAuthorize("hasRole('NUTRICIONISTA')")
     @PutMapping("/editarNutrientes/{idpaciente}")
-    public ResponseEntity<PlanAlimenticioDTO> editarPlanAlimenticio(
-            @PathVariable("idpaciente") Integer idPaciente,@RequestBody PlanAlimenticioDTO planAlimenticioDTO) {
-        PlanAlimenticioDTO actualizado = planAlimenticioService.editarPlanAlimenticio(idPaciente,planAlimenticioDTO);
+    public ResponseEntity<NutricionistaRequerimientoDTO> editarPlanAlimenticio(
+            @PathVariable("idpaciente") Integer idPaciente,@RequestBody NutricionistaRequerimientoDTO nutricionistaRequerimientoDTO) {
+        NutricionistaRequerimientoDTO actualizado = planAlimenticioService.editarPlanAlimenticio(idPaciente,nutricionistaRequerimientoDTO);
 
-        Integer idPlan = actualizado.getId();
+        Planalimenticio plan = planAlimenticioService.obtenerPlanAlimenticioPorPaciente(idPaciente);
+        Integer idPlan = plan.getId();
         planRecetaService.recalcularPlanRecetas(idPlan);
 
         return ResponseEntity.ok(actualizado);

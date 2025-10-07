@@ -1,7 +1,5 @@
 package com.upc.vitalco.interfaces;
 
-
-import com.upc.vitalco.dto.NutricionistaxRequerimientoDTO;
 import com.upc.vitalco.dto.RecetaDTO;
 import com.upc.vitalco.dto.SeguimientoDTO;
 import com.upc.vitalco.dto.SeguimientoResumenDTO;
