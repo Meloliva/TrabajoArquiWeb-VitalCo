@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -264,6 +263,32 @@ public class SeguimientoService implements ISeguimientoServices {
         seguimientoRepositorio.eliminarRecetaDeSeguimiento(seguimientoId, recetaId, pacienteId);
     }
     //metodo de nutricionista
+    @Override
+    public SeguimientoResumenDTO resumenSeguimientoNutri(String dni, LocalDate fecha) {
+        Paciente paciente = pacienteRepositorio.findByDni(dni)
+                .orElseThrow(() -> new RuntimeException("Paciente con DNI " + dni + " no encontrado"));
+
+        boolean tieneCitaAceptada = citaRepositorio.existsByPacienteIdAndEstado(paciente.getId(), "Aceptada");
+        if (!tieneCitaAceptada) {
+            throw new RuntimeException("El paciente no tiene citas aceptadas. Solo se puede ver el progreso de pacientes con citas aceptadas");
+        }
+
+        // Obtener el usuario asociado al paciente
+        Usuario usuario = paciente.getIdusuario();
+        String nombreUsuario = usuario != null ? usuario.getNombre() : "";
+
+        List<SeguimientoDTO> seguimientos = listarPorDniYFecha(dni, fecha);
+        Map<String, Double> totalesNutricionales = obtenerTotalesNutricionales(paciente.getId(), fecha);
+        Map<String, Double> caloriasPorHorario = listarCaloriasPorHorario(paciente.getId(), fecha);
+
+        SeguimientoResumenDTO resumen = new SeguimientoResumenDTO();
+        resumen.setNombrePaciente(nombreUsuario);
+        resumen.setSeguimientos(seguimientos);
+        resumen.setTotalesNutricionales(totalesNutricionales);
+        resumen.setCaloriasPorHorario(caloriasPorHorario);
+
+        return resumen;
+    }
     @Override
     public List<SeguimientoDTO> listarPorDniYFecha(String dni, LocalDate fecha) {
         // Buscar el paciente por DNI

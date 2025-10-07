@@ -91,5 +91,16 @@ public class SeguimientoController {
     }
 
 
+    @PreAuthorize("hasRole('NUTRICIONISTA')")
+    @GetMapping("/resumenSeguimientoNutri/{dni}/{fecha}")
+    public ResponseEntity<SeguimientoResumenDTO> resumenSeguimientoNutri(
+            @PathVariable("dni") String dni,
+            @PathVariable("fecha") String fecha) {
+        LocalDate fechaLocalDate = LocalDate.parse(fecha);
+        SeguimientoResumenDTO resumen = seguimientoService.resumenSeguimientoNutri(dni, fechaLocalDate);
+        return ResponseEntity.ok(resumen);
+    }
+
+
 }
 
