@@ -129,6 +129,11 @@ public class SeguimientoService implements ISeguimientoServices {
                     dto.setProteinas(receta.getProteinas());
                     dto.setGrasas(receta.getGrasas());
                     dto.setCarbohidratos(receta.getCarbohidratos());
+                    dto.setIngredientes(receta.getIngredientes());
+                    dto.setPreparacion(receta.getPreparacion());
+                    dto.setCantidadPorcion(receta.getCantidadPorcion());
+                    dto.setTiempo(receta.getTiempo());
+                    dto.setFoto(receta.getFoto());
                     return dto;
                 })
                 .toList();

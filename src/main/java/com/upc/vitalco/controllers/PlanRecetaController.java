@@ -16,7 +16,7 @@ public class PlanRecetaController {
     @Autowired
     private PlanRecetaService planRecetaService;
 
-    @PreAuthorize("hasRole('NUTRICIONISTA')")
+    @PreAuthorize("hasRole('PACIENTE')")
     @GetMapping("/listarPlanRecetas/{idPaciente}")
     public List<PlanRecetaDTO> listarPorPaciente(@PathVariable Integer idPaciente) {
         return planRecetaService.listarPorPaciente(idPaciente);
@@ -28,7 +28,8 @@ public class PlanRecetaController {
         planRecetaService.eliminar(id);
     }
 
-    @GetMapping("/recetas/paciente/{idPaciente}/horario/{nombreHorario}")
+    @PreAuthorize("hasRole('PACIENTE')")
+    @GetMapping("/listarRecetasPorHorarios/{idPaciente}/{nombreHorario}")
     public List<RecetaDTO> listarRecetasPorHorarioEnPlanRecienteDePaciente(
             @PathVariable Integer idPaciente,
             @PathVariable String nombreHorario) {

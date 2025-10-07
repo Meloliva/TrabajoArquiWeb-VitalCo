@@ -15,7 +15,7 @@ public class RecetaController {
     @Autowired
     private RecetaService recetaService;
 
-    @PreAuthorize("hasRole('NUTRICIONISTA')")
+    @PreAuthorize("hasRole('NUTRICIONISTA') or hasRole('ADMIN')")
     @PostMapping("/registrarReceta")
     public RecetaDTO registrar(@RequestBody RecetaDTO recetaDTO){ //wrapper
         return recetaService.registrar(recetaDTO);
