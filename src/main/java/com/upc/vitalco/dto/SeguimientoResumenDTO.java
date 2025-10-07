@@ -14,7 +14,6 @@ import java.util.Map;
 
 public class SeguimientoResumenDTO {
     private String nombrePaciente;
-    private List<SeguimientoDTO> seguimientos;
     private Map<String, Double> totalesNutricionales;
     private Map<String, Double> caloriasPorHorario;
 

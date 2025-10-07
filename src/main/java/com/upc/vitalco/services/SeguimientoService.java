@@ -276,14 +276,11 @@ public class SeguimientoService implements ISeguimientoServices {
         // Obtener el usuario asociado al paciente
         Usuario usuario = paciente.getIdusuario();
         String nombreUsuario = usuario != null ? usuario.getNombre() : "";
-
-        List<SeguimientoDTO> seguimientos = listarPorDniYFecha(dni, fecha);
         Map<String, Double> totalesNutricionales = obtenerTotalesNutricionales(paciente.getId(), fecha);
         Map<String, Double> caloriasPorHorario = listarCaloriasPorHorario(paciente.getId(), fecha);
 
         SeguimientoResumenDTO resumen = new SeguimientoResumenDTO();
         resumen.setNombrePaciente(nombreUsuario);
-        resumen.setSeguimientos(seguimientos);
         resumen.setTotalesNutricionales(totalesNutricionales);
         resumen.setCaloriasPorHorario(caloriasPorHorario);
 
