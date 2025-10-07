@@ -243,7 +243,7 @@ public class SeguimientoService implements ISeguimientoServices {
         resultado.put("grasas", Map.of("consumido", conGrasas, "requerido", reqGrasas, "porcentaje", porcGrasas));
         resultado.put("carbohidratos", Map.of("consumido", conCarb, "requerido", reqCarb, "porcentaje", porcCarb));
 
-        boolean cumplio = porcCal >= 100 && porcProt >= 100 && porcGrasas >= 100 && porcCarb >= 100;
+        boolean cumplio = porcCal == 100 && porcProt == 100 && porcGrasas == 100 && porcCarb == 100;
         resultado.put("cumplio", cumplio);
 
         return resultado;
