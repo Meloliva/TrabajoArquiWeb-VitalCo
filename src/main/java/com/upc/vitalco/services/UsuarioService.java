@@ -95,23 +95,7 @@ public class UsuarioService implements IUsuarioServices {
     }
 
 
-    @Override
-    public UsuarioDTO actualizar(UsuarioDTO usuarioDTO) {
-        return usuarioRepositorio.findById(usuarioDTO.getId())
-                .map(existing -> {
-                    if (!"Activo".equalsIgnoreCase(existing.getEstado())) {
-                        throw new RuntimeException("Solo usuarios activos pueden actualizar sus datos.");
-                    }
-                    if (usuarioDTO.getCorreo() != null && !usuarioDTO.getCorreo().isBlank()) {
-                        existing.setCorreo(usuarioDTO.getCorreo());
-                    }
-                    if (usuarioDTO.getContraseña() != null && !usuarioDTO.getContraseña().isBlank()) {
-                        existing.setContraseña(passwordEncoder.encode(usuarioDTO.getContraseña()));
-                    }
-                    Usuario guardado = usuarioRepositorio.save(existing);
-                    return modelMapper.map(guardado, UsuarioDTO.class);
-                }).orElseThrow(() -> new RuntimeException("Usuario con ID " + usuarioDTO.getId() + " no encontrado"));
-    }
+
 
 
 

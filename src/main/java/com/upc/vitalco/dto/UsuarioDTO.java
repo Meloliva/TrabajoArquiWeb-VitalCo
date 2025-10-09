@@ -17,5 +17,6 @@ public class UsuarioDTO {
     private String correo;
     private String genero;
     private RolDTO rol;
+    private String estado="Activo";
 
 }

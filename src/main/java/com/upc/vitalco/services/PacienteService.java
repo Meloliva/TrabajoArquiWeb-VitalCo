@@ -1,18 +1,17 @@
 package com.upc.vitalco.services;
-import com.upc.vitalco.dto.PacienteDTO;
-import com.upc.vitalco.dto.PlanAlimenticioDTO;
-import com.upc.vitalco.dto.PlanSuscripcionDTO;
-import com.upc.vitalco.dto.UsuarioDTO;
+import com.upc.vitalco.dto.*;
 import com.upc.vitalco.entidades.Paciente;
 import com.upc.vitalco.entidades.Planalimenticio;
 import com.upc.vitalco.interfaces.IPacienteServices;
 import com.upc.vitalco.repositorios.PacienteRepositorio;
 import com.upc.vitalco.repositorios.PlanAlimenticioRepositorio;
+import com.upc.vitalco.repositorios.PlanSuscripcionRepositorio;
 import com.upc.vitalco.repositorios.UsuarioRepositorio;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -27,11 +26,7 @@ public class PacienteService implements IPacienteServices {
     @Autowired
     private PlanAlimenticioService planAlimenticioService;
     @Autowired
-    private PlanAlimenticioRepositorio planAlimenticioRepositorio;
-    @Autowired
-    private PlanRecetaService planRecetaService;
-    @Autowired
-    private SeguimientoService seguimientoService;
+    private PlanSuscripcionRepositorio planSuscripcionRepositorio;
     @Autowired
     private UsuarioRepositorio usuarioRepositorio;
 
@@ -76,34 +71,52 @@ public class PacienteService implements IPacienteServices {
                 .collect(Collectors.toList());
     }
 
+    // Java
     @Override
-    public PacienteDTO actualizar(PacienteDTO pacienteDTO) {
-        Paciente paciente = pacienteRepositorio.findById(pacienteDTO.getId())
+    public PacienteDTO actualizar(EditarPacienteDTO editarPacienteDTO) {
+        Paciente paciente = pacienteRepositorio.findById(editarPacienteDTO.getId())
                 .orElseThrow(() -> new RuntimeException("Paciente no encontrado"));
 
-        if (paciente.getIdusuario() != null && pacienteDTO.getIdusuario() != null) {
-            String genero = pacienteDTO.getIdusuario().getGenero();
-            if (genero != null) {
-                paciente.getIdusuario().setGenero(genero);
-                usuarioRepositorio.save(paciente.getIdusuario());
-            }
+        // Validar correo único
+        String nuevoCorreo = editarPacienteDTO.getCorreo();
+        if (nuevoCorreo != null && usuarioRepositorio.findAll().stream()
+                .anyMatch(u -> u.getCorreo().equalsIgnoreCase(nuevoCorreo) && !u.getId().equals(paciente.getIdusuario().getId()))) {
+            throw new DataIntegrityViolationException("El correo " + nuevoCorreo + " ya existe en la base de datos.");
         }
 
-        paciente.setPeso(pacienteDTO.getPeso());
-        paciente.setEdad(pacienteDTO.getEdad());
-        paciente.setAltura(pacienteDTO.getAltura());
-        paciente.setTrigliceridos(pacienteDTO.getTrigliceridos());
+        // Actualizar datos de usuario
+        if (paciente.getIdusuario() != null) {
+            paciente.getIdusuario().setCorreo(nuevoCorreo != null ? nuevoCorreo : paciente.getIdusuario().getCorreo());
+            if (editarPacienteDTO.getContraseña() != null) {
+                BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+                paciente.getIdusuario().setContraseña(encoder.encode(editarPacienteDTO.getContraseña()));
+            }
+            usuarioRepositorio.save(paciente.getIdusuario());
+        }
 
-        if (pacienteDTO.getIdplan() != null) {
-            paciente.setIdplan(modelMapper.map(pacienteDTO.getIdplan(), com.upc.vitalco.entidades.Plansuscripcion.class));
+        // Actualizar datos de paciente
+        paciente.setPeso(editarPacienteDTO.getPeso() != null ? editarPacienteDTO.getPeso() : paciente.getPeso());
+        paciente.setEdad(editarPacienteDTO.getEdad() != null ? editarPacienteDTO.getEdad() : paciente.getEdad());
+        paciente.setAltura(editarPacienteDTO.getAltura() != null ? editarPacienteDTO.getAltura() : paciente.getAltura());
+        paciente.setTrigliceridos(editarPacienteDTO.getTrigliceridos() != null ? editarPacienteDTO.getTrigliceridos() : paciente.getTrigliceridos());
+
+        // Actualizar plan suscripción solo si viene en el DTO
+        if (editarPacienteDTO.getPlanSuscripcion() != null) {
+            paciente.setIdplan(planSuscripcionRepositorio.findByTipo((editarPacienteDTO.getPlanSuscripcion()))
+                    .orElseThrow(() -> new DataIntegrityViolationException("El plan de suscripción no es válido.")));
+        }
+
+        // Validar que el paciente tenga un plan antes de guardar
+        if (paciente.getIdplan() == null) {
+            throw new DataIntegrityViolationException("El paciente debe tener un plan de suscripción.");
         }
 
         Paciente guardado = pacienteRepositorio.save(paciente);
-
         planAlimenticioService.recalcularPlanAlimenticioPorPaciente(guardado.getId());
 
         return modelMapper.map(guardado, PacienteDTO.class);
     }
+
 }
 
 

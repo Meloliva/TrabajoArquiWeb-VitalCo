@@ -6,5 +6,4 @@ public interface IUsuarioServices {
     public UsuarioDTO registrar(UsuarioDTO usuarioDTO);
     public void eliminar(Integer id);
     public List<UsuarioDTO> findAll();
-    public UsuarioDTO actualizar(UsuarioDTO usuarioDTO);
 }

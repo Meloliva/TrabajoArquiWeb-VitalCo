@@ -29,16 +29,9 @@ public class UsuarioController {
     }
 
     @DeleteMapping("/eliminarUsuario/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('NUTRICIONISTA') or hasRole('PACIENTE')")
     public ResponseEntity<Void> eliminar(@PathVariable Integer id) {
         usuarioService.eliminar(id);
         return ResponseEntity.noContent().build();
-    }
-
-    @PutMapping("/editarUsuario/{id}")
-    @PreAuthorize("hasRole('NUTRICIONISTA') or hasRole('PACIENTE')")
-    public ResponseEntity<UsuarioDTO> editar(@RequestBody UsuarioDTO dto) {
-        UsuarioDTO actualizado = usuarioService.actualizar(dto);
-        return ResponseEntity.ok(actualizado);
     }
 }

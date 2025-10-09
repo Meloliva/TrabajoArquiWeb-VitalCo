@@ -1,5 +1,6 @@
 package com.upc.vitalco.controllers;
 
+import com.upc.vitalco.dto.EditarPacienteDTO;
 import com.upc.vitalco.dto.PacienteDTO;
 import com.upc.vitalco.services.PacienteService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,7 +35,7 @@ public class PacienteController {
 
     @PutMapping("/editarPaciente")
     @PreAuthorize("hasRole('PACIENTE')")
-    public ResponseEntity<PacienteDTO> editar(@RequestBody PacienteDTO dto) {
+    public ResponseEntity<PacienteDTO> editar(@RequestBody EditarPacienteDTO dto) {
         return ResponseEntity.ok(pacienteService.actualizar(dto));
     }
 }
