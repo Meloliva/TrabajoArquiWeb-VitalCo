@@ -1,11 +1,8 @@
 package com.upc.vitalco.services;
 
 import com.upc.vitalco.dto.RecetaDTO;
-import com.upc.vitalco.entidades.Planreceta;
 import com.upc.vitalco.entidades.Receta;
 import com.upc.vitalco.interfaces.IRecetaServices;
-import com.upc.vitalco.repositorios.CitaRepositorio;
-import com.upc.vitalco.repositorios.PlanRecetaRepositorio;
 import com.upc.vitalco.repositorios.RecetaRepositorio;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,13 +47,18 @@ public class RecetaService implements IRecetaServices {
 
     @Override
     public RecetaDTO actualizar(RecetaDTO recetaDTO) {
-        return recetaRepositorio.findById(recetaDTO.getIdReceta())
-                .map(existing -> {
-                    Receta recetaEntidad = modelMapper.map(recetaDTO, Receta.class);
-                    Receta guardado = recetaRepositorio.save(recetaEntidad);
-                    return modelMapper.map(guardado, RecetaDTO.class);
-                })
-                .orElseThrow(() -> new RuntimeException("Receta con ID " + recetaDTO.getIdReceta() +
-                        " no encontrado"));
+        Receta recetaExistente = recetaRepositorio.findById(recetaDTO.getIdReceta())
+                .orElseThrow(() -> new RuntimeException("Receta con ID " + recetaDTO.getIdReceta() + " no encontrado"));
+
+        recetaExistente.setNombre(recetaDTO.getNombre());
+        recetaExistente.setDescripcion(recetaDTO.getDescripcion());
+        recetaExistente.setTiempo(recetaDTO.getTiempo());
+        recetaExistente.setCarbohidratos(recetaDTO.getCarbohidratos());
+        recetaExistente.setCalorias(recetaDTO.getCalorias());
+        recetaExistente.setGrasas(recetaDTO.getGrasas());
+        recetaExistente.setProteinas(recetaDTO.getProteinas());
+
+        Receta guardado = recetaRepositorio.save(recetaExistente);
+        return modelMapper.map(guardado, RecetaDTO.class);
     }
 }

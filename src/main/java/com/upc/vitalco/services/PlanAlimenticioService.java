@@ -283,7 +283,7 @@ public class PlanAlimenticioService implements IPlanAlimenticioServices {
         String sexo = paciente.getIdusuario().getGenero();
         double caloriesBasales = 0;
 
-        if ("M".equalsIgnoreCase(sexo)) {
+        if ("Masculino".equalsIgnoreCase(sexo)) {
             caloriesBasales = 66 + (13.75 * paciente.getPeso().doubleValue()) +
                     (5 * paciente.getAltura().doubleValue()) -
                     (6.75 * paciente.getEdad());

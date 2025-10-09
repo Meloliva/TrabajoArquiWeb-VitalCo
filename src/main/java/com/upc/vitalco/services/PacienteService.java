@@ -81,10 +81,14 @@ public class PacienteService implements IPacienteServices {
         Paciente paciente = pacienteRepositorio.findById(pacienteDTO.getId())
                 .orElseThrow(() -> new RuntimeException("Paciente no encontrado"));
 
-        // Solo actualizar sexo, edad, altura, triglicéridos y plan de suscripción
         if (paciente.getIdusuario() != null && pacienteDTO.getIdusuario() != null) {
-            paciente.getIdusuario().setGenero(pacienteDTO.getIdusuario().getGenero());
+            String genero = pacienteDTO.getIdusuario().getGenero();
+            if (genero != null) {
+                paciente.getIdusuario().setGenero(genero);
+                usuarioRepositorio.save(paciente.getIdusuario());
+            }
         }
+
         paciente.setPeso(pacienteDTO.getPeso());
         paciente.setEdad(pacienteDTO.getEdad());
         paciente.setAltura(pacienteDTO.getAltura());

@@ -83,8 +83,10 @@ public class CitaService implements ICitaServices {
 
     @Override
     public List<CitaDTO> listarPorNutricionista(Integer idNutricionista) {
-        return citaRepositorio.findByNutricionistaId(idNutricionista)
-                .stream()
+        //No listar las citas canceladas
+        List<Cita> citas = citaRepositorio.findByNutricionistaId(idNutricionista);
+        return citas.stream()
+                .filter(cita -> !"Cancelada".equals(cita.getEstado()))
                 .map(cita -> {
                     CitaDTO dto = new CitaDTO();
                     dto.setId(cita.getId());
@@ -101,8 +103,11 @@ public class CitaService implements ICitaServices {
 
     @Override
     public List<CitaDTO> listarPorPaciente(Integer idPaciente) {
-        return citaRepositorio.findByPacienteId(idPaciente)
-                .stream()
+        // Obtener todas las citas del paciente
+        List<Cita> citas = citaRepositorio.findByPacienteId(idPaciente);
+
+        return citas.stream()
+                .filter(cita -> !"Cancelada".equals(cita.getEstado()))
                 .map(cita -> {
                     CitaDTO dto = new CitaDTO();
                     dto.setId(cita.getId());
@@ -115,6 +120,8 @@ public class CitaService implements ICitaServices {
                     return dto;
                 })
                 .collect(Collectors.toList());
+
+
     }
     //tiene que eliminar cita y saldria cancelada
     @Override
