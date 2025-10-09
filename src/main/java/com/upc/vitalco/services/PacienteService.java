@@ -1,10 +1,8 @@
 package com.upc.vitalco.services;
 import com.upc.vitalco.dto.*;
 import com.upc.vitalco.entidades.Paciente;
-import com.upc.vitalco.entidades.Planalimenticio;
 import com.upc.vitalco.interfaces.IPacienteServices;
 import com.upc.vitalco.repositorios.PacienteRepositorio;
-import com.upc.vitalco.repositorios.PlanAlimenticioRepositorio;
 import com.upc.vitalco.repositorios.PlanSuscripcionRepositorio;
 import com.upc.vitalco.repositorios.UsuarioRepositorio;
 import org.modelmapper.ModelMapper;
@@ -36,6 +34,10 @@ public class PacienteService implements IPacienteServices {
         if (pacienteDTO == null || pacienteDTO.getIdusuario() == null || pacienteDTO.getIdusuario().getId() == null) {
             throw new HttpMessageNotReadableException("Debe indicar el id del usuario");
         }
+        if (!"ACTIVO".equalsIgnoreCase(pacienteDTO.getIdusuario().getEstado())) {
+            throw new DataIntegrityViolationException("El usuario asociado no está activo.");
+        }
+
 
         // Validación de DNI duplicado
         String dni = pacienteDTO.getIdusuario().getDni();
@@ -58,6 +60,12 @@ public class PacienteService implements IPacienteServices {
 
     @Override
     public void eliminar(Integer id) {
+        Paciente paciente = pacienteRepositorio.findById(id)
+                .orElseThrow(() -> new RuntimeException("Paciente no encontrado"));
+        if (paciente.getIdusuario() == null || !"Activo".equals(paciente.getIdusuario().getEstado())) {
+            throw new DataIntegrityViolationException("El usuario asociado no está activo.");
+        }
+
         if (pacienteRepositorio.existsById(id)) {
             pacienteRepositorio.deleteById(id);
         }
@@ -67,15 +75,21 @@ public class PacienteService implements IPacienteServices {
     public List<PacienteDTO> findAll() {
         return pacienteRepositorio.findAll()
                 .stream()
+                .filter(paciente -> paciente.getIdusuario() != null &&
+                        "Activo".equals(paciente.getIdusuario().getEstado()))
                 .map(paciente -> modelMapper.map(paciente, PacienteDTO.class))
                 .collect(Collectors.toList());
     }
 
-    // Java
+
     @Override
     public PacienteDTO actualizar(EditarPacienteDTO editarPacienteDTO) {
         Paciente paciente = pacienteRepositorio.findById(editarPacienteDTO.getId())
                 .orElseThrow(() -> new RuntimeException("Paciente no encontrado"));
+
+        if (paciente.getIdusuario() == null || !"Activo".equals(paciente.getIdusuario().getEstado())) {
+            throw new DataIntegrityViolationException("El usuario asociado no está activo.");
+        }
 
         // Validar correo único
         String nuevoCorreo = editarPacienteDTO.getCorreo();

@@ -8,6 +8,7 @@ import com.upc.vitalco.repositorios.NutricionistaRepositorio;
 import com.upc.vitalco.repositorios.TurnoRepositorio;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -24,6 +25,10 @@ public class NutricionistaService implements INutricionistaServices {
 
     @Override
     public NutricionistaDTO registrar(NutricionistaDTO nutricionistaDTO) {
+        if (nutricionistaDTO.getIdusuario() == null || !"Activo".equals(nutricionistaDTO.getIdusuario().getEstado())) {
+            throw new DataIntegrityViolationException("El usuario asociado no está activo.");
+        }
+
         if (nutricionistaDTO.getId() == null) {
             Nutricionista nutricionista = modelMapper.map(nutricionistaDTO, Nutricionista.class);
             nutricionista = nutricionistaRepositorio.save(nutricionista);
@@ -34,6 +39,12 @@ public class NutricionistaService implements INutricionistaServices {
 
     @Override
     public void eliminar(Integer id) {
+        Nutricionista nutricionista = nutricionistaRepositorio.findById(id)
+                .orElseThrow(() -> new RuntimeException("Nutricionista con ID " + id + " no encontrado"));
+        if (nutricionista.getIdusuario() == null || !"Activo".equals(nutricionista.getIdusuario().getEstado())) {
+            throw new DataIntegrityViolationException("El usuario asociado no está activo.");
+        }
+
         if(nutricionistaRepositorio.existsById(id)) {
             nutricionistaRepositorio.deleteById(id);
         }
@@ -43,6 +54,8 @@ public class NutricionistaService implements INutricionistaServices {
     public List<NutricionistaDTO> findAll() {
         return nutricionistaRepositorio.findAll()
                 .stream()
+                .filter(nutricionista -> nutricionista.getIdusuario() != null &&
+                "Activo".equals(nutricionista.getIdusuario().getEstado()))
                 .map(nutricionista -> modelMapper.map(nutricionista, NutricionistaDTO.class))
                 .collect(Collectors.toList());
     }
@@ -51,6 +64,10 @@ public class NutricionistaService implements INutricionistaServices {
     public NutricionistaDTO actualizar(NutricionistaDTO nutricionistaDTO) {
         Nutricionista nutricionista = nutricionistaRepositorio.findById(nutricionistaDTO.getId())
                 .orElseThrow(() -> new RuntimeException("Usuario con ID " + nutricionistaDTO.getId() + " no encontrado"));
+
+        if (nutricionista.getIdusuario() == null || !"Activo".equals(nutricionista.getIdusuario().getEstado())) {
+            throw new DataIntegrityViolationException("El usuario asociado no está activo.");
+        }
 
         // Actualizar solo los campos permitidos
         nutricionista.setAsociaciones(nutricionistaDTO.getAsociaciones());

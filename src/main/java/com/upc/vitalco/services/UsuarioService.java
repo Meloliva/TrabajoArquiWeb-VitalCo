@@ -94,10 +94,4 @@ public class UsuarioService implements IUsuarioServices {
                 .collect(Collectors.toList());
     }
 
-
-
-
-
-
-
 }
