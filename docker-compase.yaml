@@ -1,0 +1,38 @@
+services:
+  app:
+    image: 'docker-spring-boot-postgres:latest'
+    build:
+      context: .
+    container_name: app
+    ports:
+      - "6868:8080"
+    networks:
+      - my-network-name
+    depends_on:
+      - db
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=Melanie2020
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/VitalCo
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=Melanie2020
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+  db:
+    image: postgres:16-alpine
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    restart: always
+    container_name: db
+    networks:
+      - my-network-name
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=Melanie2020
+      - POSTGRES_DB=VitalCo
+    ports:
+      - "5433:5432"
+volumes:
+  db_data:
+networks:
+  my-network-name:
+    name: VitalCo
