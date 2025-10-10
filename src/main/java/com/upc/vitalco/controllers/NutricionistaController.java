@@ -1,5 +1,6 @@
 package com.upc.vitalco.controllers;
 
+import com.upc.vitalco.dto.EditarNutricionistaDTO;
 import com.upc.vitalco.dto.NutricionistaDTO;
 import com.upc.vitalco.services.NutricionistaService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,7 +35,7 @@ public class NutricionistaController {
 
     @PutMapping("/editarNutricionista")
     @PreAuthorize("hasRole('NUTRICIONISTA')")
-    public ResponseEntity<NutricionistaDTO> editar(@RequestBody NutricionistaDTO dto) {
+    public ResponseEntity<NutricionistaDTO> editar(@RequestBody EditarNutricionistaDTO dto) {
         return ResponseEntity.ok(nutricionistaService.actualizar(dto));
     }
 }

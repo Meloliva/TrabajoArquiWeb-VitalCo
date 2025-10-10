@@ -1,6 +1,7 @@
 package com.upc.vitalco.services;
 import com.upc.vitalco.dto.*;
 import com.upc.vitalco.entidades.Paciente;
+import com.upc.vitalco.entidades.Usuario;
 import com.upc.vitalco.interfaces.IPacienteServices;
 import com.upc.vitalco.repositorios.PacienteRepositorio;
 import com.upc.vitalco.repositorios.PlanSuscripcionRepositorio;
@@ -34,7 +35,10 @@ public class PacienteService implements IPacienteServices {
         if (pacienteDTO == null || pacienteDTO.getIdusuario() == null || pacienteDTO.getIdusuario().getId() == null) {
             throw new HttpMessageNotReadableException("Debe indicar el id del usuario");
         }
-        if (!"ACTIVO".equalsIgnoreCase(pacienteDTO.getIdusuario().getEstado())) {
+        Usuario usuario = usuarioRepositorio.findById(pacienteDTO.getIdusuario().getId())
+                .orElseThrow(() -> new DataIntegrityViolationException("El usuario asociado no existe."));
+
+        if (!"Activo".equals(usuario.getEstado())) {
             throw new DataIntegrityViolationException("El usuario asociado no está activo.");
         }
 
