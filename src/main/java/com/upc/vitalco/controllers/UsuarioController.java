@@ -34,4 +34,28 @@ public class UsuarioController {
         usuarioService.eliminar(id);
         return ResponseEntity.noContent().build();
     }
+    @PostMapping("/recuperarCuenta")
+    public ResponseEntity<?> solicitarRecuperacion(@RequestParam String correo) {
+            usuarioService.solicitarRecuperacion(correo);
+            return ResponseEntity.ok("Se envió el código de recuperación al correo.");
+    }
+    @PostMapping("/verificarCodigoRecuperacion")
+    public ResponseEntity<?> verificarCodigo(@RequestParam String correo, @RequestParam String codigo) {
+            boolean valido = usuarioService.verificarCodigo(correo, codigo);
+            if (valido) {
+                return ResponseEntity.ok("Código válido.");
+            } else {
+                return ResponseEntity.badRequest().body("Código inválido.");
+            }
+    }
+    @PostMapping("/restablecerCuenta")
+    public ResponseEntity<?> restablecerCuenta(
+                @RequestParam String correo,
+                @RequestParam String nuevaContraseña,
+                @RequestParam String codigo) {
+            usuarioService.restablecerCuenta(correo, nuevaContraseña, codigo);
+            return ResponseEntity.ok("Cuenta restablecida y activada.");
+    }
+
+
 }

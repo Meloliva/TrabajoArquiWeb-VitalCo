@@ -18,5 +18,6 @@ public class UsuarioDTO {
     private String genero;
     private RolDTO rol;
     private String estado="Activo";
+    private String codigoRecuperacion;
 
 }

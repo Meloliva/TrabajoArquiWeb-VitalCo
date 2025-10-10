@@ -39,4 +39,6 @@ public class Usuario {
     @JoinColumn(name = "idrol", nullable = false)
     private Role rol;
 
+    @Column(name = "codigo_recuperacion", length = 10, nullable = true)
+    private String codigoRecuperacion;
 }

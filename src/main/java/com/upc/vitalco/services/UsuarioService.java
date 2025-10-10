@@ -11,6 +11,8 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -29,7 +31,8 @@ public class UsuarioService implements IUsuarioServices {
     private PasswordEncoder passwordEncoder;
     @Autowired
     private RolRepositorio rolRepositorio;
-
+    @Autowired
+    private JavaMailSender mailSender;
 
 
     @Override
@@ -93,5 +96,53 @@ public class UsuarioService implements IUsuarioServices {
                 .map(usuario -> modelMapper.map(usuario, UsuarioDTO.class))
                 .collect(Collectors.toList());
     }
+
+    // Genera un código aleatorio de 6 dígitos
+    private String generarCodigoVerificacion() {
+        return String.valueOf(new Random().nextInt(900000) + 100000);
+    }
+
+    private void enviarCorreoRecuperacion(String correo, String codigo) {
+        SimpleMailMessage mensaje = new SimpleMailMessage();
+        mensaje.setTo(correo);
+        mensaje.setSubject("Recuperación de cuenta - VitalCo");
+        mensaje.setText("Tu código de recuperación es: " + codigo);
+        mailSender.send(mensaje);
+    }
+
+    @Override
+    public void solicitarRecuperacion(String correo) {
+        Usuario usuario = usuarioRepositorio.findByCorreo(correo);
+        if (usuario == null || !"Desactivado".equals(usuario.getEstado())) {
+            throw new RuntimeException("Correo no válido o usuario activo.");
+        }
+        String codigo = generarCodigoVerificacion();
+        usuario.setCodigoRecuperacion(codigo);
+        usuarioRepositorio.save(usuario);
+        enviarCorreoRecuperacion(correo, codigo);
+    }
+
+    @Override
+    public boolean verificarCodigo(String correo, String codigo) {
+        Usuario usuario = usuarioRepositorio.findByCorreo(correo);
+        return usuario != null && codigo.equals(usuario.getCodigoRecuperacion());
+    }
+
+    @Override
+    public void restablecerCuenta(String correo, String nuevaContraseña, String codigo) {
+        Usuario usuario = usuarioRepositorio.findByCorreo(correo);
+        if (usuario == null || !"Desactivado".equals(usuario.getEstado())) {
+            throw new RuntimeException("No se puede restablecer la cuenta.");
+        }
+        if (!codigo.equals(usuario.getCodigoRecuperacion())) {
+            throw new RuntimeException("Código de recuperación inválido.");
+        }
+        usuario.setEstado("Activo");
+        usuario.setContraseña(passwordEncoder.encode(nuevaContraseña));
+        usuario.setCodigoRecuperacion(null);
+        usuarioRepositorio.save(usuario);
+    }
+
+
 
 }
