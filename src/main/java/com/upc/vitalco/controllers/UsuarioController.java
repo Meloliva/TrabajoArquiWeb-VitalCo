@@ -1,5 +1,7 @@
 package com.upc.vitalco.controllers;
+import com.upc.vitalco.dto.RestablecerCuentaDTO;
 import com.upc.vitalco.dto.UsuarioDTO;
+import com.upc.vitalco.dto.VerificarCodigoDTO;
 import com.upc.vitalco.services.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -35,25 +37,20 @@ public class UsuarioController {
         return ResponseEntity.noContent().build();
     }
     @PostMapping("/recuperarCuenta")
+    @PreAuthorize("hasRole('NUTRICIONISTA') or hasRole('PACIENTE')")
     public ResponseEntity<?> solicitarRecuperacion(@RequestParam String correo) {
             usuarioService.solicitarRecuperacion(correo);
             return ResponseEntity.ok("Se envió el código de recuperación al correo.");
     }
     @PostMapping("/verificarCodigoRecuperacion")
-    public ResponseEntity<?> verificarCodigo(@RequestParam String correo, @RequestParam String codigo) {
-            boolean valido = usuarioService.verificarCodigo(correo, codigo);
-            if (valido) {
-                return ResponseEntity.ok("Código válido.");
-            } else {
-                return ResponseEntity.badRequest().body("Código inválido.");
-            }
+    public ResponseEntity<?> verificarCodigo(@RequestParam VerificarCodigoDTO verificarCodigoDTO) {
+        boolean valido = usuarioService.verificarCodigo(verificarCodigoDTO.getCorreo(), verificarCodigoDTO.getCodigo());
+        return valido ? ResponseEntity.ok("Código válido.") : ResponseEntity.badRequest().body("Código inválido.");
+
     }
     @PostMapping("/restablecerCuenta")
-    public ResponseEntity<?> restablecerCuenta(
-                @RequestParam String correo,
-                @RequestParam String nuevaContraseña,
-                @RequestParam String codigo) {
-            usuarioService.restablecerCuenta(correo, nuevaContraseña, codigo);
+    public ResponseEntity<?> restablecerCuenta(@RequestParam RestablecerCuentaDTO restablecerCuentaDTO) {
+        usuarioService.restablecerCuenta(restablecerCuentaDTO.getCorreo(), restablecerCuentaDTO.getNuevaContrasena(), restablecerCuentaDTO.getCodigo());
             return ResponseEntity.ok("Cuenta restablecida y activada.");
     }
 
