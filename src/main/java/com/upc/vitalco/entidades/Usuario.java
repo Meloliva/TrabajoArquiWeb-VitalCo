@@ -1,8 +1,11 @@
 package com.upc.vitalco.entidades;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+
+import java.time.Instant;
 
 @Getter
 @Setter
@@ -39,6 +42,11 @@ public class Usuario {
     @JoinColumn(name = "idrol", nullable = false)
     private Role rol;
 
-    @Column(name = "codigo_recuperacion", length = 10, nullable = true)
+    @JsonIgnore
+    @Column(name = "codigo_recuperacion", length = 6)
     private String codigoRecuperacion;
+
+    @JsonIgnore
+    @Column(name = "codigo_recuperacion_expira")
+    private Instant codigoRecuperacionExpira;
 }
