@@ -53,7 +53,10 @@ public class SecurityConfig {
                                 "/api/registrarUsuario",
                                 "/api/registrarNutricionista",
                                 "/api/registrarPaciente",
-                                "/api/registrarRol"
+                                "/api/registrarRol",
+                                "/api/recuperarCuenta",
+                                "/api/verificarCodigoRecuperacion",
+                                "/api/restablecerCuenta"
                         ).permitAll()
                         .anyRequest().authenticated()
                 )

@@ -125,7 +125,34 @@ public class UsuarioService implements IUsuarioServices {
     @Override
     public boolean verificarCodigo(String correo, String codigo) {
         Usuario usuario = usuarioRepositorio.findByCorreo(correo);
+        // Validaciones adicionales
+        if (usuario == null) {
+            throw new RuntimeException("Usuario no encontrado con el correo: " + correo);
+        }
+
+        if (!"Desactivado".equals(usuario.getEstado())) {
+            throw new RuntimeException("La cuenta no está desactivada.");
+        }
+
+        if (usuario.getCodigoRecuperacion() == null) {
+            throw new RuntimeException("No hay un código de recuperación activo.");
+        }
         return usuario != null && codigo.equals(usuario.getCodigoRecuperacion());
+    }
+
+    private void enviarCorreoConfirmacion(String correo, String nombre) {
+        SimpleMailMessage mensaje = new SimpleMailMessage();
+        mensaje.setTo(correo);
+        mensaje.setSubject("Cuenta restablecida - VitalCo");
+        mensaje.setText(
+                "Hola " + nombre + ",\n\n" +
+                        "Tu cuenta ha sido restablecida exitosamente.\n" +
+                        "Ya puedes iniciar sesión con tu nueva contraseña.\n\n" +
+                        "Si no realizaste esta acción, contacta con soporte inmediatamente.\n\n" +
+                        "Saludos,\n" +
+                        "Equipo VitalCo"
+        );
+        mailSender.send(mensaje);
     }
 
     @Override
@@ -141,6 +168,7 @@ public class UsuarioService implements IUsuarioServices {
         usuario.setContraseña(passwordEncoder.encode(nuevaContraseña));
         usuario.setCodigoRecuperacion(null);
         usuarioRepositorio.save(usuario);
+        enviarCorreoConfirmacion(correo, usuario.getNombre());
     }
 
 

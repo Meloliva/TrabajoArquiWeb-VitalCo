@@ -12,8 +12,8 @@ import lombok.Setter;
 @NoArgsConstructor
 public class UsuarioDTO {
     private Integer id;
-    @NotBlank
-    @Size(min = 8, max = 8)
+    @NotBlank(message = "El DNI no puede estar vacío")
+    @Size(min = 8, max = 8, message = "El DNI debe tener exactamente 8 caracteres")
     private String dni;
     private String contraseña;
     private String nombre;
