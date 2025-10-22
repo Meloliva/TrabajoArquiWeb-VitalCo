@@ -14,8 +14,8 @@ public class Nutricionista {
     @Column(name = "idnutricionista", nullable = false)
     private Integer id;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "idusuario", nullable = false)
+    @OneToOne(optional = false, fetch = FetchType.LAZY)
+    @JoinColumn(name = "idusuario", nullable = false, unique = true)
     private Usuario idusuario;
 
     @Column(name = "asociaciones")

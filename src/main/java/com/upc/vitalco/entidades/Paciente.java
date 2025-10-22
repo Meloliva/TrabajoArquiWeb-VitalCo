@@ -16,8 +16,8 @@ public class Paciente {
     @Column(name = "idpaciente", nullable = false)
     private Integer id;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "idusuario", nullable = false)
+    @OneToOne(optional = false, fetch = FetchType.LAZY)
+    @JoinColumn(name = "idusuario", nullable = false, unique = true)
     private Usuario idusuario;
 
     @Column(name = "altura", precision = 5, scale = 2)

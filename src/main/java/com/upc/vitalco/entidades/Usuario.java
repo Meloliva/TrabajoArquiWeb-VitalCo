@@ -49,4 +49,12 @@ public class Usuario {
     @JsonIgnore
     @Column(name = "codigo_recuperacion_expira")
     private Instant codigoRecuperacionExpira;
+
+    @OneToOne(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @JsonIgnore
+    private Paciente paciente;
+
+    @OneToOne(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @JsonIgnore
+    private Nutricionista nutricionista;
 }
