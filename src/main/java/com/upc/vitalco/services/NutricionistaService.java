@@ -43,6 +43,11 @@ public class NutricionistaService implements INutricionistaServices {
         if (!"Activo".equals(usuario.getEstado())) {
             throw new DataIntegrityViolationException("El usuario asociado no está activo.");
         }
+        // Validar que el rol sea PACIENTE (ignore case)
+        String nombreRol = (usuario.getRol() != null) ? usuario.getRol().getTipo() : null;
+        if (nombreRol == null || !nombreRol.equalsIgnoreCase("NUTRICIONISTA")) {
+            throw new DataIntegrityViolationException("El usuario debe tener rol nutricionista.");
+        }
 
         if (nutricionistaDTO.getId() == null) {
             Nutricionista nutricionista = modelMapper.map(nutricionistaDTO, Nutricionista.class);

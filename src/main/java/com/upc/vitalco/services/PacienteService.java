@@ -42,7 +42,11 @@ public class PacienteService implements IPacienteServices {
             throw new DataIntegrityViolationException("El usuario asociado no está activo.");
         }
 
-
+        // Validar que el rol sea PACIENTE (ignore case)
+        String nombreRol = (usuario.getRol() != null) ? usuario.getRol().getTipo() : null;
+        if (nombreRol == null || !nombreRol.equalsIgnoreCase("PACIENTE")) {
+            throw new DataIntegrityViolationException("El usuario debe tener rol PACIENTE.");
+        }
         // Validación de DNI duplicado
         String dni = pacienteDTO.getIdusuario().getDni();
         if (usuarioRepositorio.findAll().stream()
