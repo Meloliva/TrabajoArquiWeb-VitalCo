@@ -1,6 +1,7 @@
 package com.upc.vitalco.controllers;
 
 import com.upc.vitalco.dto.*;
+import com.upc.vitalco.security.util.SecurityUtils;
 import com.upc.vitalco.services.SeguimientoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -23,6 +24,8 @@ public class SeguimientoController {
 
     @Autowired
     private SeguimientoService seguimientoService;
+    @Autowired
+    private SecurityUtils securityUtils;
 
     @PreAuthorize("hasRole('PACIENTE')")
     @PostMapping("/agregarProgreso/{idPlanRecetaReceta}")
@@ -31,10 +34,10 @@ public class SeguimientoController {
     }
 
     @PreAuthorize("hasRole('PACIENTE')")
-    @GetMapping("/listarSeguimientos/{pacienteId}/{fecha}")
+    @GetMapping("/listarSeguimientos/{fecha}")
     public List<RecetaDTO> listarPorDia(
-            @PathVariable("pacienteId") Integer pacienteId,
             @PathVariable("fecha") LocalDate fecha) {
+        Integer pacienteId = securityUtils.getUsuarioAutenticadoId();
         return seguimientoService.listarPorDia(pacienteId, fecha);
     }
 
@@ -52,19 +55,19 @@ public class SeguimientoController {
     }
 
     @PreAuthorize("hasRole('PACIENTE')")
-    @GetMapping("/listarCaloriasPorHorario/{idpaciente}/{fecha}")
+    @GetMapping("/listarCaloriasPorHorario/{fecha}")
     public ResponseEntity<?> listarCaloriasPorHorario(
-            @PathVariable("idpaciente") Integer pacienteId,
             @PathVariable("fecha") LocalDate fecha) {
+        Integer pacienteId = securityUtils.getUsuarioAutenticadoId();
         Map<String, Double> resultado = seguimientoService.listarCaloriasPorHorario(pacienteId, fecha);
         return ResponseEntity.ok(resultado);
     }
 
     @PreAuthorize("hasRole('PACIENTE')")
-    @GetMapping("/listarTotalesNutricionales/{idpaciente}/{fecha}")
+    @GetMapping("/listarTotalesNutricionales/{fecha}")
     public ResponseEntity<?> obtenerTotalesNutricionales(
-            @PathVariable("idpaciente") Integer pacienteId,
             @PathVariable("fecha") LocalDate fecha) {
+        Integer pacienteId = securityUtils.getUsuarioAutenticadoId();
         Map<String, Double> resultado = seguimientoService.obtenerTotalesNutricionales(pacienteId, fecha);
         return ResponseEntity.ok(resultado);
     }
