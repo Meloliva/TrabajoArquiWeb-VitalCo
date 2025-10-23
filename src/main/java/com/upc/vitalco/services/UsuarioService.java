@@ -118,17 +118,17 @@ public class UsuarioService implements IUsuarioServices {
         }
         String codigo = generarCodigoVerificacion();
         usuario.setCodigoRecuperacion(codigo);
-        usuarioRepositorio.save(usuario);
         usuario.setCodigoVerificado(false);
+        usuarioRepositorio.save(usuario);
         enviarCorreoRecuperacion(correo, codigo);
     }
 
     @Override
-    public boolean verificarCodigo(String correo, String codigo) {
-        Usuario usuario = usuarioRepositorio.findByCorreo(correo);
-        // Validaciones adicionales
+    public boolean verificarCodigo(String codigo) {
+        Usuario usuario = usuarioRepositorio.findByCodigoRecuperacion(codigo);
+
         if (usuario == null) {
-            throw new RuntimeException("Usuario no encontrado con el correo: " + correo);
+            throw new RuntimeException("Código no válido o no asociado a ningún usuario.");
         }
 
         if (!"Desactivado".equals(usuario.getEstado())) {
@@ -138,14 +138,12 @@ public class UsuarioService implements IUsuarioServices {
         if (usuario.getCodigoRecuperacion() == null) {
             throw new RuntimeException("No hay un código de recuperación activo.");
         }
+
         if (Boolean.TRUE.equals(usuario.getCodigoVerificado())) {
             throw new RuntimeException("El código ya fue utilizado. Solicita uno nuevo.");
         }
 
-        // Verifica que el código coincida
-        if (!codigo.equals(usuario.getCodigoRecuperacion())) {
-            return false;
-        }
+        // Como buscamos por código, ya coincide; marcamos verificado y guardamos
         usuario.setCodigoVerificado(true);
         usuarioRepositorio.save(usuario);
 
@@ -167,17 +165,12 @@ public class UsuarioService implements IUsuarioServices {
         mailSender.send(mensaje);
     }
 
+    // java
     @Override
-    public void restablecerCuenta(String correo, String nuevaContraseña, String codigo) {
+    public void restablecerCuenta(String correo, String nuevaContraseña) {
         Usuario usuario = usuarioRepositorio.findByCorreo(correo);
         if (usuario == null || !"Desactivado".equals(usuario.getEstado())) {
             throw new RuntimeException("No se puede restablecer la cuenta.");
-        }
-        if (!codigo.equals(usuario.getCodigoRecuperacion())) {
-            throw new RuntimeException("Código de recuperación inválido.");
-        }
-        if (!Boolean.TRUE.equals(usuario.getCodigoVerificado())) {
-            throw new RuntimeException("Debes verificar el código primero.");
         }
         usuario.setEstado("Activo");
         usuario.setContraseña(passwordEncoder.encode(nuevaContraseña));
@@ -186,6 +179,7 @@ public class UsuarioService implements IUsuarioServices {
         usuarioRepositorio.save(usuario);
         enviarCorreoConfirmacion(correo, usuario.getNombre());
     }
+
 
 
 }

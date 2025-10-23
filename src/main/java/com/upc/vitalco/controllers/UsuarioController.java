@@ -53,7 +53,6 @@ public class UsuarioController {
 
         try {
             boolean valido = usuarioService.verificarCodigo(
-                    verificarCodigoDTO.getCorreo(),
                     verificarCodigoDTO.getCodigo()
             );
 
@@ -74,7 +73,7 @@ public class UsuarioController {
     }
     @PostMapping("/restablecerCuenta")
     public ResponseEntity<?> restablecerCuenta(@RequestBody RestablecerCuentaDTO restablecerCuentaDTO) {
-        usuarioService.restablecerCuenta(restablecerCuentaDTO.getCorreo(), restablecerCuentaDTO.getNuevaContrasena(), restablecerCuentaDTO.getCodigo());
+        usuarioService.restablecerCuenta(restablecerCuentaDTO.getCorreo(), restablecerCuentaDTO.getNuevaContrasena());
             return ResponseEntity.ok("Cuenta restablecida y activada.");
     }
 

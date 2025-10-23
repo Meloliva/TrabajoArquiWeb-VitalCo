@@ -17,9 +17,6 @@ public class RestablecerCuentaDTO {
     @NotBlank
     private String correo;
 
-    @NotBlank @Size(min = 6, max = 6)
-    private String codigo;
-
     @NotBlank @Size(min = 8, max = 100)
     private String nuevaContrasena;
 }

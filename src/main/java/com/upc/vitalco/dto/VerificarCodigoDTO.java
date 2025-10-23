@@ -13,9 +13,5 @@ import lombok.Setter;
 @NoArgsConstructor
 public class VerificarCodigoDTO {
     @NotBlank
-    @Email
-    private String correo;
-
-    @NotBlank
     private String codigo;
 }

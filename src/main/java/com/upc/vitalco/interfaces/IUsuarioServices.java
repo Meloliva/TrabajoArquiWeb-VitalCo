@@ -7,6 +7,6 @@ public interface IUsuarioServices {
     public void eliminar(Integer id);
     public List<UsuarioDTO> findAll();
     void solicitarRecuperacion(String correo);
-    boolean verificarCodigo(String correo, String codigo);
-    void restablecerCuenta(String correo, String nuevaContraseña, String codigo);
+    boolean verificarCodigo(String codigo);
+    void restablecerCuenta(String correo, String nuevaContraseña);
 }
