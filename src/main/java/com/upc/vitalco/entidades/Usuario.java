@@ -49,4 +49,8 @@ public class Usuario {
     @JsonIgnore
     @Column(name = "codigo_recuperacion_expira")
     private Instant codigoRecuperacionExpira;
+
+    @JsonIgnore
+    @Column(name = "codigo_verificado")
+    private Boolean codigoVerificado = false;
 }

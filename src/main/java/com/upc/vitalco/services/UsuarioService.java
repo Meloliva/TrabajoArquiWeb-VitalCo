@@ -119,6 +119,7 @@ public class UsuarioService implements IUsuarioServices {
         String codigo = generarCodigoVerificacion();
         usuario.setCodigoRecuperacion(codigo);
         usuarioRepositorio.save(usuario);
+        usuario.setCodigoVerificado(false);
         enviarCorreoRecuperacion(correo, codigo);
     }
 
@@ -137,7 +138,18 @@ public class UsuarioService implements IUsuarioServices {
         if (usuario.getCodigoRecuperacion() == null) {
             throw new RuntimeException("No hay un código de recuperación activo.");
         }
-        return usuario != null && codigo.equals(usuario.getCodigoRecuperacion());
+        if (Boolean.TRUE.equals(usuario.getCodigoVerificado())) {
+            throw new RuntimeException("El código ya fue utilizado. Solicita uno nuevo.");
+        }
+
+        // Verifica que el código coincida
+        if (!codigo.equals(usuario.getCodigoRecuperacion())) {
+            return false;
+        }
+        usuario.setCodigoVerificado(true);
+        usuarioRepositorio.save(usuario);
+
+        return true;
     }
 
     private void enviarCorreoConfirmacion(String correo, String nombre) {
@@ -164,9 +176,13 @@ public class UsuarioService implements IUsuarioServices {
         if (!codigo.equals(usuario.getCodigoRecuperacion())) {
             throw new RuntimeException("Código de recuperación inválido.");
         }
+        if (!Boolean.TRUE.equals(usuario.getCodigoVerificado())) {
+            throw new RuntimeException("Debes verificar el código primero.");
+        }
         usuario.setEstado("Activo");
         usuario.setContraseña(passwordEncoder.encode(nuevaContraseña));
         usuario.setCodigoRecuperacion(null);
+        usuario.setCodigoVerificado(false);
         usuarioRepositorio.save(usuario);
         enviarCorreoConfirmacion(correo, usuario.getNombre());
     }
