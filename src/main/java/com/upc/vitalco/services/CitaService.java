@@ -81,10 +81,11 @@ public class CitaService implements ICitaServices {
         return dto;
     }
 
+    //Lista de toda la fecha
     @Override
-    public List<CitaDTO> listarPorNutricionista(Integer idNutricionista) {
+    public List<CitaDTO> listarPorNutricionista(Integer idNutricionista, LocalDate fecha) {
         //No listar las citas canceladas
-        List<Cita> citas = citaRepositorio.findByNutricionistaId(idNutricionista);
+        List<Cita> citas = citaRepositorio.findByNutricionistaIdAndDia(idNutricionista, fecha);
         return citas.stream()
                 .filter(cita -> !"Cancelada".equals(cita.getEstado()))
                 .map(cita -> {
@@ -100,11 +101,21 @@ public class CitaService implements ICitaServices {
                 })
                 .collect(Collectors.toList());
     }
-
+    //lista de hoy nutricionista
     @Override
-    public List<CitaDTO> listarPorPaciente(Integer idPaciente) {
+    public List<CitaDTO> listarPorNutricionistaHoy(Integer idNutricionista) {
+        return listarPorNutricionista(idNutricionista, LocalDate.now());
+    }
+    //lista de mañana nutricionista
+    @Override
+    public List<CitaDTO> listarPorNutricionistaMañana(Integer idNutricionista) {
+        return listarPorNutricionista(idNutricionista, LocalDate.now().plusDays(1));
+    }
+    //Lista de toda la fecha
+    @Override
+    public List<CitaDTO> listarPorPaciente(Integer idPaciente, LocalDate fecha) {
         // Obtener todas las citas del paciente
-        List<Cita> citas = citaRepositorio.findByPacienteId(idPaciente);
+        List<Cita> citas = citaRepositorio.findByPacienteIdAndDia(idPaciente, fecha);
 
         return citas.stream()
                 .filter(cita -> !"Cancelada".equals(cita.getEstado()))
@@ -122,6 +133,16 @@ public class CitaService implements ICitaServices {
                 .collect(Collectors.toList());
 
 
+    }
+    //Lista para hoy paciente
+    @Override
+    public List<CitaDTO> listarPorPacienteHoy(Integer idPaciente) {
+        return listarPorPaciente(idPaciente, LocalDate.now());
+    }
+    //Lista para mañana pacient
+    @Override
+    public List<CitaDTO> listarPorPacienteMañana(Integer idPaciente) {
+        return listarPorPaciente(idPaciente, LocalDate.now().plusDays(1));
     }
     //tiene que eliminar cita y saldria cancelada
     @Override
@@ -158,23 +179,6 @@ public class CitaService implements ICitaServices {
         citaRepositorio.save(cita);
         return cita.getLink();
     }
-    public List<CitaDTO> listarPorFecha(LocalDate fecha) {
-        return citaRepositorio.findByDia(fecha)
-                .stream()
-                .map(cita -> {
-                    CitaDTO dto = new CitaDTO();
-                    dto.setId(cita.getId());
-                    dto.setDia(cita.getDia());
-                    dto.setHora(cita.getHora());
-                    dto.setDescripcion(cita.getDescripcion());
-                    dto.setLink(cita.getLink());
-                    dto.setIdPaciente(cita.getPaciente().getId());
-                    dto.setIdNutricionista(cita.getNutricionista().getId());
-                    return dto;
-                })
-                .collect(Collectors.toList());
-    }
-
 
 
 }

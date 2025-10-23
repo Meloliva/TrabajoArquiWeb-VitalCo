@@ -15,11 +15,12 @@ public class RolController {
     @Autowired
     private RolService rolService;
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/registrarRol")
     public RolDTO registrar(@RequestBody RolDTO rolesDTO){ //wrapper
         return rolService.registrar(rolesDTO);
     }
-    @PreAuthorize("hasRole('ADMIN')")
+
     @GetMapping("/listarRoles")
     public List<RolDTO> findAll(){
         return rolService.findAll();

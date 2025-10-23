@@ -58,20 +58,6 @@ public class NutricionistaService implements INutricionistaServices {
         return null;
     }
 
-
-    @Override
-    public void eliminar(Integer id) {
-        Nutricionista nutricionista = nutricionistaRepositorio.findById(id)
-                .orElseThrow(() -> new RuntimeException("Nutricionista con ID " + id + " no encontrado"));
-        if (nutricionista.getIdusuario() == null || !"Activo".equals(nutricionista.getIdusuario().getEstado())) {
-            throw new DataIntegrityViolationException("El usuario asociado no está activo.");
-        }
-
-        if(nutricionistaRepositorio.existsById(id)) {
-            nutricionistaRepositorio.deleteById(id);
-        }
-    }
-
     @Override
     public List<NutricionistaDTO> findAll() {
         return nutricionistaRepositorio.findAll()

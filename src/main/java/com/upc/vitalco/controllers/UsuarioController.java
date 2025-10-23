@@ -35,7 +35,7 @@ public class UsuarioController {
         return ResponseEntity.ok(lista);
     }
 
-    @DeleteMapping("/eliminarUsuario/{id}")
+    @DeleteMapping("/eliminarUsuario")
     @PreAuthorize("hasRole('NUTRICIONISTA') or hasRole('PACIENTE')")
     public ResponseEntity<Void> eliminar() {
         Integer idUsuario = securityUtils.getUsuarioAutenticadoId();

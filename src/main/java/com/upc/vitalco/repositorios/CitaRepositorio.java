@@ -17,4 +17,8 @@ public interface CitaRepositorio extends JpaRepository<Cita, Integer> {
     List<Cita> findByDia(LocalDate dia);
 
     Optional<Object> findByNutricionistaIdAndDiaAndHora(Integer id, LocalDate dia, LocalTime hora);
+
+    List<Cita> findByPacienteIdAndDia(Integer idPaciente, LocalDate fecha);
+
+    List<Cita> findByNutricionistaIdAndDia(Integer idNutricionista, LocalDate fecha);
 }

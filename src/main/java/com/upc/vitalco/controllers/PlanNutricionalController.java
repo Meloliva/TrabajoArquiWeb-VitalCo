@@ -22,7 +22,7 @@ public class PlanNutricionalController {
         return ResponseEntity.ok(registrado);
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('PACIENTE')")
     @GetMapping("/listarPlanesNutricionales")
     public ResponseEntity<List<PlanNutricionalDTO>> listar() {
         List<PlanNutricionalDTO> lista = plannutricionalService.findAll();

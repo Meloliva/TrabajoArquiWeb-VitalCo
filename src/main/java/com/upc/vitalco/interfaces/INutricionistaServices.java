@@ -7,7 +7,6 @@ import java.util.List;
 
 public interface INutricionistaServices {
     public NutricionistaDTO registrar(NutricionistaDTO nutricionistaDTO);
-    public void eliminar(Integer id);
     public List<NutricionistaDTO> findAll();
     public NutricionistaDTO actualizar(EditarNutricionistaDTO editarNutricionistaDTO);
 }

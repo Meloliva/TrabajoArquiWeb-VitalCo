@@ -1,6 +1,7 @@
 package com.upc.vitalco.controllers;
 import com.upc.vitalco.dto.PlanRecetaDTO;
 import com.upc.vitalco.dto.RecetaDTO;
+import com.upc.vitalco.security.util.SecurityUtils;
 import com.upc.vitalco.services.PlanRecetaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -15,10 +16,13 @@ import java.util.List;
 public class PlanRecetaController {
     @Autowired
     private PlanRecetaService planRecetaService;
+    @Autowired
+    private SecurityUtils securityUtils;
 
     @PreAuthorize("hasRole('PACIENTE')")
-    @GetMapping("/listarPlanRecetas/{idPaciente}")
-    public List<PlanRecetaDTO> listarPorPaciente(@PathVariable Integer idPaciente) {
+    @GetMapping("/listarPlanRecetas")
+    public List<PlanRecetaDTO> listarPorPaciente() {
+        Integer idPaciente = securityUtils.getUsuarioAutenticadoId();
         return planRecetaService.listarPorPaciente(idPaciente);
     }
 
@@ -29,26 +33,26 @@ public class PlanRecetaController {
     }
 
     @PreAuthorize("hasRole('PACIENTE')")
-    @GetMapping("/listarRecetasPorHorarios/{idPaciente}/{nombreHorario}")
+    @GetMapping("/listarRecetasPorHorarios/{nombreHorario}")
     public List<RecetaDTO> listarRecetasPorHorarioEnPlanRecienteDePaciente(
-            @PathVariable Integer idPaciente,
             @PathVariable String nombreHorario) {
+        Integer idPaciente = securityUtils.getUsuarioAutenticadoId();
         return planRecetaService.listarRecetasPorHorarioEnPlanRecienteDePaciente(idPaciente, nombreHorario);
     }
 
     @PreAuthorize("hasRole('PACIENTE')")
-    @GetMapping("/autocompletarRecetas/{idPaciente}")
+    @GetMapping("/autocompletarRecetas/{texto}")
     public List<String> autocompletarNombreRecetaEnPlanReciente(
-            @PathVariable Integer idPaciente,
-            @RequestParam String texto) {
+            @PathVariable("texto") String texto) {
+        Integer idPaciente = securityUtils.getUsuarioAutenticadoId();
         return planRecetaService.autocompletarNombreRecetaEnPlanReciente(idPaciente, texto);
     }
 
     @PreAuthorize("hasRole('PACIENTE')")
-    @GetMapping("/buscarRecetas/{idPaciente}")
+    @GetMapping("/buscarRecetas/{texto}")
     public List<RecetaDTO> buscarRecetasEnPlanReciente(
-            @PathVariable Integer idPaciente,
-            @RequestParam String texto) {
+            @PathVariable("texto") String texto) {
+        Integer idPaciente = securityUtils.getUsuarioAutenticadoId();
         return planRecetaService.buscarRecetasEnPlanReciente(idPaciente, texto);
     }
 

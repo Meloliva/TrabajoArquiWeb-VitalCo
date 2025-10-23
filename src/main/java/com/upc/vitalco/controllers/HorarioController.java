@@ -28,13 +28,13 @@ public class HorarioController {
     }
 
     @GetMapping("/listarHorarios")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('NUTRICIONISTA') or hasRole('PACIENTE') or hasRole('ADMIN')")
     public List<HorarioDTO> findAll(){
         return  horarioService.findAll();
     }
 
     @DeleteMapping("/eliminarHorario/{id}")
-    @PreAuthorize("hasRole('NUTRICIONISTA') or hasRole('PACIENTE')")
+    @PreAuthorize("hasRole('ADMIN')")
     public void borrar(@PathVariable Long id){
         horarioService.borrar(id);
     }

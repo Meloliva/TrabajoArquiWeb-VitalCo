@@ -65,20 +65,6 @@ public class PacienteService implements IPacienteServices {
         return null;
     }
 
-
-    @Override
-    public void eliminar(Integer id) {
-        Paciente paciente = pacienteRepositorio.findById(id)
-                .orElseThrow(() -> new RuntimeException("Paciente no encontrado"));
-        if (paciente.getIdusuario() == null || !"Activo".equals(paciente.getIdusuario().getEstado())) {
-            throw new DataIntegrityViolationException("El usuario asociado no está activo.");
-        }
-
-        if (pacienteRepositorio.existsById(id)) {
-            pacienteRepositorio.deleteById(id);
-        }
-    }
-
     @Override
     public List<PacienteDTO> findAll() {
         return pacienteRepositorio.findAll()

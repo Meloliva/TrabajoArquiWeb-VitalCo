@@ -56,7 +56,8 @@ public class SecurityConfig {
                                 "/api/registrarRol",
                                 "/api/recuperarCuenta",
                                 "/api/verificarCodigoRecuperacion",
-                                "/api/restablecerCuenta"
+                                "/api/restablecerCuenta",
+                                "/api/listarRoles"
                         ).permitAll()
                         .anyRequest().authenticated()
                 )

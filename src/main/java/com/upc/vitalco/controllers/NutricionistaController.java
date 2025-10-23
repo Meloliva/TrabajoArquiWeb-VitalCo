@@ -27,12 +27,6 @@ public class NutricionistaController {
         return nutricionistaService.findAll();
     }
 
-    @DeleteMapping("/eliminarNutricionista/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
-    public void eliminar(@PathVariable Integer id){
-        nutricionistaService.eliminar(id);
-    }
-
     @PutMapping("/editarNutricionista")
     @PreAuthorize("hasRole('NUTRICIONISTA')")
     public ResponseEntity<NutricionistaDTO> editar(@RequestBody EditarNutricionistaDTO dto) {

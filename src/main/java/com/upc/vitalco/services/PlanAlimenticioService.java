@@ -93,8 +93,11 @@ public class PlanAlimenticioService implements IPlanAlimenticioServices {
 
 
     @Override
-    public NutricionistaRequerimientoDTO editarPlanAlimenticio(Integer idPaciente, NutricionistaRequerimientoDTO dto) {
-        Planalimenticio plan = planAlimenticioRepositorio.findByIdpacienteId(idPaciente);
+    public NutricionistaRequerimientoDTO editarPlanAlimenticio(String dni, NutricionistaRequerimientoDTO dto) {
+        Paciente paciente1 = pacienteRepositorio.findByDni(dni)
+                .orElseThrow(() -> new RuntimeException("Paciente no encontrado con DNI: " + dni));
+
+        Planalimenticio plan = planAlimenticioRepositorio.findByIdpacienteId(paciente1.getId());
         if (plan == null) {
             throw new RuntimeException("No se encontró el plan alimenticio asociado al paciente");
         }
@@ -343,8 +346,11 @@ public class PlanAlimenticioService implements IPlanAlimenticioServices {
 
         return new double[]{carbohidratos, proteinas, grasas};
     }
-    public Planalimenticio obtenerPlanAlimenticioPorPaciente(Integer idPaciente) {
-        return planAlimenticioRepositorio.findByIdpacienteId(idPaciente);
+    public Planalimenticio obtenerPlanAlimenticioPorPaciente(String dni) {
+        Paciente paciente = pacienteRepositorio.findByDni(dni)
+                .orElseThrow(() -> new RuntimeException("Paciente no encontrado con DNI: " + dni));
+
+        return planAlimenticioRepositorio.findByIdpacienteId(paciente.getId());
     }
 
 

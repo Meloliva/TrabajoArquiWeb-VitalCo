@@ -3,6 +3,7 @@ import com.upc.vitalco.dto.NutricionistaDTO;
 import com.upc.vitalco.dto.NutricionistaRequerimientoDTO;
 import com.upc.vitalco.dto.PlanAlimenticioDTO;
 import com.upc.vitalco.entidades.Planalimenticio;
+import com.upc.vitalco.security.util.SecurityUtils;
 import com.upc.vitalco.services.NutricionistaService;
 import com.upc.vitalco.services.PlanAlimenticioService;
 import com.upc.vitalco.services.PlanRecetaService;
@@ -23,6 +24,8 @@ public class PlanAlimenticioController {
     private SeguimientoService seguimientoService;
     @Autowired
     private PlanRecetaService planRecetaService;
+    @Autowired
+    private SecurityUtils securityUtils;
 
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/listarPlanesAlimenticios")
@@ -65,9 +68,10 @@ public class PlanAlimenticioController {
     }
 
 
-    @PreAuthorize("hasRole('PACIENTE') or hasRole('NUTRICIONISTA')")
-    @GetMapping("/consultarPlanAlimenticio/{idPaciente}")
-    public ResponseEntity<PlanAlimenticioDTO> consultarPlanAlimenticio(@PathVariable Integer idPaciente) {
+    @PreAuthorize("hasRole('PACIENTE')")
+    @GetMapping("/consultarPlanAlimenticio")
+    public ResponseEntity<PlanAlimenticioDTO> consultarPlanAlimenticio() {
+        Integer idPaciente = securityUtils.getUsuarioAutenticadoId();
         try {
 
             PlanAlimenticioDTO plan = planAlimenticioService.consultarPlanAlimenticioConDatosActualizados(idPaciente);
@@ -80,12 +84,12 @@ public class PlanAlimenticioController {
     }
 
     @PreAuthorize("hasRole('NUTRICIONISTA')")
-    @PutMapping("/editarNutrientes/{idpaciente}")
+    @PutMapping("/editarNutrientes/{dniPaciente}")
     public ResponseEntity<NutricionistaRequerimientoDTO> editarPlanAlimenticio(
-            @PathVariable("idpaciente") Integer idPaciente,@RequestBody NutricionistaRequerimientoDTO nutricionistaRequerimientoDTO) {
-        NutricionistaRequerimientoDTO actualizado = planAlimenticioService.editarPlanAlimenticio(idPaciente,nutricionistaRequerimientoDTO);
+            @PathVariable("dniPaciente") String dni,@RequestBody NutricionistaRequerimientoDTO nutricionistaRequerimientoDTO) {
+        NutricionistaRequerimientoDTO actualizado = planAlimenticioService.editarPlanAlimenticio(dni,nutricionistaRequerimientoDTO);
 
-        Planalimenticio plan = planAlimenticioService.obtenerPlanAlimenticioPorPaciente(idPaciente);
+        Planalimenticio plan = planAlimenticioService.obtenerPlanAlimenticioPorPaciente(dni);
         Integer idPlan = plan.getId();
         planRecetaService.recalcularPlanRecetas(idPlan);
 

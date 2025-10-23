@@ -27,12 +27,6 @@ public class PacienteController {
         return pacienteService.findAll();
     }
 
-    @DeleteMapping("/eliminarPaciente/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
-    public void eliminar(@PathVariable Integer id){
-        pacienteService.eliminar(id);
-    }
-
     @PutMapping("/editarPaciente")
     @PreAuthorize("hasRole('PACIENTE')")
     public ResponseEntity<PacienteDTO> editar(@RequestBody EditarPacienteDTO dto) {

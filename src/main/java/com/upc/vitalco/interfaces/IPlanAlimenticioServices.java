@@ -13,6 +13,6 @@ public interface IPlanAlimenticioServices {
     PlanAlimenticioDTO consultarPlanAlimenticio(Integer idPaciente);
     PlanAlimenticioDTO consultarPlanAlimenticioConDatosActualizados(Integer idPaciente);
     PlanAlimenticioDTO registrar(Integer idPaciente);
-    NutricionistaRequerimientoDTO editarPlanAlimenticio(Integer idPlanAlimenticio, NutricionistaRequerimientoDTO nuevoPlan);
+    NutricionistaRequerimientoDTO editarPlanAlimenticio(String dni, NutricionistaRequerimientoDTO nuevoPlan);
     PlanAlimenticioDTO eliminarPlanAlimenticio(Integer id);
 }
