@@ -2,13 +2,13 @@ package com.upc.vitalco.controllers;
 import com.upc.vitalco.dto.RestablecerCuentaDTO;
 import com.upc.vitalco.dto.UsuarioDTO;
 import com.upc.vitalco.dto.VerificarCodigoDTO;
+import com.upc.vitalco.security.util.SecurityUtils;
 import com.upc.vitalco.services.UsuarioService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.security.access.prepost.PreAuthorize;
-
 
 import java.util.HashMap;
 import java.util.List;
@@ -19,6 +19,8 @@ import java.util.Map;
 public class UsuarioController {
     @Autowired
     private UsuarioService usuarioService;
+    @Autowired
+    private SecurityUtils securityUtils;
 
     @PostMapping("/registrarUsuario")
     public ResponseEntity<UsuarioDTO> registrar(@Valid @RequestBody UsuarioDTO dto) {
@@ -35,8 +37,9 @@ public class UsuarioController {
 
     @DeleteMapping("/eliminarUsuario/{id}")
     @PreAuthorize("hasRole('NUTRICIONISTA') or hasRole('PACIENTE')")
-    public ResponseEntity<Void> eliminar(@PathVariable Integer id) {
-        usuarioService.eliminar(id);
+    public ResponseEntity<Void> eliminar() {
+        Integer idUsuario = securityUtils.getUsuarioAutenticadoId();
+        usuarioService.eliminar(idUsuario);
         return ResponseEntity.noContent().build();
     }
     @PostMapping("/recuperarCuenta")
