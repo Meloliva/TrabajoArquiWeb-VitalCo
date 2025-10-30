@@ -1,22 +1,25 @@
 package com.upc.vitalco.services;
 
 import com.upc.vitalco.dto.RecetaDTO;
+import com.upc.vitalco.entidades.Paciente;
 import com.upc.vitalco.entidades.Receta;
+import com.upc.vitalco.entidades.Seguimiento;
 import com.upc.vitalco.interfaces.IRecetaServices;
+import com.upc.vitalco.repositorios.PacienteRepositorio;
 import com.upc.vitalco.repositorios.RecetaRepositorio;
+import com.upc.vitalco.repositorios.SeguimientoRepositorio;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import java.time.LocalDate;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
 public class RecetaService implements IRecetaServices {
     @Autowired
     private RecetaRepositorio recetaRepositorio;
-
-
     @Autowired
     private ModelMapper modelMapper;
 
@@ -61,4 +64,5 @@ public class RecetaService implements IRecetaServices {
         Receta guardado = recetaRepositorio.save(recetaExistente);
         return modelMapper.map(guardado, RecetaDTO.class);
     }
+
 }

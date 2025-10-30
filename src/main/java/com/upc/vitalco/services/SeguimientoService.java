@@ -50,7 +50,10 @@ public class SeguimientoService implements ISeguimientoServices {
         if (receta == null) {
             throw new RuntimeException("El PlanRecetaReceta no tiene una receta asociada");
         }
-
+        Planalimenticio planAli = plan.getIdplanalimenticio();
+        if (planAli == null) {
+            throw new RuntimeException("El plan asociado no contiene un Planalimenticio");
+        }
         if ((receta.getCalorias() != null && receta.getCalorias() > plan.getIdplanalimenticio().getCaloriasDiaria()) ||
                 (receta.getProteinas() != null && receta.getProteinas() > plan.getIdplanalimenticio().getProteinasDiaria()) ||
                 (receta.getGrasas() != null && receta.getGrasas() > plan.getIdplanalimenticio().getGrasasDiaria()) ||
@@ -66,6 +69,7 @@ public class SeguimientoService implements ISeguimientoServices {
         seguimiento.setCumplio(false); // por defecto
         seguimiento.setFecharegistro(LocalDate.now());
         seguimiento.setPlanRecetaReceta(rel);
+        seguimiento.setObjetivoSnapshot(planAli != null ? planAli.getIdpaciente().getIdPlanNutricional().getObjetivo() : null);
 
         Seguimiento saved = seguimientoRepositorio.save(seguimiento);
 
@@ -100,45 +104,34 @@ public class SeguimientoService implements ISeguimientoServices {
 
         return result;
     }
+   //corregir listar por dia solo debe visualizarse totales nutricionles por horario, total de caloria, totales nutricionales
+   //probar y eliminar esto, resumen seguimiento
+   @Override
+   public SeguimientoResumenDTO listarPorDia(Integer pacienteId, LocalDate fecha) {
+       if (pacienteId == null || pacienteId <= 0) {
+           throw new IllegalArgumentException("pacienteId inválido");
+       }
+       if (fecha == null) {
+           throw new IllegalArgumentException("fecha no puede ser null");
+       }
+
+       // Verificar existencia de paciente
+       pacienteRepositorio.findById(pacienteId)
+               .orElseThrow(() -> new RuntimeException("Paciente con id " + pacienteId + " no encontrado"));
+
+       Map<String, Double> totales = Optional.ofNullable(obtenerTotalesNutricionales(pacienteId, fecha))
+               .orElseGet(HashMap::new);
+       Map<String, Double> caloriasPorHorario = Optional.ofNullable(listarCaloriasPorHorario(pacienteId, fecha))
+               .orElseGet(HashMap::new);
+
+       SeguimientoResumenDTO resumen = new SeguimientoResumenDTO();
+       resumen.setTotalesNutricionales(totales);
+       resumen.setCaloriasPorHorario(caloriasPorHorario);
+
+       return resumen;
+   }
 
 
-
-    @Override
-    public List<RecetaDTO> listarPorDia(Integer pacienteId, LocalDate fecha) {
-        List<Seguimiento> seguimientos = seguimientoRepositorio.buscarPorPacienteYFecha(pacienteId, fecha);
-
-        return seguimientos.stream()
-                .filter(s -> s.getId() != null) // Solo seguimientos que existen (no eliminados)
-                .map(Seguimiento::getPlanRecetaReceta)
-                .filter(Objects::nonNull)
-                .map(PlanRecetaReceta::getReceta)
-                .filter(Objects::nonNull)
-                .map(receta -> {
-                    RecetaDTO dto = new RecetaDTO();
-                    dto.setIdReceta(receta.getId().longValue());
-                    if (receta.getIdhorario() != null) {
-                        HorarioDTO horarioDTO = new HorarioDTO();
-                        horarioDTO.setId(receta.getIdhorario().getId().longValue());
-                        horarioDTO.setNombre(receta.getIdhorario().getNombre());
-                        dto.setIdhorario(horarioDTO);
-                    }
-                    dto.setNombre(receta.getNombre());
-                    dto.setDescripcion(receta.getDescripcion());
-                    dto.setCalorias(receta.getCalorias());
-                    dto.setProteinas(receta.getProteinas());
-                    dto.setGrasas(receta.getGrasas());
-                    dto.setCarbohidratos(receta.getCarbohidratos());
-                    dto.setIngredientes(receta.getIngredientes());
-                    dto.setPreparacion(receta.getPreparacion());
-                    dto.setCantidadPorcion(receta.getCantidadPorcion());
-                    dto.setTiempo(receta.getTiempo());
-                    dto.setFoto(receta.getFoto());
-                    return dto;
-                })
-                .toList();
-    }
-
-    @Override
     public Map<String, Double> obtenerTotalesNutricionales(Integer pacienteId, LocalDate fecha) {
         List<Seguimiento> seguimientos = seguimientoRepositorio.buscarPorPacienteYFecha(pacienteId, fecha);
 
@@ -163,16 +156,32 @@ public class SeguimientoService implements ISeguimientoServices {
                 .mapToDouble(s -> Optional.ofNullable(s.getGrasas()).orElse(0.0))
                 .sum();
 
+        // Obtener totales requeridos del plan alimenticio
+        Planalimenticio plan = planAlimenticioRepositorio.buscarPorPaciente(pacienteId);
+        if (plan == null) {
+            throw new RuntimeException("El paciente no tiene un plan alimenticio asignado");
+        }
+
+        double reqCalorias = Optional.ofNullable(plan.getCaloriasDiaria()).orElse(0.0);
+        double reqCarbohidratos = Optional.ofNullable(plan.getCarbohidratosDiaria()).orElse(0.0);
+        double reqProteinas = Optional.ofNullable(plan.getProteinasDiaria()).orElse(0.0);
+        double reqGrasas = Optional.ofNullable(plan.getGrasasDiaria()).orElse(0.0);
+
         Map<String, Double> totales = new HashMap<>();
         totales.put("calorias", totalCalorias);
         totales.put("carbohidratos", totalCarbohidratos);
         totales.put("proteinas", totalProteinas);
         totales.put("grasas", totalGrasas);
 
+        // Totales requeridos según plan
+        totales.put("requerido_calorias", reqCalorias);
+        totales.put("requerido_carbohidratos", reqCarbohidratos);
+        totales.put("requerido_proteinas", reqProteinas);
+        totales.put("requerido_grasas", reqGrasas);
+
         return totales;
     }
 
-    @Override
     public Map<String, Double> listarCaloriasPorHorario(Integer pacienteId, LocalDate fecha) {
         List<Seguimiento> seguimientos = seguimientoRepositorio.buscarPorPacienteYFecha(pacienteId, fecha);
 
@@ -195,7 +204,6 @@ public class SeguimientoService implements ISeguimientoServices {
 
         return caloriasPorHorario;
     }
-
 
     @Override
     public Map<String, Object> verificarCumplimientoDiario(String dni, LocalDate fecha) {
@@ -262,7 +270,7 @@ public class SeguimientoService implements ISeguimientoServices {
         }
         seguimientoRepositorio.eliminarRecetaDeSeguimiento(seguimientoId, recetaId, pacienteId);
     }
-    //metodo de nutricionista
+    //metodo de nutricionista, paciente
     @Override
     public SeguimientoResumenDTO resumenSeguimientoNutri(String dni, LocalDate fecha) {
         Paciente paciente = pacienteRepositorio.findByDni(dni)
@@ -286,8 +294,9 @@ public class SeguimientoService implements ISeguimientoServices {
 
         return resumen;
     }
+    //nutri modificar
     @Override
-    public List<SeguimientoDTO> listarPorDniYFecha(String dni, LocalDate fecha) {
+    public List<SeguimientoBusquedaDTO> listarPorDniYFecha(String dni, LocalDate fecha) {
         // Buscar el paciente por DNI
         Paciente paciente = pacienteRepositorio.findByDni(dni)
                 .orElseThrow(() -> new RuntimeException("Paciente con DNI " + dni + " no encontrado"));
@@ -297,56 +306,23 @@ public class SeguimientoService implements ISeguimientoServices {
         if (!tieneCitaAceptada) {
             throw new RuntimeException("El paciente no tiene citas aceptadas. Solo se puede ver el progreso de pacientes con citas aceptadas");
         }
+        List<Seguimiento> seguimientos = seguimientoRepositorio.buscarPorPacienteYFecha(paciente.getId(), fecha);
+        if (seguimientos == null || seguimientos.isEmpty()) {
+            throw new RuntimeException("No hay seguimientos para la fecha indicada");
+        }
 
-        List<Seguimiento> seguimientos = seguimientoRepositorio.buscarPorInicialUsernameYFecha(dni, fecha);
+        Seguimiento seleccionado = seguimientos.stream()
+                .max(Comparator.comparing(Seguimiento::getId))
+                .orElseThrow(() -> new RuntimeException("No se pudo determinar el seguimiento más reciente"));
 
-        return seguimientos.stream()
-                .filter(s -> s.getId() != null)
-                .map(s -> {
-                    SeguimientoDTO dto = new SeguimientoDTO();
+        SeguimientoBusquedaDTO resp = new SeguimientoBusquedaDTO();
+        resp.setApellidoPaciente(paciente.getIdusuario() != null ? paciente.getIdusuario().getApellido() : "");
+        resp.setNombrePaciente(paciente.getIdusuario() != null ? paciente.getIdusuario().getNombre() : "");
+        resp.setObjetivoPaciente(seleccionado.getObjetivoSnapshot() != null
+                ? seleccionado.getObjetivoSnapshot()
+                : (paciente.getIdPlanNutricional() != null ? paciente.getIdPlanNutricional().getObjetivo() : null));
 
-                    // Campos básicos
-                    dto.setId(s.getId());
-                    dto.setFecharegistro(s.getFecharegistro());
-                    dto.setCalorias(s.getCalorias());
-                    dto.setProteinas(s.getProteinas());
-                    dto.setGrasas(s.getGrasas());
-                    dto.setCarbohidratos(s.getCarbohidratos());
-
-                    // Relación con PlanRecetaReceta
-                    if (s.getPlanRecetaReceta() != null) {
-                        dto.setIdPlanRecetaReceta(s.getPlanRecetaReceta().getIdPlanRecetaReceta());
-
-                        // Receta asociada
-                        if (s.getPlanRecetaReceta().getReceta() != null) {
-                            Receta receta = s.getPlanRecetaReceta().getReceta();
-                            RecetaDTO recetaDTO = new RecetaDTO();
-                            recetaDTO.setIdReceta(receta.getId().longValue());
-                            recetaDTO.setNombre(receta.getNombre());
-                            recetaDTO.setCalorias(receta.getCalorias());
-                            recetaDTO.setProteinas(receta.getProteinas());
-                            recetaDTO.setGrasas(receta.getGrasas());
-                            recetaDTO.setCarbohidratos(receta.getCarbohidratos());
-                            recetaDTO.setIngredientes(receta.getIngredientes());
-                            recetaDTO.setPreparacion(receta.getPreparacion());
-                            recetaDTO.setCantidadPorcion(receta.getCantidadPorcion());
-                            recetaDTO.setTiempo(receta.getTiempo());
-                            recetaDTO.setFoto(receta.getFoto());
-                            if (receta.getIdhorario() != null) {
-                                HorarioDTO horarioDTO = new HorarioDTO();
-                                horarioDTO.setId(receta.getIdhorario().getId().longValue());
-                                horarioDTO.setNombre(receta.getIdhorario().getNombre());
-                                recetaDTO.setIdhorario(horarioDTO);
-                            }
-                            recetaDTO.setDescripcion(receta.getDescripcion());
-                            dto.setReceta(recetaDTO);
-                        }
-                    }
-
-                    return dto;
-                })
-                .collect(Collectors.toList());
+        return Collections.singletonList(resp);
     }
-
 
 }

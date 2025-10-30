@@ -19,6 +19,10 @@ public class PlanRecetaService implements IPlanRecetaServices {
     @Autowired
     private PlanRecetaRepositorio planRecetaRepositorio;
     @Autowired
+    private PacienteRepositorio pacienteRepositorio;
+    @Autowired
+    private SeguimientoRepositorio seguimientoRepositorio;
+    @Autowired
     private ModelMapper modelMapper;
     @Autowired
     private PlanAlimenticioRepositorio planAlimenticioRepositorio;
@@ -222,6 +226,106 @@ public class PlanRecetaService implements IPlanRecetaServices {
                                 (receta.getIngredientes() != null && receta.getIngredientes().toLowerCase().contains(textoLower))
                 )
                 .map(receta -> modelMapper.map(receta, RecetaDTO.class))
+                .collect(Collectors.toList());
+    }
+    @Override
+    public List<Map<String, String>> listarRecetasAgregadasHoyPorPacienteId(Integer pacienteId) {
+        if (pacienteId == null) {
+            throw new IllegalArgumentException("id de paciente inválido");
+        }
+
+        Paciente paciente = pacienteRepositorio.findById(pacienteId)
+                .orElseThrow(() -> new RuntimeException("Paciente con ID " + pacienteId + " no encontrado"));
+
+
+        LocalDate hoy = LocalDate.now();
+        List<Seguimiento> seguimientos = seguimientoRepositorio.buscarPorPacienteYFecha(paciente.getId(), hoy);
+        if (seguimientos == null || seguimientos.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        // Mantener orden y eliminar duplicados por nombre
+        Set<String> vistos = new LinkedHashSet<>();
+        List<Map<String, String>> resultado = new ArrayList<>();
+        for (Seguimiento s : seguimientos) {
+            if (s == null || s.getPlanRecetaReceta() == null) continue;
+            Receta receta = s.getPlanRecetaReceta().getReceta();
+            if (receta == null || receta.getNombre() == null) continue;
+            String nombre = receta.getNombre();
+            if (vistos.add(nombre)) { // solo la primera aparición se añade
+                Map<String, String> m = new LinkedHashMap<>();
+                m.put("nombre", nombre);
+                m.put("descripcion", Optional.ofNullable(receta.getDescripcion()).orElse(""));
+                resultado.add(m);
+            }
+        }
+
+        return resultado;
+    }
+
+    public List<PlanRecetaDTO> listarFavoritosPorPaciente(Integer idPaciente) {
+        if (idPaciente == null) {
+            throw new IllegalArgumentException("id de paciente inválido");
+        }
+
+        List<Planreceta> planes = planRecetaRepositorio.buscarPorPaciente(idPaciente);
+        if (planes == null || planes.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        // Filtrar solo favoritos
+        List<Planreceta> favoritos = planes.stream()
+                .filter(p -> Boolean.TRUE.equals(p.getFavorito()))
+                .collect(Collectors.toList());
+        if (favoritos.isEmpty()) return Collections.emptyList();
+
+        // Tomar el plan más reciente (último creado) por cada plan alimenticio
+        List<Planreceta> unicos = favoritos.stream()
+                .collect(Collectors.toMap(
+                        p -> p.getIdplanalimenticio().getId(),
+                        p -> p,
+                        (p1, p2) -> p1.getFecharegistro().isAfter(p2.getFecharegistro()) ? p1 : p2
+                ))
+                .values()
+                .stream()
+                .collect(Collectors.toList());
+
+        for (int i = 0; i < unicos.size(); i++) {
+            Planreceta planreceta = unicos.get(i);
+
+            if (planreceta.getId() == null) {
+                planreceta = planRecetaRepositorio.save(planreceta);
+                unicos.set(i, planreceta);
+            }
+
+            asignarRecetasAPlan(planreceta.getId());
+        }
+
+        return unicos.stream()
+                .map(planReceta -> {
+                    PlanRecetaDTO dto = modelMapper.map(planReceta, PlanRecetaDTO.class);
+
+                    List<PlanRecetaReceta> relaciones = planrecetaRecetaRepositorio.findByPlanreceta(planReceta);
+                    String tipoPlan = planReceta.getIdplanalimenticio().getIdpaciente().getIdplan().getTipo();
+                    if ("Plan free".equalsIgnoreCase(tipoPlan) && relaciones.size() > 15) {
+                        relaciones = relaciones.subList(0, 15);
+                    }
+                    List<PlanRecetaRecetaDTO> relacionesDTO = relaciones.stream()
+                            .map(rel -> {
+                                PlanRecetaRecetaDTO relDTO = new PlanRecetaRecetaDTO();
+                                relDTO.setIdPlanRecetaReceta(rel.getIdPlanRecetaReceta());
+                                relDTO.setIdPlanReceta(rel.getPlanreceta().getId());
+
+                                RecetaDTO recetaDTO = modelMapper.map(rel.getReceta(), RecetaDTO.class);
+                                relDTO.setRecetaDTO(recetaDTO);
+
+                                return relDTO;
+                            })
+                            .collect(Collectors.toList());
+
+                    dto.setRecetas(relacionesDTO);
+                    return dto;
+                })
                 .collect(Collectors.toList());
     }
 

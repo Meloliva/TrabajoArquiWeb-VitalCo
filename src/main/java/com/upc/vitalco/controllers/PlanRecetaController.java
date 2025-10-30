@@ -10,6 +10,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api")
@@ -24,6 +25,12 @@ public class PlanRecetaController {
     public List<PlanRecetaDTO> listarPorPaciente() {
         Integer idPaciente = securityUtils.getUsuarioAutenticadoId();
         return planRecetaService.listarPorPaciente(idPaciente);
+    }
+    @PreAuthorize("hasRole('PACIENTE')")
+    @GetMapping("/listarPlanRecetasFavoritos")
+    public List<PlanRecetaDTO> listarFavoritosPorPaciente() {
+        Integer idPaciente = securityUtils.getUsuarioAutenticadoId();
+        return planRecetaService.listarFavoritosPorPaciente(idPaciente);
     }
 
     @PreAuthorize("hasRole('ADMIN')")
@@ -55,5 +62,12 @@ public class PlanRecetaController {
         Integer idPaciente = securityUtils.getUsuarioAutenticadoId();
         return planRecetaService.buscarRecetasEnPlanReciente(idPaciente, texto);
     }
+    @PreAuthorize("hasRole('PACIENTE')")
+    @GetMapping("/listarRecetasAgregadasHoy")
+    public List<Map<String, String>> listarRecetasAgregadasHoy() {
+        Integer idPaciente = securityUtils.getUsuarioAutenticadoId();
+        return planRecetaService.listarRecetasAgregadasHoyPorPacienteId(idPaciente);
+    }
+
 
 }

@@ -35,7 +35,7 @@ public class SeguimientoController {
 
     @PreAuthorize("hasRole('PACIENTE')")
     @GetMapping("/listarSeguimientos/{fecha}")
-    public List<RecetaDTO> listarPorDia(
+    public SeguimientoResumenDTO listarPorDia(
             @PathVariable("fecha") LocalDate fecha) {
         Integer pacienteId = securityUtils.getUsuarioAutenticadoId();
         return seguimientoService.listarPorDia(pacienteId, fecha);
@@ -47,29 +47,11 @@ public class SeguimientoController {
             @PathVariable("dni") String dni,
             @PathVariable("fecha") LocalDate fecha
     ) {
-        List<SeguimientoDTO> resultados = seguimientoService.listarPorDniYFecha(dni, fecha);
+        List<SeguimientoBusquedaDTO> resultados = seguimientoService.listarPorDniYFecha(dni, fecha);
         if (resultados.isEmpty()) {
             return ResponseEntity.ok("No hay seguimientos registrados para esa fecha.");
         }
         return ResponseEntity.ok(resultados);
-    }
-
-    @PreAuthorize("hasRole('PACIENTE')")
-    @GetMapping("/listarCaloriasPorHorario/{fecha}")
-    public ResponseEntity<?> listarCaloriasPorHorario(
-            @PathVariable("fecha") LocalDate fecha) {
-        Integer pacienteId = securityUtils.getUsuarioAutenticadoId();
-        Map<String, Double> resultado = seguimientoService.listarCaloriasPorHorario(pacienteId, fecha);
-        return ResponseEntity.ok(resultado);
-    }
-
-    @PreAuthorize("hasRole('PACIENTE')")
-    @GetMapping("/listarTotalesNutricionales/{fecha}")
-    public ResponseEntity<?> obtenerTotalesNutricionales(
-            @PathVariable("fecha") LocalDate fecha) {
-        Integer pacienteId = securityUtils.getUsuarioAutenticadoId();
-        Map<String, Double> resultado = seguimientoService.obtenerTotalesNutricionales(pacienteId, fecha);
-        return ResponseEntity.ok(resultado);
     }
 
     @PreAuthorize("hasRole('NUTRICIONISTA')")
@@ -83,20 +65,19 @@ public class SeguimientoController {
     }
 
     @PreAuthorize("hasRole('PACIENTE')")
-    @DeleteMapping("/eliminarSeguimiento/{seguimientoId}/{recetaId}/{pacienteId}")
+    @DeleteMapping("/eliminarSeguimiento/{seguimientoId}/{recetaId}")
     public ResponseEntity<Void> eliminarRecetaDeSeguimiento(
             @PathVariable("seguimientoId") Integer seguimientoId,
-            @PathVariable("recetaId") Integer recetaId,
-            @PathVariable("pacienteId") Integer pacienteId) {
-
+            @PathVariable("recetaId") Integer recetaId) {
+        Integer pacienteId = securityUtils.getUsuarioAutenticadoId();
         seguimientoService.eliminarRecetaDeSeguimiento(pacienteId, seguimientoId, recetaId);
         return ResponseEntity.noContent().build();
     }
 
 
     @PreAuthorize("hasRole('NUTRICIONISTA')")
-    @GetMapping("/resumenSeguimientoNutri/{dni}/{fecha}")
-    public ResponseEntity<SeguimientoResumenDTO> resumenSeguimientoNutri(
+    @GetMapping("/resumenSeguimientoNutriPaci/{dni}/{fecha}")
+    public ResponseEntity<SeguimientoResumenDTO> resumenSeguimientoNutriPaci(
             @PathVariable("dni") String dni,
             @PathVariable("fecha") String fecha) {
         LocalDate fechaLocalDate = LocalDate.parse(fecha);
