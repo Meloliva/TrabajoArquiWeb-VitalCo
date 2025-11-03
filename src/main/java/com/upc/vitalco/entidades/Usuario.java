@@ -38,6 +38,9 @@ public class Usuario {
     @Column(name = "estado", length = 50)
     private String estado;
 
+    @Column(name = "fotoPerfil", length = 50)
+    private String fotoPerfil;
+
     @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "idrol", nullable = false)
     private Role rol;
