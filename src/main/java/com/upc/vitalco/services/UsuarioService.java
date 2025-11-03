@@ -92,9 +92,11 @@ public class UsuarioService implements IUsuarioServices {
 
     @Override //si es que hay administrador se hara la lista
     public List<UsuarioDTO> obtenerPorId(Integer pacienteId) {
-        return usuarioRepositorio.findByPacienteId(pacienteId).stream()
-                .map(u -> modelMapper.map(u, UsuarioDTO.class))
-                .collect(Collectors.toList());
+        Usuario usuario = usuarioRepositorio.findUsuarioByPacienteId(pacienteId);
+        if (usuario == null) {
+            return Collections.emptyList();
+        }
+        return Collections.singletonList(modelMapper.map(usuario, UsuarioDTO.class));
     }
 
     // Genera un código aleatorio de 6 dígitos

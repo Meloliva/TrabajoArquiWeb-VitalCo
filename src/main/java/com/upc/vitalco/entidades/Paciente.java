@@ -1,5 +1,6 @@
 package com.upc.vitalco.entidades;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -29,6 +30,7 @@ public class Paciente {
     @Column(name = "edad")
     private Integer edad;
 
+    @JsonProperty("idPlan")
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "idplan", nullable = false)
     private Plansuscripcion idplan;
