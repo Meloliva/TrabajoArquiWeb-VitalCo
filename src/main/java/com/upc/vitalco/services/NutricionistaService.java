@@ -85,6 +85,9 @@ public class NutricionistaService implements INutricionistaServices {
         if (dto.getUniversidad() != null && !dto.getUniversidad().isEmpty()) {
             nutricionista.setUniversidad(dto.getUniversidad());
         }
+        if (dto.getFotoPerfil() != null && !dto.getFotoPerfil().isBlank()) {
+            nutricionista.getIdusuario().setFotoPerfil(dto.getFotoPerfil().trim());
+        }
 
         if (dto.getCorreo() != null && !dto.getCorreo().isEmpty()) {
             nutricionista.getIdusuario().setCorreo(dto.getCorreo());

@@ -18,4 +18,5 @@ public class EditarPacienteDTO {
     private BigDecimal altura;
     private BigDecimal trigliceridos;
     private Integer edad;
+    private String fotoPerfil;
 }

@@ -19,4 +19,5 @@ public class EditarNutricionistaDTO {
     private Integer idTurno;
     private String correo;
     private String Contraseña;
+    private String fotoPerfil;
 }

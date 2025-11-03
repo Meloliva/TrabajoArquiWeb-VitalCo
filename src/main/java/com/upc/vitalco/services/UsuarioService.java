@@ -59,6 +59,7 @@ public class UsuarioService implements IUsuarioServices {
         if (usuarioExistente != null) {
             if ("Desactivado".equalsIgnoreCase(usuarioExistente.getEstado())) {
                 usuarioExistente.setEstado("Activo");
+                usuarioExistente.setFotoPerfil(usuarioDTO.getFotoPerfil());
                 usuarioExistente.setNombre(usuarioDTO.getNombre());
                 usuarioExistente.setApellido(usuarioDTO.getApellido());
                 usuarioExistente = usuarioRepositorio.save(usuarioExistente);

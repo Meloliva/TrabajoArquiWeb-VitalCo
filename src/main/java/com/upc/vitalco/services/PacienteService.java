@@ -94,12 +94,23 @@ public class PacienteService implements IPacienteServices {
 
         // Actualizar datos de usuario
         if (paciente.getIdusuario() != null) {
-            paciente.getIdusuario().setCorreo(nuevoCorreo != null ? nuevoCorreo : paciente.getIdusuario().getCorreo());
-            if (editarPacienteDTO.getContraseña() != null) {
-                BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
-                paciente.getIdusuario().setContraseña(encoder.encode(editarPacienteDTO.getContraseña()));
+            Usuario usuario = paciente.getIdusuario();
+
+            if (nuevoCorreo != null && !nuevoCorreo.isBlank()) {
+                usuario.setCorreo(nuevoCorreo.trim());
             }
-            usuarioRepositorio.save(paciente.getIdusuario());
+
+            String nuevaContrasena = editarPacienteDTO.getContraseña();
+            if (nuevaContrasena != null && !nuevaContrasena.isBlank()) {
+                BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+                usuario.setContraseña(encoder.encode(nuevaContrasena));
+            }
+            String nuevaFotoUrl = editarPacienteDTO.getFotoPerfil();
+            if (nuevaFotoUrl != null && !nuevaFotoUrl.isBlank()) {
+                usuario.setFotoPerfil(nuevaFotoUrl.trim());
+            }
+
+            usuarioRepositorio.save(usuario);
         }
 
         // Actualizar datos de paciente
