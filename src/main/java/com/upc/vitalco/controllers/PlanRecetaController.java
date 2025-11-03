@@ -33,6 +33,21 @@ public class PlanRecetaController {
         return planRecetaService.listarFavoritosPorPaciente(idPaciente);
     }
 
+    @PreAuthorize("hasRole('PACIENTE')")
+    @PutMapping("/actualizarPlanReceta/{id}/favorito")
+    public ResponseEntity<PlanRecetaDTO> actualizarFavorito(
+            @PathVariable Integer id,
+            @RequestParam Boolean favorito) {
+        try {
+            PlanRecetaDTO actualizado = planRecetaService.actualizarFavorito(id, favorito);
+            return ResponseEntity.ok(actualizado);
+        } catch (RuntimeException ex) {
+            return ResponseEntity.notFound().build();
+        } catch (Exception ex) {
+            return ResponseEntity.badRequest().build();
+        }
+    }
+
     @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/eliminarPlanReceta/{id}")
     public void eliminar(@PathVariable Integer id){

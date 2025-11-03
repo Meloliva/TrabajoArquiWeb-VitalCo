@@ -13,4 +13,5 @@ public interface IPlanRecetaServices {
     List<RecetaDTO> buscarRecetasEnPlanReciente(Integer idPaciente, String texto);
     List<Map<String, String>> listarRecetasAgregadasHoyPorPacienteId(Integer pacienteId);
     List<PlanRecetaDTO> listarFavoritosPorPaciente(Integer idPaciente);
+    PlanRecetaDTO actualizarFavorito(Integer idPlanReceta, Boolean esFavorito);
 }

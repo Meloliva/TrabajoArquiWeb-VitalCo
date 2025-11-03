@@ -328,6 +328,20 @@ public class PlanRecetaService implements IPlanRecetaServices {
                 })
                 .collect(Collectors.toList());
     }
+    @Override
+    public PlanRecetaDTO actualizarFavorito(Integer idPlanReceta, Boolean favorito) {
+        Planreceta planreceta = planRecetaRepositorio.findById(idPlanReceta)
+                .orElseThrow(() -> new RuntimeException("No existe el plan receta con ID: " + idPlanReceta));
+
+        if (Objects.equals(planreceta.getFavorito(), favorito)) {
+            return modelMapper.map(planreceta, PlanRecetaDTO.class);
+        }
+
+        planreceta.setFavorito(Boolean.TRUE.equals(favorito));
+        Planreceta actualizado = planRecetaRepositorio.save(planreceta);
+        return modelMapper.map(actualizado, PlanRecetaDTO.class);
+    }
+
 
 
 }
