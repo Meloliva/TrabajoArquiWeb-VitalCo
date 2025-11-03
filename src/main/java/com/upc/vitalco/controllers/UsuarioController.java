@@ -29,9 +29,10 @@ public class UsuarioController {
     }
 
     @GetMapping("/listarUsuarios")
-    @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<List<UsuarioDTO>> listar() {
-        List<UsuarioDTO> lista = usuarioService.findAll();
+    @PreAuthorize("hasRole('PACIENTE') or hasRole('NUTRICIONISTA')")
+    public ResponseEntity<List<UsuarioDTO>> listarPorPaciente() {
+        Integer idUsuario = securityUtils.getUsuarioAutenticadoId();
+        List<UsuarioDTO> lista = usuarioService.obtenerPorId(idUsuario);
         return ResponseEntity.ok(lista);
     }
 

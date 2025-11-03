@@ -90,10 +90,9 @@ public class UsuarioService implements IUsuarioServices {
     }
 
     @Override //si es que hay administrador se hara la lista
-    public List<UsuarioDTO> findAll() {
-        return usuarioRepositorio.findAll()
-                .stream()
-                .map(usuario -> modelMapper.map(usuario, UsuarioDTO.class))
+    public List<UsuarioDTO> obtenerPorId(Integer pacienteId) {
+        return usuarioRepositorio.findByPacienteId(pacienteId).stream()
+                .map(u -> modelMapper.map(u, UsuarioDTO.class))
                 .collect(Collectors.toList());
     }
 

@@ -5,7 +5,7 @@ import java.util.List;
 public interface IUsuarioServices {
     public UsuarioDTO registrar(UsuarioDTO usuarioDTO);
     public void eliminar(Integer id);
-    public List<UsuarioDTO> findAll();
+    public List<UsuarioDTO> obtenerPorId(Integer pacienteId);
     void solicitarRecuperacion(String correo);
     boolean verificarCodigo(String codigo);
     void restablecerCuenta(String correo, String nuevaContraseña);
