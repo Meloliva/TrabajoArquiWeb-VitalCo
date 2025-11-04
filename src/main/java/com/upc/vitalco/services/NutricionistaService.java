@@ -106,6 +106,4 @@ public class NutricionistaService implements INutricionistaServices {
         Nutricionista guardado = nutricionistaRepositorio.save(nutricionista);
         return modelMapper.map(guardado, NutricionistaDTO.class);
     }
-
-
 }

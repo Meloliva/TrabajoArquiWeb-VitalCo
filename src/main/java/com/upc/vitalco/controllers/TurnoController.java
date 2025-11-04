@@ -10,6 +10,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 
 import java.util.List;
 
+@CrossOrigin(origins = "http://localhost:4200")
 @RestController
 @RequestMapping("/api")
 public class TurnoController {
@@ -30,7 +31,7 @@ public class TurnoController {
         turnoService.eliminar(id);
     }
     @GetMapping("/listarTurnos")
-    @PreAuthorize("hasRole('PACIENTE') or hasRole('NUTRICIONISTA')")
+
     public List<TurnoDTO> findAll() {
         return turnoService.findAll();
     }

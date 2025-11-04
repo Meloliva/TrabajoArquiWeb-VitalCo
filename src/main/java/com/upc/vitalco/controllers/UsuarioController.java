@@ -4,6 +4,7 @@ import com.upc.vitalco.dto.UsuarioDTO;
 import com.upc.vitalco.dto.VerificarCodigoDTO;
 import com.upc.vitalco.security.util.SecurityUtils;
 import com.upc.vitalco.services.UsuarioService;
+import com.upc.vitalco.security.util.SecurityUtils;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
