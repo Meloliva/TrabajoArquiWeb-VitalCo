@@ -9,16 +9,13 @@ import java.util.List;
 import java.util.Optional;
 
 public interface CitaRepositorio extends JpaRepository<Cita, Integer> {
+
     List<Cita> findByNutricionistaId(Integer idNutricionista);
     List<Cita> findByPacienteId(Integer idPaciente);
-    boolean existsByPacienteId(Integer pacienteId);
-    boolean existsByPacienteIdAndEstado(Integer pacienteId, String estado);
-
+    boolean existsByPacienteId(Integer idPaciente);
+    boolean existsByPacienteIdAndEstado(Integer idPaciente, String estado);
     List<Cita> findByDia(LocalDate dia);
-
     Optional<Object> findByNutricionistaIdAndDiaAndHora(Integer id, LocalDate dia, LocalTime hora);
-
     List<Cita> findByPacienteIdAndDia(Integer idPaciente, LocalDate fecha);
-
     List<Cita> findByNutricionistaIdAndDia(Integer idNutricionista, LocalDate fecha);
 }

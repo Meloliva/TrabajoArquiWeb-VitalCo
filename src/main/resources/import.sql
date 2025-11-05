@@ -12,8 +12,8 @@ VALUES
 -- =============================================
 INSERT INTO turno (inicioturno, finturno)
 VALUES
-    ('08:00:00', '16:00:00'),  -- Turno mañana
-    ('14:00:00', '22:00:00');  -- Turno tarde
+    ('08:00:00', '12:00:00'),  -- Turno mañana
+    ('14:00:00', '16:00:00');  -- Turno tarde
 
 -- =============================================
 -- HORARIOS DE COMIDA
