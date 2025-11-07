@@ -6,6 +6,7 @@ import com.upc.vitalco.interfaces.IPacienteServices;
 import com.upc.vitalco.repositorios.PacienteRepositorio;
 import com.upc.vitalco.repositorios.PlanSuscripcionRepositorio;
 import com.upc.vitalco.repositorios.UsuarioRepositorio;
+import com.upc.vitalco.security.util.SecurityUtils;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -28,6 +29,9 @@ public class PacienteService implements IPacienteServices {
     private PlanSuscripcionRepositorio planSuscripcionRepositorio;
     @Autowired
     private UsuarioRepositorio usuarioRepositorio;
+
+    @Autowired
+    private SecurityUtils securityUtils;
 
     @Override
     public PacienteDTO registrar(PacienteDTO pacienteDTO) {
@@ -135,6 +139,15 @@ public class PacienteService implements IPacienteServices {
 
         return modelMapper.map(guardado, PacienteDTO.class);
     }
+    @Override
+    public PacienteDTO obtenerPacientePorUsuarioId(Integer usuarioId) {
+        Paciente paciente = pacienteRepositorio.findByIdusuarioId(usuarioId)
+                .orElseThrow(() -> new RuntimeException("Paciente no encontrado para el usuario: " + usuarioId));
+
+        return modelMapper.map(paciente, PacienteDTO.class);
+    }
+
+
 
 }
 

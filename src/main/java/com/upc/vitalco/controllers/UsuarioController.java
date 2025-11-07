@@ -7,6 +7,7 @@ import com.upc.vitalco.services.UsuarioService;
 import com.upc.vitalco.security.util.SecurityUtils;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -78,6 +79,5 @@ public class UsuarioController {
         usuarioService.restablecerCuenta(restablecerCuentaDTO.getCorreo(), restablecerCuentaDTO.getNuevaContrasena());
             return ResponseEntity.ok("Cuenta restablecida y activada.");
     }
-
 
 }

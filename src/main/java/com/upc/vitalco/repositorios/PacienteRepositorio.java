@@ -11,4 +11,11 @@ import java.util.Optional;
 public interface PacienteRepositorio extends JpaRepository<Paciente, Integer>{
     @Query("SELECT p FROM Paciente p WHERE p.idusuario.dni = :dni")
     Optional<Paciente> findByDni(@Param("dni") String dni);
+    @Query("SELECT p FROM Paciente p " +
+            "LEFT JOIN FETCH p.idusuario u " +
+            "LEFT JOIN FETCH p.idplan plan " +
+            "LEFT JOIN FETCH p.idPlanNutricional nut " +
+            "WHERE u.id = :usuarioId")
+    Optional<Paciente> findByIdusuarioId(@Param("usuarioId") Integer usuarioId);
+
 }

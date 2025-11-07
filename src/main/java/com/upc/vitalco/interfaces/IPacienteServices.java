@@ -7,4 +7,5 @@ public interface IPacienteServices {
     public PacienteDTO registrar(PacienteDTO pacienteDTO);
     public List<PacienteDTO> findAll();
     public PacienteDTO actualizar(EditarPacienteDTO editarPacienteDTO);
+    public PacienteDTO obtenerPacientePorUsuarioId(Integer usuarioId);
 }

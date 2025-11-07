@@ -1,5 +1,6 @@
 package com.upc.vitalco.services;
 import com.upc.vitalco.dto.PacienteDTO;
+import com.upc.vitalco.dto.PlanSuscripcionDTO;
 import com.upc.vitalco.dto.UsuarioDTO;
 import com.upc.vitalco.entidades.*;
 import com.upc.vitalco.interfaces.IUsuarioServices;
@@ -7,6 +8,7 @@ import com.upc.vitalco.repositorios.PacienteRepositorio;
 import com.upc.vitalco.repositorios.PlanSuscripcionRepositorio;
 import com.upc.vitalco.repositorios.RolRepositorio;
 import com.upc.vitalco.repositorios.UsuarioRepositorio;
+import com.upc.vitalco.security.util.SecurityUtils;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -25,6 +27,8 @@ import java.util.stream.Collectors;
 public class UsuarioService implements IUsuarioServices {
     @Autowired
     private UsuarioRepositorio usuarioRepositorio;
+    @Autowired
+    private PacienteRepositorio pacienteRepositorio;
     @Autowired
     private ModelMapper modelMapper;
     @Autowired
@@ -183,5 +187,9 @@ public class UsuarioService implements IUsuarioServices {
     }
 
 
-
 }
+
+
+
+
+
