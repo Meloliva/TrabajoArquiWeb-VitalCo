@@ -1,0 +1,1125 @@
+[33mcommit b8f451d3d2d3231d92e4f8f641d79777a40b1af6[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m
+Author: Maripareja <mari.pavi.06@gmail.com>
+Date:   Fri Nov 7 22:07:51 2025 -0500
+
+    Arreglos hechos
+
+[33mcommit 27a4c9c31378db881728e754c8147c89b1ea383c[m
+Merge: 988a42c 7cf5089
+Author: Melanie Oliva <mel.olivac@gmail.com>
+Date:   Fri Nov 7 17:30:14 2025 -0500
+
+    Conectando frontend con backend parte 1
+
+[33mcommit 988a42c10b62679795a171fdcc963f3fd84bb9f1[m
+Author: Melanie Oliva <mel.olivac@gmail.com>
+Date:   Fri Nov 7 17:29:25 2025 -0500
+
+    Conectando frontend con backend
+
+[33mcommit 7cf5089290ab9a22c65cdcaf0a9375511a5cfd36[m
+Author: Maripareja <mari.pavi.06@gmail.com>
+Date:   Wed Nov 5 17:24:40 2025 -0500
+
+    Cambios para el consultar
+
+[33mcommit 390267a21c199a7881b99c3069e92f3df8472293[m
+Author: Maripareja <mari.pavi.06@gmail.com>
+Date:   Tue Nov 4 03:20:44 2025 -0500
+
+    Actualizacion import
+
+[33mcommit c8520c3ca0fee298a6a61348295aadd554f7c3f8[m
+Author: Maripareja <mari.pavi.06@gmail.com>
+Date:   Tue Nov 4 01:49:11 2025 -0500
+
+    Actualizacion backend
+
+[33mcommit b4e5a4b8f613e5dca599edde6f0e889bc870841b[m
+Author: Melanie Oliva <mel.olivac@gmail.com>
+Date:   Mon Nov 3 11:42:45 2025 -0500
+
+    Finalizando todo parte 1
+
+[33mcommit 923549c1e2627b9667af2160bd745b42dfaa4c2f[m
+Author: Melanie Oliva <mel.olivac@gmail.com>
+Date:   Mon Nov 3 08:13:39 2025 -0500
+
+    Arreglando todo parte final
+
+[33mcommit ae59a4de2720fac6d40a5051c193beb9126139e3[m
+Author: Melanie Oliva <mel.olivac@gmail.com>
+Date:   Sun Nov 2 20:54:10 2025 -0500
+
+    Arreglando todo 3
+
+[33mcommit 3ac401857f0fb1e7c295a3a44a3ba19967c57c9e[m
+Author: Melanie Oliva <mel.olivac@gmail.com>
+Date:   Sun Nov 2 20:18:34 2025 -0500
+
+    Arreglando todo 2
+
+[33mcommit ae6e9b149e509aa13b5646102a04384c2a81ea45[m
+Author: Melanie Oliva <mel.olivac@gmail.com>
+Date:   Sun Nov 2 19:24:59 2025 -0500
+
+    Arreglando todo
+
+[33mcommit d207312fd6fe7a852a7790d8d8bfc0a9adccf561[m
+Author: Melanie Oliva <mel.olivac@gmail.com>
+Date:   Thu Oct 30 16:24:44 2025 -0500
+
+    Haciendo ultimas correcciones
+
+[33mcommit 67880948b886cb34eb4560872be779be0a43fa65[m
+Author: Melanie Oliva <mel.olivac@gmail.com>
+Date:   Thu Oct 23 17:09:10 2025 -0500
+
+    Arreglando cosas de recuperar cuenta
+
+[33mcommit afb6aab21663c9db956283f1084ab020889dcf40[m
+Author: Melanie Oliva <mel.olivac@gmail.com>
+Date:   Wed Oct 22 23:54:51 2025 -0500
+
+    Leyendo token para el id parte 1
+
+[33mcommit 6802e04146d301ddf0d79bf5b287df12dbb48d5a[m
+Author: Melanie Oliva <mel.olivac@gmail.com>
+Date:   Wed Oct 22 23:27:54 2025 -0500
+
+    Leyendo token para el id
+
+[33mcommit 73b5190ce500f5a9c9b0fd53f5bda7d83580da6d[m
+Merge: b9aa182 6693aa3
+Author: Melanie Oliva <mel.olivac@gmail.com>
+Date:   Wed Oct 22 21:43:50 2025 -0500
+
+    Merge remote-tracking branch 'origin/main'
+
+[33mcommit b9aa182fcda28fdac77cb9d07a350ba06c28448f[m
+Author: Melanie Oliva <mel.olivac@gmail.com>
+Date:   Wed Oct 22 21:36:47 2025 -0500
+
+    Validacion de token parte 2
+
+[33mcommit 6693aa35ccabe324524a2b90aee66e063c211211[m
+Author: Melanie Anai Oliva Cabanillas <mel.olivac@gmail.com>
+Date:   Wed Oct 22 19:19:47 2025 -0500
+
+    Remove course details from README description
+
+[33mcommit cc7efb03c3a22a71cc1eb49aa2886029f28b1431[m
+Author: Melanie Oliva <mel.olivac@gmail.com>
+Date:   Wed Oct 22 19:09:14 2025 -0500
+
+    Validacion de token
+
+[33mcommit 5b44c37d2e80977ed1419e609e74ee832298b8d2[m
+Author: Melanie Oliva <mel.olivac@gmail.com>
+Date:   Wed Oct 22 18:36:24 2025 -0500
+
+    Recuperacion de cuenta funciona correctamente
+
+[33mcommit ccc99b6625721ee5aed5cfb62595a51a4c2bf011[m
+Author: Melanie Oliva <mel.olivac@gmail.com>
+Date:   Wed Oct 22 14:23:16 2025 -0500
+
+    añadiendo mas validaciones
+
+[33mcommit f92c55abac5a9b2db5e981822383521831e89fb3[m
+Author: Melanie Oliva <mel.olivac@gmail.com>
+Date:   Wed Oct 22 12:15:20 2025 -0500
+
+    mejorando la recuperacion de cuenta
+
+[33mcommit 4cfcfb96de6d79b9445481b9cfac31bba969edc8[m
+Author: Melanie Oliva <mel.olivac@gmail.com>
+Date:   Wed Oct 22 11:49:10 2025 -0500
+
+    mejorando las relaciones
+
+[33mcommit 707eb11f20e540695aade29094a9921bd6b7639d[m
+Author: Melanie Oliva <mel.olivac@gmail.com>
+Date:   Wed Oct 22 11:33:20 2025 -0500
+
+    Agregando el dto restablecer cuenta en caso se olvide su contraseña
+
+[33mcommit 80f06e7990068a40b1e84f31ff120ada1c8d915d[m
+Author: Melanie Oliva <mel.olivac@gmail.com>
+Date:   Fri Oct 10 08:05:12 2025 -0500
+
+    Version final parte 21
+
+[33mcommit 0702b53d389e4f1e8ac8fab65a0d2bc282a0cd08[m
+Author: Melanie Oliva <mel.olivac@gmail.com>
+Date:   Thu Oct 9 22:18:47 2025 -0500
+
+    Version final parte 20
+
+[33mcommit 0fdb5d03771ccec5817d2a32a7161972e8d81084[m
+Author: Melanie Oliva <mel.olivac@gmail.com>
+Date:   Thu Oct 9 19:05:33 2025 -0500
+
+    Version final parte 19
+
+[33mcommit 19fc4e6de5bc8ee67c9a7804f4e5ae33cc15a9da[m
+Author: Melanie Oliva <mel.olivac@gmail.com>
+Date:   Thu Oct 9 18:26:31 2025 -0500
+
+    Version final parte 18
+
+[33mcommit b606b8df175bdd75ff8c7d73831dd9bc5790eedb[m
+Author: Melanie Oliva <mel.olivac@gmail.com>
+Date:   Thu Oct 9 18:10:14 2025 -0500
+
+    Version final parte 17
+
+[33mcommit 0b1fdd0f0c24effaa7fdbb77f291cd277d5e7a17[m
+Author: Melanie Oliva <mel.olivac@gmail.com>
+Date:   Thu Oct 9 03:41:58 2025 -0500
+
+    Version final parte 16
+
+[33mcommit 6d607d5384ef407d25840f2e9d0f4f5d78140220[m
+Author: Melanie Oliva <mel.olivac@gmail.com>
+Date:   Thu Oct 9 02:02:43 2025 -0500
+
+    Version final parte 15
+
+[33mcommit a524871e43c3d100568dc466f0b1c19979b0c3b3[m
+Author: Melanie Oliva <mel.olivac@gmail.com>
+Date:   Thu Oct 9 00:41:46 2025 -0500
+
+    Version final parte 14
+
+[33mcommit 03da37af5bdad01ea1e6c544f853bbf6977280c0[m
+Author: Melanie Oliva <mel.olivac@gmail.com>
+Date:   Tue Oct 7 16:20:21 2025 -0500
+
+    Version final parte 15
+
+[33mcommit 83b6d2300490a6fe8c00e430142725260f1522d6[m
+Author: Melanie Oliva <mel.olivac@gmail.com>
+Date:   Tue Oct 7 15:53:00 2025 -0500
+
+    Version final parte 14
+
+[33mcommit 6464aa8f996dba71c074cda3b3e2b8f42b24c09e[m
+Author: Melanie Oliva <mel.olivac@gmail.com>
+Date:   Tue Oct 7 15:04:40 2025 -0500
+
+    Version final parte 13
+
+[33mcommit b62e11698f7088acb1cdfe0c1f2f576bd9883d88[m
+Author: Melanie Oliva <mel.olivac@gmail.com>
+Date:   Tue Oct 7 13:39:52 2025 -0500
+
+    Version final parte 12
+
+[33mcommit 747c012f520a24a9cdf7f6c32acc110711447795[m
+Author: Melanie Oliva <mel.olivac@gmail.com>
+Date:   Tue Oct 7 13:15:59 2025 -0500
+
+    Version final parte 11
+
+[33mcommit 93164b221f6b5e77f11f2121aa8a8a78efe5e5ba[m
+Author: Melanie Oliva <mel.olivac@gmail.com>
+Date:   Tue Oct 7 12:47:48 2025 -0500
+
+    Version final parte 10
+
+[33mcommit 19f0294809198b0b9debeb61284a30e5bd17d13b[m
+Author: Melanie Oliva <mel.olivac@gmail.com>
+Date:   Tue Oct 7 12:03:16 2025 -0500
+
+    Version final parte 9
+
+[33mcommit ef57cc421a3dafa0a2c435ba85247a522804e250[m
+Author: Melanie Oliva <mel.olivac@gmail.com>
+Date:   Sun Oct 5 19:52:30 2025 -0500
+
+    Version final parte 8
+
+[33mcommit e2ba86e39f27f08db2fbe5eaba115d1f76ee79d1[m
+Author: Melanie Oliva <mel.olivac@gmail.com>
+Date:   Sun Oct 5 19:52:02 2025 -0500
+
+    Version final parte 7
+
+[33mcommit 7992033c42680efd7c274247baa035603ca6ce48[m
+Author: Melanie Oliva <mel.olivac@gmail.com>
+Date:   Sun Oct 5 18:46:36 2025 -0500
+
+    Version final parte 6
+
+[33mcommit 5c49956b747b2f9cbf3d3bb17a42e158094febd4[m
+Author: Melanie Oliva <mel.olivac@gmail.com>
+Date:   Sun Oct 5 16:32:11 2025 -0500
+
+    Version final parte 5
+
+[33mcommit ac57a3cff23969253c6741ff25ca7098b9465ced[m
+Author: Melanie Oliva <mel.olivac@gmail.com>
+Date:   Sun Oct 5 14:35:54 2025 -0500
+
+    Version final parte 4
+
+[33mcommit 3f62745bfdf02fba3667a7ce644150ded359aef8[m
+Author: luz21-brownie <luzclaritacochachi21@gmail.com>
+Date:   Sun Oct 5 13:54:52 2025 -0500
+
+    cambio de mensaje
+
+[33mcommit 757ac138ec8d46486422946b052f56c5860277c5[m
+Author: Melanie Oliva <mel.olivac@gmail.com>
+Date:   Sun Oct 5 13:33:12 2025 -0500
+
+    Version final parte 3
+
+[33mcommit a1676ab25c4e64dd6304a8f18cbc2d6cc2bbf344[m
+Author: Melanie Oliva <mel.olivac@gmail.com>
+Date:   Sun Oct 5 13:12:12 2025 -0500
+
+    Version final parte 2
+
+[33mcommit c11fe66e66a74a010d43362698021abc729f1aec[m
+Author: Maripareja <mari.pavi.06@gmail.com>
+Date:   Sun Oct 5 12:18:04 2025 -0500
+
+    Solucionando version final
+
+[33mcommit 1d8475ac2729a4dbf1955622c2e8cf56c959d78a[m
+Author: Melanie Oliva <mel.olivac@gmail.com>
+Date:   Sun Oct 5 10:09:00 2025 -0500
+
+    Version final parte 1
+
+[33mcommit c19f8f3ef3e3d3304f819a806f7936d75db1a927[m
+Author: Melanie Oliva <mel.olivac@gmail.com>
+Date:   Sun Oct 5 09:51:56 2025 -0500
+
+    Tratando de arreglar por completo parte 17
+
+[33mcommit fcbd538afae82d6b09819f9f26b4b32ced1e8b3d[m
+Author: Melanie Oliva <mel.olivac@gmail.com>
+Date:   Sun Oct 5 09:04:37 2025 -0500
+
+    Tratando de arreglar por completo parte 16
+
+[33mcommit 9598fe3fcbd45cb7d9456bd5ac4b83e9d68d803b[m
+Author: Melanie Oliva <mel.olivac@gmail.com>
+Date:   Sun Oct 5 08:54:41 2025 -0500
+
+    Tratando de arreglar por completo parte 15
+
+[33mcommit db753ec8c994e229d711af734260e323dbf99e28[m
+Author: Melanie Oliva <mel.olivac@gmail.com>
+Date:   Sun Oct 5 08:13:48 2025 -0500
+
+    Tratando de arreglar por completo parte 14
+
+[33mcommit efb3b2f014fb0861ebeeb3c4b91da8166f5e86b7[m
+Author: Melanie Oliva <mel.olivac@gmail.com>
+Date:   Sun Oct 5 07:55:58 2025 -0500
+
+    Tratando de arreglar por completo parte 13
+
+[33mcommit e72c0f325e176114e67b39a2c0a41eaa0b15b18c[m
+Author: Melanie Oliva <mel.olivac@gmail.com>
+Date:   Sun Oct 5 07:15:53 2025 -0500
+
+    Tratando de arreglar por completo parte 12
+
+[33mcommit b36838bd333f300978510a46dba4a6d025b2984d[m
+Author: AllisG <alligalindo30@gmail.com>
+Date:   Sun Oct 5 00:10:40 2025 -0500
+
+    validacion de estructura JSON y DNI duplicado registro paciente
+
+[33mcommit caca395a966b31dbb252e273fa0e2712a5ce1445[m
+Author: AllisG <alligalindo30@gmail.com>
+Date:   Sun Oct 5 00:01:45 2025 -0500
+
+    validar DNI duplicado en registro usuario cn exepcion
+
+[33mcommit 595bc099193ceab92ea5dce61610464e651aa176[m
+Author: KokyRamirezPerez <koky.ramirez26@outlook.com>
+Date:   Sat Oct 4 23:40:19 2025 -0500
+
+    Update SeguimientoController.java
+
+[33mcommit 6ea33d8617f740f4c530104e8161b65c2f63514f[m
+Author: KokyRamirezPerez <koky.ramirez26@outlook.com>
+Date:   Sat Oct 4 23:39:26 2025 -0500
+
+    Update RolController.java
+
+[33mcommit 8e93de39af1e2739bfb0e209d2195a3a39947142[m
+Author: KokyRamirezPerez <koky.ramirez26@outlook.com>
+Date:   Sat Oct 4 23:39:06 2025 -0500
+
+    Update RecetaController.java
+
+[33mcommit 1d27c5dcf18fcdcfce39de49f45d7576e508cd66[m
+Author: KokyRamirezPerez <koky.ramirez26@outlook.com>
+Date:   Sat Oct 4 23:38:32 2025 -0500
+
+    Update PlanSuscripcionController.java
+
+[33mcommit 0bde1dd2805205c90843fa9f8b8b7b319947e8de[m
+Author: KokyRamirezPerez <koky.ramirez26@outlook.com>
+Date:   Sat Oct 4 23:37:53 2025 -0500
+
+    Update PlanRecetaController.java
+
+[33mcommit 31251ce65a019fdf58e5f2dce5d4457c948e39cc[m
+Author: KokyRamirezPerez <koky.ramirez26@outlook.com>
+Date:   Sat Oct 4 23:37:41 2025 -0500
+
+    Update PlanNutricionalController.java
+
+[33mcommit 623b11b559029e126dab120b8d316e1894af8c67[m
+Author: KokyRamirezPerez <koky.ramirez26@outlook.com>
+Date:   Sat Oct 4 23:37:00 2025 -0500
+
+    Update PlanAlimenticioController.java
+
+[33mcommit 98e27fe1029bded4107e1bdf4e2b61e683bda61f[m
+Author: KokyRamirezPerez <koky.ramirez26@outlook.com>
+Date:   Sat Oct 4 23:36:47 2025 -0500
+
+    Update PacienteController.java
+
+[33mcommit e4d67d89d7890d505076a0ff6d51f3fe873e8a29[m
+Author: KokyRamirezPerez <koky.ramirez26@outlook.com>
+Date:   Sat Oct 4 23:36:39 2025 -0500
+
+    Update NutricionistaController.java
+
+[33mcommit 8842d0d9e047b25a0cbc13ef5dbba3add7732211[m
+Author: KokyRamirezPerez <koky.ramirez26@outlook.com>
+Date:   Sat Oct 4 23:36:28 2025 -0500
+
+    Update HorarioController.java
+
+[33mcommit dc2c828bbdc57873933ce6dda4b799a927615c24[m
+Author: KokyRamirezPerez <koky.ramirez26@outlook.com>
+Date:   Sat Oct 4 23:36:04 2025 -0500
+
+    Update CitaController.java
+
+[33mcommit b1089d8b75415eba6aa4c4945c0bbfb7fff055d2[m
+Author: KokyRamirezPerez <koky.ramirez26@outlook.com>
+Date:   Sat Oct 4 23:17:57 2025 -0500
+
+    Update application.properties
+
+[33mcommit fe0cf8c377a60798261aaf56e418dd2caa25a640[m
+Author: KokyRamirezPerez <koky.ramirez26@outlook.com>
+Date:   Sat Oct 4 23:16:43 2025 -0500
+
+    Update UsuarioService.java
+
+[33mcommit bc92c2c4b29bc73dae9a462bf87d43ea26336779[m
+Author: KokyRamirezPerez <koky.ramirez26@outlook.com>
+Date:   Sat Oct 4 23:13:31 2025 -0500
+
+    Update UsuarioService.java
+
+[33mcommit 39a14da57272a1ded65b0aeef6d59618d8e9cb07[m
+Author: KokyRamirezPerez <koky.ramirez26@outlook.com>
+Date:   Sat Oct 4 23:12:34 2025 -0500
+
+    Update CitaController.java
+
+[33mcommit f978a2bbcfe7373ac14dce7ae7aa956e7dc6a5f8[m
+Author: KokyRamirezPerez <koky.ramirez26@outlook.com>
+Date:   Sat Oct 4 23:12:16 2025 -0500
+
+    Update TurnoController.java
+
+[33mcommit 1a41b93436c29e0ee005c8f5a7a22ce80e363489[m
+Author: KokyRamirezPerez <koky.ramirez26@outlook.com>
+Date:   Sat Oct 4 23:12:07 2025 -0500
+
+    Update UsuarioController.java
+
+[33mcommit a6a8b33055304d15e7d3e5be8181286397fcd976[m
+Author: KokyRamirezPerez <koky.ramirez26@outlook.com>
+Date:   Sat Oct 4 23:11:12 2025 -0500
+
+    Update pom.xml
+
+[33mcommit 5953ee6f542f008052ba5279ca7b353e84a7e2d4[m
+Author: KokyRamirezPerez <koky.ramirez26@outlook.com>
+Date:   Sat Oct 4 23:08:01 2025 -0500
+
+    Update CitaController.java
+
+[33mcommit 0cb7f3c735af371dd365398a94af1e1bac1cee03[m
+Author: KokyRamirezPerez <koky.ramirez26@outlook.com>
+Date:   Sat Oct 4 23:07:15 2025 -0500
+
+    Update TurnoController.java
+
+[33mcommit 0d62e851e0cbf0d2464381338283c6eb0aa31587[m
+Author: KokyRamirezPerez <koky.ramirez26@outlook.com>
+Date:   Sat Oct 4 23:06:57 2025 -0500
+
+    Update UsuarioController.java
+
+[33mcommit 7b7b65e3b03f391fe604d6630c95553b99a7f623[m
+Author: KokyRamirezPerez <koky.ramirez26@outlook.com>
+Date:   Sat Oct 4 23:05:48 2025 -0500
+
+    Update UsuarioDTO.java
+
+[33mcommit 5550ce0b2fc401d950306f3aa8c15ab285c6af0d[m
+Author: KokyRamirezPerez <koky.ramirez26@outlook.com>
+Date:   Sat Oct 4 23:05:33 2025 -0500
+
+    Update Usuario.java
+
+[33mcommit f1c5592a5b0cc7c202cffa13b28f98dc0583d428[m
+Author: KokyRamirezPerez <koky.ramirez26@outlook.com>
+Date:   Sat Oct 4 23:05:13 2025 -0500
+
+    Update UsuarioRepositorio.java
+
+[33mcommit 8959ac66a26293ed5170396efe150f44eef6b322[m
+Author: KokyRamirezPerez <koky.ramirez26@outlook.com>
+Date:   Sat Oct 4 23:04:45 2025 -0500
+
+    Update UsuarioService.java
+
+[33mcommit f24d59c1356c82131adedb6a48d4ca1a7f54e8c7[m
+Author: KokyRamirezPerez <koky.ramirez26@outlook.com>
+Date:   Sat Oct 4 23:04:06 2025 -0500
+
+    Agregando security
+
+[33mcommit ee6de670221152f4b92fa279185dd5456040d14f[m
+Author: Maripareja <mari.pavi.06@gmail.com>
+Date:   Sat Oct 4 18:46:03 2025 -0500
+
+    Quitando funciones vacias en plan receta receta
+
+[33mcommit 177026b89f554d22cf28756cdbc19a172b9d6876[m
+Author: Melanie Oliva <mel.olivac@gmail.com>
+Date:   Sat Oct 4 17:53:24 2025 -0500
+
+    Tratando de arreglar por completo parte 11
+
+[33mcommit 0b1e6eaec9c12252b28a41e6c8dbd6fc24eb8886[m
+Author: Melanie Oliva <mel.olivac@gmail.com>
+Date:   Sat Oct 4 17:26:36 2025 -0500
+
+    Tratando de arreglar por completo parte 10_2
+
+[33mcommit 514addc69c87572212a23f71b7d47d1ebc0618fc[m
+Author: Melanie Oliva <mel.olivac@gmail.com>
+Date:   Sat Oct 4 17:25:16 2025 -0500
+
+    Tratando de arreglar por completo parte 10
+
+[33mcommit a98e5de7b067a5e0ad33db05003b005053757898[m
+Author: Melanie Oliva <mel.olivac@gmail.com>
+Date:   Sat Oct 4 08:48:23 2025 -0500
+
+    Tratando de arreglar por completo parte 9
+
+[33mcommit 1914b4815834843ac16a1fef84b8a8b03746b812[m
+Author: Melanie Oliva <mel.olivac@gmail.com>
+Date:   Sat Oct 4 02:26:04 2025 -0500
+
+    Tratando de arreglar por completo parte 8
+
+[33mcommit 130b7fe54a4e868218428f1592ac55d3f570d7c4[m
+Author: Melanie Oliva <mel.olivac@gmail.com>
+Date:   Fri Oct 3 18:22:07 2025 -0500
+
+    Tratando de arreglar por completo parte 7
+
+[33mcommit 9ee9577f6d48d61d48ddae25cf0155582dc92d8e[m
+Author: Melanie Oliva <mel.olivac@gmail.com>
+Date:   Fri Oct 3 17:05:43 2025 -0500
+
+    Tratando de arreglar por completo parte 6
+
+[33mcommit 65984fdfcfc40c9895718fa0fb05fe6414b174ad[m
+Author: luz21-brownie <luzclaritacochachi21@gmail.com>
+Date:   Fri Oct 3 16:05:29 2025 -0500
+
+    se agrego cosas nuevas en application.properties
+
+[33mcommit cc45ec0e1348e9f3b7df047e927685e1447b0f42[m
+Author: luz21-brownie <luzclaritacochachi21@gmail.com>
+Date:   Fri Oct 3 16:02:29 2025 -0500
+
+    excepcion de que no encontro la ruta del api
+
+[33mcommit 73b2b4c05a1dc7763ea8db2d3ef4e9d0a4ffad3a[m
+Author: luz21-brownie <luzclaritacochachi21@gmail.com>
+Date:   Fri Oct 3 16:01:19 2025 -0500
+
+    excepcion de que esta mal el formato Json
+
+[33mcommit 4412964f1b6d8e8a4f46c6996219273849e08815[m
+Author: luz21-brownie <luzclaritacochachi21@gmail.com>
+Date:   Fri Oct 3 15:57:29 2025 -0500
+
+    excepciones de duplicidad de dni
+
+[33mcommit 8d18d6fa5ed7a0fe86c005c8a6348a4324a4b9a5[m
+Author: luz21-brownie <luzclaritacochachi21@gmail.com>
+Date:   Fri Oct 3 15:54:52 2025 -0500
+
+    carpeta de excepciones
+
+[33mcommit 186d817dbaa2a91943f99b1eff038e8abd4fc5d3[m
+Author: Maripareja <mari.pavi.06@gmail.com>
+Date:   Fri Oct 3 15:42:25 2025 -0500
+
+    Solucionado la función de seguimiento
+
+[33mcommit a8836504b7381b7a59676ea7e99c2619ff958e82[m
+Author: Melanie Oliva <mel.olivac@gmail.com>
+Date:   Fri Oct 3 11:43:36 2025 -0500
+
+    Tratando de arreglar por completo parte 5
+
+[33mcommit 8f2e84b63018678fa99210e4da3b2b0223bc89af[m
+Author: Melanie Oliva <mel.olivac@gmail.com>
+Date:   Fri Oct 3 11:31:25 2025 -0500
+
+    Tratando de arreglar por completo parte 4
+
+[33mcommit 93afdb29ecdc7a70ebce719ce45e776c59903a2e[m
+Author: Melanie Oliva <mel.olivac@gmail.com>
+Date:   Fri Oct 3 10:39:28 2025 -0500
+
+    Tratando de arreglar por completo parte 3
+
+[33mcommit 3280f1ffe786bbdeade3eebaf477509da4f2fc39[m
+Author: Melanie Oliva <mel.olivac@gmail.com>
+Date:   Thu Oct 2 20:00:45 2025 -0500
+
+    Tratando de arreglar por completo parte 2
+
+[33mcommit 0cb9a92b88ec5cf16c3ca705aa0c127f93f31a92[m
+Author: Melanie Oliva <mel.olivac@gmail.com>
+Date:   Thu Oct 2 19:43:49 2025 -0500
+
+    Tratando de arreglar por completo parte 1
+
+[33mcommit 5fe0f620966ad5fc1fbf319d4e173ca68f5ab73b[m
+Author: Melanie Oliva <mel.olivac@gmail.com>
+Date:   Thu Oct 2 18:29:08 2025 -0500
+
+    Corrigiendo errores tabla seguimiento y Relaciones con PlanRecetaReceta
+
+[33mcommit c7c624d06f54b4be1fd6840977033fe78684b838[m
+Author: Melanie Oliva <mel.olivac@gmail.com>
+Date:   Thu Oct 2 15:29:16 2025 -0500
+
+    Corrigiendo errores tabla seguimiento
+
+[33mcommit 198efea78d18e8b625d1ecdf99acfb9699cff3dc[m
+Author: Maripareja <mari.pavi.06@gmail.com>
+Date:   Thu Oct 2 12:21:45 2025 -0500
+
+    WIP: cambios temporales antes de reescribir historial
+
+[33mcommit fdc31a38643ee5683104a54bf18ce1efb2739c98[m
+Author: Melanie Oliva <mel.olivac@gmail.com>
+Date:   Thu Oct 2 10:12:56 2025 -0500
+
+    Arreglando plan receta-error de listado
+
+[33mcommit 3c15ca7540e1a2e58deb3ff16d916d2d62814a16[m
+Author: Melanie Oliva <mel.olivac@gmail.com>
+Date:   Wed Oct 1 23:23:47 2025 -0500
+
+    Actualizando todo
+
+[33mcommit 2e96e384f980f26554e7a2113f2f364963a18703[m
+Author: Maripareja <mari.pavi.06@gmail.com>
+Date:   Mon Sep 29 19:17:42 2025 -0500
+
+    Mejorando duplicidad de dni de nutricionista
+
+[33mcommit b00ea8a888fae07ad2393102b1c0041f7f2c6b40[m
+Author: Maripareja <mari.pavi.06@gmail.com>
+Date:   Mon Sep 29 18:13:01 2025 -0500
+
+    Problema del swagger solucionado
+
+[33mcommit 58e7086074d4492632bcba9f8f1139a4ddf6d857[m
+Author: Melanie Oliva <mel.olivac@gmail.com>
+Date:   Mon Sep 29 17:12:59 2025 -0500
+
+    Modificando RecetaController: Agregar recetas de nutricionistas a pacientes
+
+[33mcommit 03e5ce825f1a9f75cc3bd86da9b4c2ca5206afdd[m
+Author: Melanie Oliva <mel.olivac@gmail.com>
+Date:   Mon Sep 29 16:52:21 2025 -0500
+
+    Realizando cumplimiento para historia de usuario
+
+[33mcommit 4179977104f92b61b9ca241d484c8a91fea29fed[m
+Author: Melanie Oliva <mel.olivac@gmail.com>
+Date:   Mon Sep 29 16:26:10 2025 -0500
+
+    Corrigiendo logica de seguimiento
+
+[33mcommit f9f35383b64ee6e3c9e14243b6d950c861304c68[m
+Author: Melanie Oliva <mel.olivac@gmail.com>
+Date:   Mon Sep 29 14:11:29 2025 -0500
+
+    Modificando historia de usuario 9
+
+[33mcommit 822ad1f63855e8141d5b5463e41c518db0a4d360[m
+Author: Melanie Oliva <mel.olivac@gmail.com>
+Date:   Mon Sep 29 11:57:18 2025 -0500
+
+    Modificando atributo username por dni
+
+[33mcommit 202b64a0e3901668a2241eca917994d72da9715a[m
+Author: Melanie Oliva <mel.olivac@gmail.com>
+Date:   Mon Sep 29 11:44:08 2025 -0500
+
+    Actualizando el listar plan receta
+
+[33mcommit 0a8b49cf910354d9cb5b6a8c952d2099c67dd0de[m
+Author: Melanie Oliva <mel.olivac@gmail.com>
+Date:   Wed Sep 24 07:21:38 2025 -0500
+
+    .
+
+[33mcommit c160e7d757121563f4978c38129231d3946e3b53[m
+Author: Melanie Oliva <mel.olivac@gmail.com>
+Date:   Wed Sep 24 07:16:45 2025 -0500
+
+    Correccion de relacion
+
+[33mcommit 0660396d0f02286c49857654713c766979f21cdd[m
+Merge: 0d95b3f ae34941
+Author: luz21-brownie <luzclaritacochachi21@gmail.com>
+Date:   Mon Sep 22 15:24:49 2025 -0500
+
+    se actualizo planalimenticio
+
+[33mcommit 0d95b3f58f1c620988534c7833b3ae28e1a46a9f[m
+Author: luz21-brownie <luzclaritacochachi21@gmail.com>
+Date:   Mon Sep 22 15:23:32 2025 -0500
+
+    actualizacion de planalimenticio
+
+[33mcommit ae34941bd7683c4ce22da48db2c59d53a0478d54[m
+Author: Melanie Oliva <mel.olivac@gmail.com>
+Date:   Mon Sep 22 13:24:55 2025 -0500
+
+    Correccion del services: Plan Seguimiento  parte 3
+
+[33mcommit 35f5765fe07e6d707c195b86248eff17f848cfc8[m
+Author: Melanie Oliva <mel.olivac@gmail.com>
+Date:   Mon Sep 22 12:57:53 2025 -0500
+
+    Correccion del services: Plan Seguimiento  parte 2
+
+[33mcommit 073f8082ba90bd4fb9fa7a228edaafde65a73362[m
+Author: Melanie Oliva <mel.olivac@gmail.com>
+Date:   Mon Sep 22 12:30:23 2025 -0500
+
+    Correccion del services: Plan Receta parte 2
+
+[33mcommit 1339bf9f2e2bfe898962bf64ab5a7a6d8a05efa1[m
+Author: Melanie Oliva <mel.olivac@gmail.com>
+Date:   Mon Sep 22 11:46:45 2025 -0500
+
+    Correccion del services:  Plan Receta
+
+[33mcommit e703f88c8face1e040e66ee33f973d23cf1365d6[m
+Author: Melanie Oliva <mel.olivac@gmail.com>
+Date:   Mon Sep 22 10:20:01 2025 -0500
+
+    Correccion del services:  PlanAlimenticioService
+
+[33mcommit 5062850af5e30d9fc62fef664fa41fdd1b59ae6a[m
+Author: Melanie Oliva <mel.olivac@gmail.com>
+Date:   Mon Sep 22 08:59:31 2025 -0500
+
+    Agregando columna preparacion en la tabla receta
+
+[33mcommit f4eb4dad2fc5582eba98906b4b63162a3dae519b[m
+Merge: af34f24 3b15a97
+Author: luz21-brownie <luzclaritacochachi21@gmail.com>
+Date:   Mon Sep 22 08:58:54 2025 -0500
+
+    registro actualizado
+
+[33mcommit af34f24399d6dd5e655c7a54ab3e6835bac631a4[m
+Author: luz21-brownie <luzclaritacochachi21@gmail.com>
+Date:   Mon Sep 22 08:55:31 2025 -0500
+
+    registro actualizado
+
+[33mcommit 3b15a97a9f01c7bbaca97cf270566b65ecd8ae73[m
+Author: Melanie Oliva <mel.olivac@gmail.com>
+Date:   Mon Sep 22 08:53:19 2025 -0500
+
+    Modificando la tabla plan alimenticio, errores de automatizacion part1
+
+[33mcommit c01619f27de4297a9e0a08c4609b5c42b73986cb[m
+Author: Melanie Oliva <mel.olivac@gmail.com>
+Date:   Sun Sep 21 23:18:04 2025 -0500
+
+    Modificando la tabla receta parte 2
+
+[33mcommit acf109bbd9b97e2b9b097829b1d42a9146093961[m
+Author: Melanie Oliva <mel.olivac@gmail.com>
+Date:   Sun Sep 21 22:31:38 2025 -0500
+
+    Modificando la tabla receta parte 1
+
+[33mcommit 3676f48c8779aa26883ad3a373898ec682ffecae[m
+Author: Melanie Oliva <mel.olivac@gmail.com>
+Date:   Sun Sep 21 22:30:24 2025 -0500
+
+    Modificando la tabla receta
+
+[33mcommit 4cb8d64cc4da7d09717a933db8e307e805afba3e[m
+Author: Melanie Oliva <mel.olivac@gmail.com>
+Date:   Sun Sep 21 22:04:14 2025 -0500
+
+    Modificando la tabla plan receta
+
+[33mcommit 480a8a05d6afc4e89f19d1b0d3eee962102bbebc[m
+Author: Maripareja <mari.pavi.06@gmail.com>
+Date:   Sun Sep 21 21:09:16 2025 -0500
+
+    Mejorando el duplicado de seguimiento
+
+[33mcommit ad3051ad86b5d6588a0336f7068a77be23ccaaf8[m
+Author: KokyRamirezPerez <koky.ramirez26@outlook.com>
+Date:   Sun Sep 21 11:41:50 2025 -0500
+
+    Agregando validación de datos para editar seguimiento
+
+[33mcommit c1366a3a728d1e112c684de7a614a331337889ae[m
+Author: AllisG <alligalindo30@gmail.com>
+Date:   Sun Sep 21 11:35:29 2025 -0500
+
+    Agregando al controlador listarSeguimientosPorInicialYFecha
+
+[33mcommit 1a984d98982876e47669890d4d1457492a72caf8[m
+Author: luz21-brownie <luzclaritacochachi21@gmail.com>
+Date:   Sat Sep 20 22:38:22 2025 -0500
+
+    se agrego al controlador consultarplanalimenticio
+
+[33mcommit 48beca15f7c2f40a026ef61fbfa95ba9a62ad4dd[m
+Author: luz21-brownie <luzclaritacochachi21@gmail.com>
+Date:   Sat Sep 20 21:58:25 2025 -0500
+
+    se agrego planalimenticioservice
+
+[33mcommit 79584cb312283687a26da5146c7a640d07fafb2a[m
+Author: luz21-brownie <luzclaritacochachi21@gmail.com>
+Date:   Sat Sep 20 21:46:11 2025 -0500
+
+    se puso un query buscar por paciente
+
+[33mcommit bfc4058759ed80c4bfbf73fe077842a7c3379e6c[m
+Author: luz21-brownie <luzclaritacochachi21@gmail.com>
+Date:   Sat Sep 20 21:43:08 2025 -0500
+
+    se puso consultarplanalimenticio
+
+[33mcommit 717807d7a8799e0965d3f09f49045ff75068baa6[m
+Author: Maripareja <mari.pavi.06@gmail.com>
+Date:   Sat Sep 20 20:51:33 2025 -0500
+
+    Mejorando los atributos del service de Seguimiento
+
+[33mcommit bbe851c67b3d62cdeb95a9de45f61a8790f8f801[m
+Author: Melanie Oliva <mel.olivac@gmail.com>
+Date:   Sat Sep 20 19:04:25 2025 -0500
+
+    Modificando todos los errores de la tabla plan receta y seguimiento
+
+[33mcommit 1a951c192d8795961475580d8fa1381cb846dfc9[m
+Author: Melanie Oliva <mel.olivac@gmail.com>
+Date:   Sat Sep 20 16:31:43 2025 -0500
+
+    Actualizando historias de usuario parte 2
+
+[33mcommit 4f8ab27dd8f901faaaa7f8b37d95b853d2be3935[m
+Author: Melanie Oliva <mel.olivac@gmail.com>
+Date:   Sat Sep 20 15:50:03 2025 -0500
+
+    Actualizando historias de usuario
+
+[33mcommit ec107f133d7c1cef13d04d0390513bff033fe125[m
+Author: Melanie Oliva <mel.olivac@gmail.com>
+Date:   Sat Sep 20 15:02:23 2025 -0500
+
+    Quitando relacion
+
+[33mcommit 2888ae2139bf27e9154022595a358b33ed3bb9c8[m
+Author: Melanie Oliva <mel.olivac@gmail.com>
+Date:   Fri Sep 19 15:26:01 2025 -0500
+
+    Haciendo correcciones a los metodos de seguimiento parte 2
+
+[33mcommit 4213238cb5a274693404a7350c72cb978193044c[m
+Author: Melanie Oliva <mel.olivac@gmail.com>
+Date:   Fri Sep 19 11:41:23 2025 -0500
+
+    Haciendo correcciones a los metodos de seguimiento
+
+[33mcommit bb792b15651a4f4d489473f589180e56176b29c7[m
+Author: Melanie Oliva <mel.olivac@gmail.com>
+Date:   Fri Sep 19 09:11:38 2025 -0500
+
+    Solucionando errores de dependencias
+
+[33mcommit 2ea7135f7041c2837fccc595bb927d970c6aba0a[m
+Author: Melanie Oliva <mel.olivac@gmail.com>
+Date:   Fri Sep 19 08:15:55 2025 -0500
+
+    Solucionando problemas con errores en la BD
+
+[33mcommit 1eb6175b3f02f2b33a6e6468f3c8cf9bfb082d94[m
+Author: Melanie Oliva <mel.olivac@gmail.com>
+Date:   Wed Sep 17 20:58:35 2025 -0500
+
+    Agregando metodos a la tabla Seguimiento
+
+[33mcommit 5c4b7cdd59eeeb4dc504e392c6cb3b417b2a0269[m
+Author: Melanie Oliva <mel.olivac@gmail.com>
+Date:   Wed Sep 17 17:31:05 2025 -0500
+
+    Modificando Tabla plan de receta, Seguimiento y Receta segun la logica de negocios
+
+[33mcommit 27943b4b2ab883451796a5c19ebe5dcb92f8151b[m
+Author: Melanie Oliva <mel.olivac@gmail.com>
+Date:   Tue Sep 16 12:45:09 2025 -0500
+
+    Modificando todos los metodos que seran para el administrador, en caso A o B haiga uno
+
+[33mcommit 9bb618840dcbaa495b169ab3643938ba3fa830c8[m
+Author: Melanie Oliva <mel.olivac@gmail.com>
+Date:   Tue Sep 16 11:30:42 2025 -0500
+
+    Actualizando metodos necesarios para las historias de usuario como: Listar Citas Por Nutricionista y Citas Por Paciente
+
+[33mcommit cd57e4a7e1b15af166b9d0159a7164b3f18fa4bc[m
+Author: Melanie Oliva <mel.olivac@gmail.com>
+Date:   Fri Sep 12 09:42:09 2025 -0500
+
+    Modificando citas, para que solo registre pacientes con plan premium
+
+[33mcommit dc837371c3d98a9c03efccaa427b20ac0010a2a4[m
+Author: Melanie Oliva <mel.olivac@gmail.com>
+Date:   Fri Sep 12 09:03:51 2025 -0500
+
+    pequeñas actualizaciones
+
+[33mcommit 49e469518d300028c76e62f8a5d615d810977009[m
+Author: Melanie Oliva <mel.olivac@gmail.com>
+Date:   Fri Sep 12 08:56:53 2025 -0500
+
+    Actualizando metodos registrar de usuario
+
+[33mcommit ec390106298dc2c1e0cbfc5b42b2c9ddfdf49be4[m
+Author: Melanie Oliva <mel.olivac@gmail.com>
+Date:   Fri Sep 12 08:27:14 2025 -0500
+
+    Errores de la tabla Turno usuario-estado
+
+[33mcommit 95e754f87aafbcc4dc63df36fdf20de03fddfead[m
+Author: Melanie Oliva <mel.olivac@gmail.com>
+Date:   Thu Sep 11 01:49:07 2025 -0500
+
+    Errores de la tabla Turno corregidos
+
+[33mcommit 2777ab6cc8cb73de5b4fd041826e4ed4f41bbe78[m
+Author: Melanie Oliva <mel.olivac@gmail.com>
+Date:   Thu Sep 11 01:35:44 2025 -0500
+
+    Agregando los metodos Buscar y autocompletar busqueda en la tabla RecetaController
+
+[33mcommit 399da0c58f0a1de24b8d6c5c7ac5843cdbc14cb7[m
+Author: Melanie Oliva <mel.olivac@gmail.com>
+Date:   Thu Sep 11 00:48:07 2025 -0500
+
+    Url de TurnoController modificado
+
+[33mcommit 58236f8590e11d48a6a575fe1356dc60be0cbc4f[m
+Author: Melanie Oliva <mel.olivac@gmail.com>
+Date:   Thu Sep 11 00:44:53 2025 -0500
+
+    Agregando CRUD a la tabla Plan Receta
+
+[33mcommit b19a423e70581cb151bbf7e9fa7f74d615a6c8c6[m
+Author: Melanie Oliva <mel.olivac@gmail.com>
+Date:   Thu Sep 11 00:08:34 2025 -0500
+
+    Agregando CRUD a la tabla Plan Alimenticio
+
+[33mcommit 2f7cc6e63d896ab9663d955b7b9a3e8aee6f8204[m
+Author: KokyRamirezPerez <koky.ramirez26@outlook.com>
+Date:   Thu Sep 11 00:07:08 2025 -0500
+
+    Create CitaController.java
+
+[33mcommit b6ce0373131f962c993ff0fb1c164a8129e6cfb8[m
+Author: KokyRamirezPerez <koky.ramirez26@outlook.com>
+Date:   Thu Sep 11 00:06:22 2025 -0500
+
+    Create CitaService.java
+
+[33mcommit 336f1193846b7e41dedc8a9dd80cef7fedb58796[m
+Author: KokyRamirezPerez <koky.ramirez26@outlook.com>
+Date:   Thu Sep 11 00:05:52 2025 -0500
+
+    Create CitaRepositorio.java
+
+[33mcommit 4936ffc9acb7e1426f94795dea11d4ae550c7615[m
+Author: KokyRamirezPerez <koky.ramirez26@outlook.com>
+Date:   Thu Sep 11 00:05:16 2025 -0500
+
+    Create ICitaServices.java
+
+[33mcommit 2efa9cca4cce32c254dcedb85445edda4054857d[m
+Author: KokyRamirezPerez <koky.ramirez26@outlook.com>
+Date:   Wed Sep 10 23:59:40 2025 -0500
+
+    Update CitaDTO.java
+
+[33mcommit 5449a86574c14ae38486e16007120e88dc86b4ef[m
+Author: KokyRamirezPerez <koky.ramirez26@outlook.com>
+Date:   Wed Sep 10 23:59:27 2025 -0500
+
+    Update Cita.java
+
+[33mcommit ae031f609504ce5e6c0a5212cec77e98d9eedb9f[m
+Author: Melanie Oliva <mel.olivac@gmail.com>
+Date:   Wed Sep 10 23:19:01 2025 -0500
+
+    Agregando CRUD a la tabla Nutricionista
+
+[33mcommit 572a882ac03207d2a70ceeae8bd3fdd40197e961[m
+Author: KokyRamirezPerez <koky.ramirez26@outlook.com>
+Date:   Wed Sep 10 23:08:39 2025 -0500
+
+    Create CitaDTO.java
+
+[33mcommit 7a5a19304f49cac58c6b72da9adec16d030d83f0[m
+Author: Melanie Oliva <mel.olivac@gmail.com>
+Date:   Wed Sep 10 22:36:16 2025 -0500
+
+    Agregando mantenimiento a la tabla Paciente
+
+[33mcommit 2f504e264e4a7204c497d98319732bbc03f66df1[m
+Author: Melanie Oliva <mel.olivac@gmail.com>
+Date:   Wed Sep 10 20:33:09 2025 -0500
+
+    Agregando mantenimiento a la tabla Usuario
+
+[33mcommit 043d63a6c328c323ff4e0ea4e53075aa6e6d270a[m
+Author: Melanie Oliva <mel.olivac@gmail.com>
+Date:   Wed Sep 10 17:43:41 2025 -0500
+
+    Agregando mantenimiento a la tabla Turno
+
+[33mcommit 44e3afce54779cb7cecb000b14f27c7cc81b11e7[m
+Author: Melanie Oliva <mel.olivac@gmail.com>
+Date:   Wed Sep 10 17:16:39 2025 -0500
+
+    Agregando mantenimiento a la tabla horario
+
+[33mcommit 974d66658be88eb26aab94e2f0a8e800796ce088[m
+Author: Melanie Oliva <mel.olivac@gmail.com>
+Date:   Wed Sep 10 16:51:07 2025 -0500
+
+    Actualizacion de los atributos y logica de negocio
+
+[33mcommit 711b017acaf587b3cd6436ee35f1c98ae1e94e68[m
+Author: Melanie Oliva <mel.olivac@gmail.com>
+Date:   Wed Sep 10 13:42:55 2025 -0500
+
+    Agregando mantenimiento de Plan Nutricional
+
+[33mcommit bb9f03f000ddbc356ab21c08d946f2ae59fee026[m
+Author: Melanie Oliva <mel.olivac@gmail.com>
+Date:   Wed Sep 10 11:40:00 2025 -0500
+
+    Modificando PlanSuscripcionServices: librerias
+
+[33mcommit 5b2ddde98f5c14e342cebc2a0abdd71043ba1b5b[m
+Author: Melanie Oliva <mel.olivac@gmail.com>
+Date:   Wed Sep 10 11:17:22 2025 -0500
+
+    Modificando PlanSuscripcionServices: editar
+
+[33mcommit d2acfcb80e066644ac6beaa0ffc7e66992143239[m
+Author: Melanie Oliva <mel.olivac@gmail.com>
+Date:   Wed Sep 10 10:50:51 2025 -0500
+
+    Eliminando atributo favorito de tabla receta
+
+[33mcommit 68b5c11032f3586b180fb461c12e9789bb1d27cf[m
+Author: Melanie Oliva <mel.olivac@gmail.com>
+Date:   Wed Sep 10 10:36:04 2025 -0500
+
+    Modificacion de la tabla receta
+
+[33mcommit 4e71bd23fef58ebf499b4b7f59b440a32fbca700[m
+Author: Melanie Oliva <mel.olivac@gmail.com>
+Date:   Wed Sep 10 10:14:52 2025 -0500
+
+    Se agrego el mantenimiento de Plan de Suscripcion
+
+[33mcommit dbf9885a3e44ed558c457662fdc123c67f468baf[m
+Author: Melanie Oliva <mel.olivac@gmail.com>
+Date:   Wed Sep 10 00:24:49 2025 -0500
+
+    Agregando el mantenimiento de las tablas rol y receta
+
+[33mcommit 808059fcf8c7e46fbd3f10d958dc62fc289ff3f0[m
+Author: Melanie Oliva <mel.olivac@gmail.com>
+Date:   Tue Sep 9 23:58:39 2025 -0500
+
+    Agregando archivo de configuraciones ModelMapperConfig
+
+[33mcommit cbe4178996d549fab5360e6be18d3ad8861d92d1[m
+Author: Melanie Oliva <mel.olivac@gmail.com>
+Date:   Tue Sep 9 22:33:19 2025 -0500
+
+    Creando DTO de Plan de suscripcion
+
+[33mcommit 55e3c3e2d9a05b4d8af364a1e1d3c1e9e4740c51[m
+Author: Melanie Oliva <mel.olivac@gmail.com>
+Date:   Tue Sep 9 22:16:46 2025 -0500
+
+    Agregando dependencias de maven como swagger y Dto mapper
+
+[33mcommit 59a1522fb70481dbad1b5681e4070a4639a141a7[m
+Author: Melanie Oliva <mel.olivac@gmail.com>
+Date:   Tue Sep 9 21:38:39 2025 -0500
+
+    Corrigiendo carpeta de entidades
+
+[33mcommit 1eb95a1e68357f0d8475a668dcfef4f978ee2d2d[m
+Author: Melanie Oliva <mel.olivac@gmail.com>
+Date:   Tue Sep 9 21:10:45 2025 -0500
+
+    Agregando toda la configuracion de la base de datos incluyendo el JPA
+
+[33mcommit 3e7a3012615b745c380c2df710e4e2e5572549bf[m
+Author: Melanie Anai Oliva Cabanillas <mel.olivac@gmail.com>
+Date:   Tue Sep 9 21:06:31 2025 -0500
+
+    Initial commit
