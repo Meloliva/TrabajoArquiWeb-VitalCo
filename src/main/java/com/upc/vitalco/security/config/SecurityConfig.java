@@ -60,7 +60,9 @@ public class SecurityConfig {
                                 "/api/verificarCodigoRecuperacion",
                                 "/api/restablecerCuenta",
                                 "/api/listarRoles",
-                                "/api/listarTurnos"
+                                "/api/listarTurnos",
+                                "/api/listarPlanesNutricionales",
+                                "/api/listarPlanesSuscripcion"
                         ).permitAll()
                         .anyRequest().authenticated()
                 )

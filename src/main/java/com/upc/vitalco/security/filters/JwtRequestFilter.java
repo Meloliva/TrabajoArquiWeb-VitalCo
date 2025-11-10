@@ -29,6 +29,23 @@ public class JwtRequestFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
             throws ServletException, IOException {
+        final String requestPath = request.getRequestURI();
+        if (
+                requestPath.startsWith("/api/registrarUsuario") ||
+                requestPath.startsWith("/api/registrarNutricionista") ||
+                requestPath.startsWith("/api/registrarPaciente") ||
+                requestPath.startsWith("/api/registrarRol") ||
+                requestPath.startsWith("/api/recuperarCuenta") ||
+                requestPath.startsWith("/api/verificarCodigoRecuperacion") ||
+                requestPath.startsWith("/api/restablecerCuenta") ||
+                requestPath.startsWith("/api/listarRoles") ||
+                requestPath.startsWith("/api/listarPlanesSuscripcion") ||
+                requestPath.startsWith("/api/listarPlanesNutricionales") ||
+                requestPath.startsWith("/api/listarTurnos"))  {
+            chain.doFilter(request, response);
+            return;
+        }
+
 
         final String authorizationHeader = request.getHeader("Authorization");
 
