@@ -80,4 +80,12 @@ public class UsuarioController {
             return ResponseEntity.ok("Cuenta restablecida y activada.");
     }
 
+    @GetMapping("/obtenerUsuario/{id}")
+    @PreAuthorize("hasRole('PACIENTE') or hasRole('NUTRICIONISTA')")
+    public ResponseEntity<UsuarioDTO> obtenerUsuarioPorId(@PathVariable Integer id) {
+        UsuarioDTO usuario = usuarioService.obtenerPorIdIndividual(id);
+        return ResponseEntity.ok(usuario);
+    }
+
+
 }

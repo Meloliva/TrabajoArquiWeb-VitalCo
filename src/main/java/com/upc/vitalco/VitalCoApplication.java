@@ -3,7 +3,7 @@ package com.upc.vitalco;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-@SpringBootApplication
+@SpringBootApplication(scanBasePackages = "com.upc.vitalco")
 public class VitalCoApplication {
 
     public static void main(String[] args) {

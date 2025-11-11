@@ -42,9 +42,16 @@ VALUES
 -- =============================================
 INSERT INTO plannutricional (duracion, objetivo)
 VALUES
+    -- Planes para bajar triglicéridos
     ('3 meses', 'bajar trigliceridos'),
     ('6 meses', 'bajar trigliceridos'),
-    ('12 meses', 'bajar trigliceridos');
+    ('12 meses', 'bajar trigliceridos'),
+
+    -- Planes para mantener tu salud
+    ('3 meses', 'mantener tu salud'),
+    ('6 meses', 'mantener tu salud'),
+    ('12 meses', 'mantener tu salud');
+
 
 -- =============================================
 -- USUARIOS

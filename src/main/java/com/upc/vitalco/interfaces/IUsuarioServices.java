@@ -9,4 +9,5 @@ public interface IUsuarioServices {
     void solicitarRecuperacion(String correo);
     boolean verificarCodigo(String codigo);
     void restablecerCuenta(String correo, String nuevaContraseña);
+    public UsuarioDTO obtenerPorIdIndividual(Integer id);
 }

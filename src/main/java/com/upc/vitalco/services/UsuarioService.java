@@ -186,6 +186,12 @@ public class UsuarioService implements IUsuarioServices {
         enviarCorreoConfirmacion(correo, usuario.getNombre());
     }
 
+    @Override
+    public UsuarioDTO obtenerPorIdIndividual(Integer id) {
+        Usuario usuario = usuarioRepositorio.findById(id)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado con ID: " + id));
+        return modelMapper.map(usuario, UsuarioDTO.class);
+    }
 
 }
 
