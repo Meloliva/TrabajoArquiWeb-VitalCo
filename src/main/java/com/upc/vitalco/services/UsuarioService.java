@@ -193,6 +193,7 @@ public class UsuarioService implements IUsuarioServices {
         return modelMapper.map(usuario, UsuarioDTO.class);
     }
 
+
 }
 
 
