@@ -2,6 +2,7 @@ package com.upc.vitalco.controllers;
 import com.upc.vitalco.dto.PlanRecetaDTO;
 import com.upc.vitalco.dto.RecetaDTO;
 import com.upc.vitalco.security.util.SecurityUtils;
+import com.upc.vitalco.services.PacienteService;
 import com.upc.vitalco.services.PlanRecetaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -19,17 +20,21 @@ public class PlanRecetaController {
     private PlanRecetaService planRecetaService;
     @Autowired
     private SecurityUtils securityUtils;
+    @Autowired
+    private PacienteService pacienteService;
 
     @PreAuthorize("hasRole('PACIENTE')")
     @GetMapping("/listarPlanRecetas")
     public List<PlanRecetaDTO> listarPorPaciente() {
-        Integer idPaciente = securityUtils.getUsuarioAutenticadoId();
+        Integer idUsuario = securityUtils.getUsuarioAutenticadoId();
+        Integer idPaciente=pacienteService.obtenerIdPacientePorUsuario(idUsuario);
         return planRecetaService.listarPorPaciente(idPaciente);
     }
     @PreAuthorize("hasRole('PACIENTE')")
     @GetMapping("/listarPlanRecetasFavoritos")
     public List<PlanRecetaDTO> listarFavoritosPorPaciente() {
-        Integer idPaciente = securityUtils.getUsuarioAutenticadoId();
+        Integer idUsuario = securityUtils.getUsuarioAutenticadoId();
+        Integer idPaciente=pacienteService.obtenerIdPacientePorUsuario(idUsuario);
         return planRecetaService.listarFavoritosPorPaciente(idPaciente);
     }
 
@@ -58,7 +63,8 @@ public class PlanRecetaController {
     @GetMapping("/listarRecetasPorHorarios/{nombreHorario}")
     public List<RecetaDTO> listarRecetasPorHorarioEnPlanRecienteDePaciente(
             @PathVariable String nombreHorario) {
-        Integer idPaciente = securityUtils.getUsuarioAutenticadoId();
+        Integer idUsuario = securityUtils.getUsuarioAutenticadoId();
+        Integer idPaciente=pacienteService.obtenerIdPacientePorUsuario(idUsuario);
         return planRecetaService.listarRecetasPorHorarioEnPlanRecienteDePaciente(idPaciente, nombreHorario);
     }
 
@@ -66,7 +72,8 @@ public class PlanRecetaController {
     @GetMapping("/autocompletarRecetas/{texto}")
     public List<String> autocompletarNombreRecetaEnPlanReciente(
             @PathVariable("texto") String texto) {
-        Integer idPaciente = securityUtils.getUsuarioAutenticadoId();
+        Integer idUsuario = securityUtils.getUsuarioAutenticadoId();
+        Integer idPaciente=pacienteService.obtenerIdPacientePorUsuario(idUsuario);
         return planRecetaService.autocompletarNombreRecetaEnPlanReciente(idPaciente, texto);
     }
 
@@ -74,13 +81,15 @@ public class PlanRecetaController {
     @GetMapping("/buscarRecetas/{texto}")
     public List<RecetaDTO> buscarRecetasEnPlanReciente(
             @PathVariable("texto") String texto) {
-        Integer idPaciente = securityUtils.getUsuarioAutenticadoId();
+        Integer idUsuario = securityUtils.getUsuarioAutenticadoId();
+        Integer idPaciente=pacienteService.obtenerIdPacientePorUsuario(idUsuario);
         return planRecetaService.buscarRecetasEnPlanReciente(idPaciente, texto);
     }
     @PreAuthorize("hasRole('PACIENTE')")
     @GetMapping("/listarRecetasAgregadasHoy")
     public List<Map<String, String>> listarRecetasAgregadasHoy() {
-        Integer idPaciente = securityUtils.getUsuarioAutenticadoId();
+        Integer idUsuario = securityUtils.getUsuarioAutenticadoId();
+        Integer idPaciente=pacienteService.obtenerIdPacientePorUsuario(idUsuario);
         return planRecetaService.listarRecetasAgregadasHoyPorPacienteId(idPaciente);
     }
 

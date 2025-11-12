@@ -95,12 +95,22 @@ public class UsuarioService implements IUsuarioServices {
     }
 
     @Override //si es que hay administrador se hara la lista
-    public List<UsuarioDTO> obtenerPorId(Integer pacienteId) {
+    public UsuarioDTO obtenerPorId(Integer pacienteId) {
         Usuario usuario = usuarioRepositorio.findUsuarioByPacienteId(pacienteId);
         if (usuario == null) {
-            return Collections.emptyList();
+            throw new RuntimeException("Usuario no encontrado para pacienteId: " + pacienteId);
+
         }
-        return Collections.singletonList(modelMapper.map(usuario, UsuarioDTO.class));
+        return modelMapper.map(usuario, UsuarioDTO.class);
+    }
+    //nutri
+    @Override //si es que hay administrador se hara la lista
+    public UsuarioDTO obtenerPorIdNutri(Integer nutricionistaId) {
+        Usuario usuario = usuarioRepositorio.findUsuarioByNutricionistaId(nutricionistaId);
+        if (usuario == null) {
+            throw new RuntimeException("Usuario no encontrado para nutricionistaId: " + nutricionistaId);
+        }
+        return modelMapper.map(usuario, UsuarioDTO.class);
     }
 
     // Genera un código aleatorio de 6 dígitos

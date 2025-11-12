@@ -3,6 +3,8 @@ import com.upc.vitalco.dto.RestablecerCuentaDTO;
 import com.upc.vitalco.dto.UsuarioDTO;
 import com.upc.vitalco.dto.VerificarCodigoDTO;
 import com.upc.vitalco.security.util.SecurityUtils;
+import com.upc.vitalco.services.NutricionistaService;
+import com.upc.vitalco.services.PacienteService;
 import com.upc.vitalco.services.UsuarioService;
 import com.upc.vitalco.security.util.SecurityUtils;
 import jakarta.validation.Valid;
@@ -23,6 +25,10 @@ public class UsuarioController {
     private UsuarioService usuarioService;
     @Autowired
     private SecurityUtils securityUtils;
+    @Autowired
+    private PacienteService pacienteService;
+    @Autowired
+    private NutricionistaService nutricionistaService;
 
     @PostMapping("/registrarUsuario")
     public ResponseEntity<UsuarioDTO> registrar(@Valid @RequestBody UsuarioDTO dto) {
@@ -30,11 +36,20 @@ public class UsuarioController {
         return ResponseEntity.ok(registrado);
     }
 
-    @GetMapping("/listarUsuarios")
-    @PreAuthorize("hasRole('PACIENTE') or hasRole('NUTRICIONISTA')")
-    public ResponseEntity<List<UsuarioDTO>> listarPorPaciente() {
+    @GetMapping("/usuarioPaciente")
+    @PreAuthorize("hasRole('PACIENTE')")
+    public ResponseEntity<UsuarioDTO> listarPorPaciente() {
         Integer idUsuario = securityUtils.getUsuarioAutenticadoId();
-        List<UsuarioDTO> lista = usuarioService.obtenerPorId(idUsuario);
+        Integer idPaciente=pacienteService.obtenerIdPacientePorUsuario(idUsuario);
+        UsuarioDTO lista = usuarioService.obtenerPorId(idPaciente);
+        return ResponseEntity.ok(lista);
+    }
+    @GetMapping("/usuarioNutricionista")
+    @PreAuthorize("hasRole('NUTRICIONISTA')")
+    public ResponseEntity<UsuarioDTO> listarPorNutricionista() {
+        Integer idUsuario = securityUtils.getUsuarioAutenticadoId();
+        Integer idNutricionista=nutricionistaService.obtenerIdNutricionistaPorUsuario(idUsuario);
+        UsuarioDTO lista = usuarioService.obtenerPorIdNutri(idNutricionista);
         return ResponseEntity.ok(lista);
     }
 

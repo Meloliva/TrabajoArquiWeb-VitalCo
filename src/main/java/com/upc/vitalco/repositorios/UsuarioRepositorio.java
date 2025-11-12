@@ -16,4 +16,6 @@ public interface UsuarioRepositorio extends JpaRepository<Usuario, Integer>{
 
     @Query("SELECT p.idusuario FROM Paciente p WHERE p.id = :pacienteId")
     Usuario findUsuarioByPacienteId(@Param("pacienteId") Integer pacienteId);
+    @Query("SELECT p.idusuario FROM Nutricionista p WHERE p.id = :nutricionistaId")
+    Usuario findUsuarioByNutricionistaId(@Param("nutricionistaId") Integer nutricionistaId);
 }

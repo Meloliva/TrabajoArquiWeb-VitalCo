@@ -139,14 +139,11 @@ public class PacienteService implements IPacienteServices {
 
         return modelMapper.map(guardado, PacienteDTO.class);
     }
-    @Override
-    public PacienteDTO obtenerPacientePorUsuarioId(Integer usuarioId) {
-        Paciente paciente = pacienteRepositorio.findByIdusuarioId(usuarioId)
-                .orElseThrow(() -> new RuntimeException("Paciente no encontrado para el usuario: " + usuarioId));
-
-        return modelMapper.map(paciente, PacienteDTO.class);
+    public Integer obtenerIdPacientePorUsuario(Integer idusuario) {
+        Paciente paciente = pacienteRepositorio.findByIdusuarioId(idusuario)
+                .orElseThrow(() -> new RuntimeException("No existe un paciente asociado al usuario con ID " + idusuario));
+        return paciente.getId();
     }
-
 
 
 }

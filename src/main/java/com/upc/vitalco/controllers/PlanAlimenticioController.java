@@ -4,10 +4,7 @@ import com.upc.vitalco.dto.NutricionistaRequerimientoDTO;
 import com.upc.vitalco.dto.PlanAlimenticioDTO;
 import com.upc.vitalco.entidades.Planalimenticio;
 import com.upc.vitalco.security.util.SecurityUtils;
-import com.upc.vitalco.services.NutricionistaService;
-import com.upc.vitalco.services.PlanAlimenticioService;
-import com.upc.vitalco.services.PlanRecetaService;
-import com.upc.vitalco.services.SeguimientoService;
+import com.upc.vitalco.services.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -26,6 +23,8 @@ public class PlanAlimenticioController {
     private PlanRecetaService planRecetaService;
     @Autowired
     private SecurityUtils securityUtils;
+    @Autowired
+    private PacienteService pacienteService;
 
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/listarPlanesAlimenticios")
@@ -71,7 +70,8 @@ public class PlanAlimenticioController {
     @PreAuthorize("hasRole('PACIENTE')")
     @GetMapping("/consultarPlanAlimenticio")
     public ResponseEntity<PlanAlimenticioDTO> consultarPlanAlimenticio() {
-        Integer idPaciente = securityUtils.getUsuarioAutenticadoId();
+        Integer idUsuario = securityUtils.getUsuarioAutenticadoId();
+        Integer idPaciente=pacienteService.obtenerIdPacientePorUsuario(idUsuario);
         try {
 
             PlanAlimenticioDTO plan = planAlimenticioService.consultarPlanAlimenticioConDatosActualizados(idPaciente);

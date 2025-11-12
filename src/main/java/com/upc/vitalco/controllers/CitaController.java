@@ -3,6 +3,8 @@ package com.upc.vitalco.controllers;
 import com.upc.vitalco.dto.CitaDTO;
 import com.upc.vitalco.security.util.SecurityUtils;
 import com.upc.vitalco.services.CitaService;
+import com.upc.vitalco.services.NutricionistaService;
+import com.upc.vitalco.services.PacienteService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +21,10 @@ public class CitaController {
     private CitaService citaService;
     @Autowired
     private SecurityUtils securityUtils;
+    @Autowired
+    private PacienteService pacienteService;
+    @Autowired
+    private NutricionistaService nutricionistaService;
 
     @PostMapping("/registrarCita")
     @PreAuthorize("hasRole('NUTRICIONISTA') or hasRole('PACIENTE')")
@@ -29,14 +35,16 @@ public class CitaController {
     @GetMapping("/listarCitasPorNutricionista")
     @PreAuthorize("hasRole('NUTRICIONISTA')")
     public List<CitaDTO> listarPorNutricionista(@PathVariable LocalDate fecha){
-        Integer idNutricionista = securityUtils.getUsuarioAutenticadoId();
+        Integer idUsuario = securityUtils.getUsuarioAutenticadoId();
+        Integer idNutricionista=nutricionistaService.obtenerIdNutricionistaPorUsuario(idUsuario);
         return citaService.listarPorNutricionista(idNutricionista, fecha);
     }
 
-    @GetMapping("/listarCitasPorPaciente")
+    @GetMapping("/listarCitasPorPaciente/{fecha}")
     @PreAuthorize("hasRole('PACIENTE')")
     public List<CitaDTO> listarPorPaciente(@PathVariable LocalDate fecha){
-        Integer idPaciente = securityUtils.getUsuarioAutenticadoId();
+        Integer idUsuario = securityUtils.getUsuarioAutenticadoId();
+        Integer idPaciente=pacienteService.obtenerIdPacientePorUsuario(idUsuario);
         return citaService.listarPorPaciente(idPaciente, fecha);
     }
     @PutMapping("/actualizarCita")
@@ -45,24 +53,23 @@ public class CitaController {
         return citaService.actualizar(citaDTO);
     }
 
-    @DeleteMapping("/eliminarCita")
+    @DeleteMapping("/eliminarCita/{id}")
     @PreAuthorize("hasRole('NUTRICIONISTA') or hasRole('PACIENTE')")
-    public void eliminar() {
-        Integer id = securityUtils.getUsuarioAutenticadoId();
+    public void eliminar(@PathVariable Integer id) {
         citaService.eliminar(id);
     }
 
-    @GetMapping("/unirseACita")
+    @GetMapping("/unirseACita/{id}")
     @PreAuthorize("hasRole('NUTRICIONISTA') or hasRole('PACIENTE')")
-    public ResponseEntity<String> unirseACita() {
-        Integer id = securityUtils.getUsuarioAutenticadoId();
+    public ResponseEntity<String> unirseACita(@PathVariable Integer id) {
         String link = citaService.unirseACita(id);
         return ResponseEntity.ok(link);
     }
     @GetMapping("/paciente/hoy")
     @PreAuthorize("hasRole('PACIENTE')")
     public ResponseEntity<List<CitaDTO>> listarMisCitasPacienteHoy() {
-        Integer idPaciente = securityUtils.getUsuarioAutenticadoId();
+        Integer idUsuario = securityUtils.getUsuarioAutenticadoId();
+        Integer idPaciente=pacienteService.obtenerIdPacientePorUsuario(idUsuario);
         List<CitaDTO> citas = citaService.listarPorPacienteHoy(idPaciente);
         return ResponseEntity.ok(citas);
     }
@@ -70,14 +77,16 @@ public class CitaController {
     @GetMapping("/paciente/mañana")
     @PreAuthorize("hasRole('PACIENTE')")
     public ResponseEntity<List<CitaDTO>> listarMisCitasPacienteMañana() {
-        Integer idPaciente = securityUtils.getUsuarioAutenticadoId();
+        Integer idUsuario = securityUtils.getUsuarioAutenticadoId();
+        Integer idPaciente=pacienteService.obtenerIdPacientePorUsuario(idUsuario);
         List<CitaDTO> citas = citaService.listarPorPacienteMañana(idPaciente);
         return ResponseEntity.ok(citas);
     }
     @GetMapping("/nutricionista/hoy")
     @PreAuthorize("hasRole('NUTRICIONISTA')")
     public ResponseEntity<List<CitaDTO>> listarMisCitasHoy() {
-        Integer idNutricionista = securityUtils.getUsuarioAutenticadoId();
+        Integer idUsuario = securityUtils.getUsuarioAutenticadoId();
+        Integer idNutricionista=nutricionistaService.obtenerIdNutricionistaPorUsuario(idUsuario);
         List<CitaDTO> citas = citaService.listarPorNutricionistaHoy(idNutricionista);
         return ResponseEntity.ok(citas);
     }
@@ -85,7 +94,8 @@ public class CitaController {
     @GetMapping("/nutricionista/mañana")
     @PreAuthorize("hasRole('NUTRICIONISTA')")
     public ResponseEntity<List<CitaDTO>> listarMisCitasMañana() {
-        Integer idNutricionista = securityUtils.getUsuarioAutenticadoId();
+        Integer idUsuario = securityUtils.getUsuarioAutenticadoId();
+        Integer idNutricionista=nutricionistaService.obtenerIdNutricionistaPorUsuario(idUsuario);
         List<CitaDTO> citas = citaService.listarPorNutricionistaMañana(idNutricionista);
         return ResponseEntity.ok(citas);
     }

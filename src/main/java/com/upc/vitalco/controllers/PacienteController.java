@@ -19,8 +19,6 @@ import java.util.List;
 public class PacienteController {
     @Autowired
     private PacienteService pacienteService;
-    @Autowired
-    private SecurityUtils securityUtils;
 
     @PostMapping("/registrarPaciente")
     public PacienteDTO registrar(@RequestBody PacienteDTO dto) {
@@ -37,18 +35,6 @@ public class PacienteController {
     @PreAuthorize("hasRole('PACIENTE')")
     public ResponseEntity<PacienteDTO> editar(@RequestBody EditarPacienteDTO dto) {
         return ResponseEntity.ok(pacienteService.actualizar(dto));
-    }
-    @GetMapping("/pacienteActual")
-    @PreAuthorize("hasRole('PACIENTE')")
-    public ResponseEntity<PacienteDTO> obtenerPacienteActual() {
-        try {
-            Integer usuarioId = securityUtils.getUsuarioAutenticadoId();
-
-            PacienteDTO paciente = pacienteService.obtenerPacientePorUsuarioId(usuarioId);
-            return ResponseEntity.ok(paciente);
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-        }
     }
 
 }

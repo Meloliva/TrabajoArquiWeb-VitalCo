@@ -2,6 +2,7 @@ package com.upc.vitalco.controllers;
 
 import com.upc.vitalco.dto.*;
 import com.upc.vitalco.security.util.SecurityUtils;
+import com.upc.vitalco.services.PacienteService;
 import com.upc.vitalco.services.SeguimientoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -26,6 +27,9 @@ public class SeguimientoController {
     private SeguimientoService seguimientoService;
     @Autowired
     private SecurityUtils securityUtils;
+    @Autowired
+    private PacienteService pacienteService;
+
 
     @PreAuthorize("hasRole('PACIENTE')")
     @PostMapping("/agregarProgreso/{idPlanRecetaReceta}")
@@ -37,8 +41,9 @@ public class SeguimientoController {
     @GetMapping("/listarSeguimientos/{fecha}")
     public SeguimientoResumenDTO listarPorDia(
             @PathVariable("fecha") LocalDate fecha) {
-        Integer pacienteId = securityUtils.getUsuarioAutenticadoId();
-        return seguimientoService.listarPorDia(pacienteId, fecha);
+        Integer idUsuario = securityUtils.getUsuarioAutenticadoId();
+        Integer idPaciente=pacienteService.obtenerIdPacientePorUsuario(idUsuario);
+        return seguimientoService.listarPorDia(idPaciente, fecha);
     }
 
     @PreAuthorize("hasRole('NUTRICIONISTA')")
@@ -69,8 +74,9 @@ public class SeguimientoController {
     public ResponseEntity<Void> eliminarRecetaDeSeguimiento(
             @PathVariable("seguimientoId") Integer seguimientoId,
             @PathVariable("recetaId") Integer recetaId) {
-        Integer pacienteId = securityUtils.getUsuarioAutenticadoId();
-        seguimientoService.eliminarRecetaDeSeguimiento(pacienteId, seguimientoId, recetaId);
+        Integer idUsuario = securityUtils.getUsuarioAutenticadoId();
+        Integer idPaciente=pacienteService.obtenerIdPacientePorUsuario(idUsuario);
+        seguimientoService.eliminarRecetaDeSeguimiento(idPaciente, seguimientoId, recetaId);
         return ResponseEntity.noContent().build();
     }
 

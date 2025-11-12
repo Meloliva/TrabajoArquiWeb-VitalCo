@@ -106,4 +106,10 @@ public class NutricionistaService implements INutricionistaServices {
         Nutricionista guardado = nutricionistaRepositorio.save(nutricionista);
         return modelMapper.map(guardado, NutricionistaDTO.class);
     }
+    public Integer obtenerIdNutricionistaPorUsuario(Integer idusuario) {
+        Nutricionista nutricionista = nutricionistaRepositorio.findNutricionistaByUsuarioId(idusuario)
+                .orElseThrow(() -> new RuntimeException("No existe un nutricionista asociado al usuario con ID " + idusuario));
+        return nutricionista.getId();
+    }
+
 }
