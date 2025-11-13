@@ -2,7 +2,9 @@ package com.upc.vitalco.services;
 
 import com.upc.vitalco.dto.EditarNutricionistaDTO;
 import com.upc.vitalco.dto.NutricionistaDTO;
+import com.upc.vitalco.dto.PacienteDTO;
 import com.upc.vitalco.entidades.Nutricionista;
+import com.upc.vitalco.entidades.Paciente;
 import com.upc.vitalco.entidades.Turno;
 import com.upc.vitalco.entidades.Usuario;
 import com.upc.vitalco.interfaces.INutricionistaServices;
@@ -111,5 +113,12 @@ public class NutricionistaService implements INutricionistaServices {
                 .orElseThrow(() -> new RuntimeException("No existe un nutricionista asociado al usuario con ID " + idusuario));
         return nutricionista.getId();
     }
-
+    @Override
+    public NutricionistaDTO obtenerPorUsuario(Integer idUsuario) {
+        // Busca el paciente asociado al usuario
+        Nutricionista nutricionista = nutricionistaRepositorio.findByIdusuario_Id(idUsuario);
+        // Convierte la entidad a DTO
+        NutricionistaDTO dto = modelMapper.map(nutricionista, NutricionistaDTO.class);
+        return dto;
+    }
 }

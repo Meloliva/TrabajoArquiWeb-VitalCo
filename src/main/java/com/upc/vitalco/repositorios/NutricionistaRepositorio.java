@@ -11,5 +11,6 @@ import java.util.Optional;
 public interface NutricionistaRepositorio extends JpaRepository<Nutricionista, Integer>{
     @Query("SELECT n FROM Nutricionista n WHERE n.idusuario.id = :idUsuario")
     Optional<Nutricionista> findNutricionistaByUsuarioId(@Param("idUsuario") Integer idUsuario);
+    Nutricionista findByIdusuario_Id(Integer idUsuario);
 
 }

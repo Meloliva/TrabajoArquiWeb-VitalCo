@@ -61,6 +61,18 @@ public class UsuarioController {
         return ResponseEntity.ok(lista);
     }
 
+    // 🟢 Nuevo endpoint para obtener el nutricionista por usuario
+    @GetMapping("/nutricionistaPorUsuario/{idUsuario}")
+    public ResponseEntity<NutricionistaDTO> obtenerPorUsuario(@PathVariable Integer idUsuario) {
+        NutricionistaDTO dto = nutricionistaService.obtenerPorUsuario(idUsuario);
+        if (dto != null) {
+            return ResponseEntity.ok(dto);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+
     @DeleteMapping("/eliminarUsuario")
     @PreAuthorize("hasRole('NUTRICIONISTA') or hasRole('PACIENTE')")
     public ResponseEntity<Void> eliminar() {
