@@ -17,6 +17,6 @@ public interface PacienteRepositorio extends JpaRepository<Paciente, Integer>{
             "LEFT JOIN FETCH p.idPlanNutricional nut " +
             "WHERE u.id = :usuarioId")
     Optional<Paciente> findByIdusuarioId(@Param("usuarioId") Integer usuarioId);
-
+    Optional<Paciente> findByIdusuario_Id(Integer idUsuario);
 
 }

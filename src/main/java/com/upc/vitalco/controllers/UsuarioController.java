@@ -1,8 +1,5 @@
 package com.upc.vitalco.controllers;
-import com.upc.vitalco.dto.RestablecerCuentaDTO;
-import com.upc.vitalco.dto.RolDTO;
-import com.upc.vitalco.dto.UsuarioDTO;
-import com.upc.vitalco.dto.VerificarCodigoDTO;
+import com.upc.vitalco.dto.*;
 import com.upc.vitalco.security.util.SecurityUtils;
 import com.upc.vitalco.services.NutricionistaService;
 import com.upc.vitalco.services.PacienteService;
@@ -37,13 +34,23 @@ public class UsuarioController {
         return ResponseEntity.ok(registrado);
     }
 
-    @GetMapping("/usuarioPaciente")
-    @PreAuthorize("hasRole('PACIENTE')")
-    public ResponseEntity<UsuarioDTO> listarPorPaciente() {
+    @GetMapping("/usuarioNormal")
+    @PreAuthorize("permitAll()")
+    public ResponseEntity<UsuarioDTO> listarPorUsuario() {
         Integer idUsuario = securityUtils.getUsuarioAutenticadoId();
         Integer idPaciente=pacienteService.obtenerIdPacientePorUsuario(idUsuario);
         UsuarioDTO lista = usuarioService.obtenerPorId(idPaciente);
         return ResponseEntity.ok(lista);
+    }
+    @GetMapping("/usuarioPaciente")
+    @PreAuthorize("hasRole('PACIENTE')")
+    public ResponseEntity<PacienteDTO> obtenerDatosPaciente() {
+        Integer idUsuario = securityUtils.getUsuarioAutenticadoId();
+
+        // ✅ Obtener el objeto Paciente asociado al usuario autenticado
+        PacienteDTO pacienteDTO = pacienteService.obtenerPorUsuario(idUsuario);
+
+        return ResponseEntity.ok(pacienteDTO);
     }
     @GetMapping("/usuarioNutricionista")
     @PreAuthorize("hasRole('NUTRICIONISTA')")
