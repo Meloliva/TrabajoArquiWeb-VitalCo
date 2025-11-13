@@ -94,7 +94,7 @@ public class UsuarioService implements IUsuarioServices {
         });
     }
 
-    @Override //si es que hay administrador se hara la lista
+    @Override
     public UsuarioDTO obtenerPorId(Integer pacienteId) {
         Usuario usuario = usuarioRepositorio.findUsuarioByPacienteId(pacienteId);
         if (usuario == null) {
@@ -104,7 +104,7 @@ public class UsuarioService implements IUsuarioServices {
         return modelMapper.map(usuario, UsuarioDTO.class);
     }
     //nutri
-    @Override //si es que hay administrador se hara la lista
+    @Override
     public UsuarioDTO obtenerPorIdNutri(Integer nutricionistaId) {
         Usuario usuario = usuarioRepositorio.findUsuarioByNutricionistaId(nutricionistaId);
         if (usuario == null) {

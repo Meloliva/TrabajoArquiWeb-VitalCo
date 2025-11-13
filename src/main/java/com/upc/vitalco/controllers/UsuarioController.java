@@ -1,5 +1,6 @@
 package com.upc.vitalco.controllers;
 import com.upc.vitalco.dto.RestablecerCuentaDTO;
+import com.upc.vitalco.dto.RolDTO;
 import com.upc.vitalco.dto.UsuarioDTO;
 import com.upc.vitalco.dto.VerificarCodigoDTO;
 import com.upc.vitalco.security.util.SecurityUtils;
@@ -95,10 +96,11 @@ public class UsuarioController {
             return ResponseEntity.ok("Cuenta restablecida y activada.");
     }
 
-    @GetMapping("/obtenerUsuario/{id}")
+    @GetMapping("/obtenerUsuario")
     @PreAuthorize("hasRole('PACIENTE') or hasRole('NUTRICIONISTA')")
-    public ResponseEntity<UsuarioDTO> obtenerUsuarioPorId(@PathVariable Integer id) {
-        UsuarioDTO usuario = usuarioService.obtenerPorIdIndividual(id);
+    public ResponseEntity<UsuarioDTO> obtenerUsuarioPorId() {
+        Integer idUsuario = securityUtils.getUsuarioAutenticadoId();
+        UsuarioDTO usuario = usuarioService.obtenerPorIdIndividual(idUsuario);
         return ResponseEntity.ok(usuario);
     }
 
