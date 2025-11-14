@@ -119,7 +119,9 @@ public class PacienteService implements IPacienteServices {
 
         // Actualizar datos de paciente
         paciente.setPeso(editarPacienteDTO.getPeso() != null ? editarPacienteDTO.getPeso() : paciente.getPeso());
-        paciente.setEdad(editarPacienteDTO.getEdad() != null ? editarPacienteDTO.getEdad() : paciente.getEdad());
+        // ✅ Guardar edad manualmente ingresada
+        Integer edadManual = editarPacienteDTO.getEdad();
+        paciente.setEdad(edadManual != null ? edadManual : paciente.getEdad());
         paciente.setAltura(editarPacienteDTO.getAltura() != null ? editarPacienteDTO.getAltura() : paciente.getAltura());
         paciente.setTrigliceridos(editarPacienteDTO.getTrigliceridos() != null ? editarPacienteDTO.getTrigliceridos() : paciente.getTrigliceridos());
 
@@ -134,11 +136,19 @@ public class PacienteService implements IPacienteServices {
             throw new DataIntegrityViolationException("El paciente debe tener un plan de suscripción.");
         }
 
+        // ✅ PRIMERO guardar el paciente con la edad manual
         Paciente guardado = pacienteRepositorio.save(paciente);
+
+        // ✅ LUEGO recalcular el plan (sin tocar la edad)
         planAlimenticioService.recalcularPlanAlimenticioPorPaciente(guardado.getId());
 
-        return modelMapper.map(guardado, PacienteDTO.class);
+        // ✅ VOLVER A ESTABLECER la edad manual después del recálculo
+        guardado.setEdad(edadManual != null ? edadManual : guardado.getEdad());
+        Paciente finalizado = pacienteRepositorio.save(guardado);
+
+        return modelMapper.map(finalizado, PacienteDTO.class);
     }
+
 
     @Override
     public PacienteDTO obtenerPorUsuario(Integer idUsuario) {
