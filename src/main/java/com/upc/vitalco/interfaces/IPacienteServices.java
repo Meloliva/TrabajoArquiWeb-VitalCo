@@ -8,4 +8,5 @@ public interface IPacienteServices {
     public List<PacienteDTO> findAll();
     public PacienteDTO actualizar(EditarPacienteDTO editarPacienteDTO);
     public PacienteDTO obtenerPorUsuario(Integer idUsuario);
+    public PacienteDTO buscarPacientePorDni(String dni);
 }

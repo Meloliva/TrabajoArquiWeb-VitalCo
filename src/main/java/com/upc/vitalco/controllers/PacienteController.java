@@ -37,4 +37,11 @@ public class PacienteController {
         return ResponseEntity.ok(pacienteService.actualizar(dto));
     }
 
+    @GetMapping("/buscarPorDni/{dni}")
+    @PreAuthorize("hasRole('NUTRICIONISTA')")
+    public ResponseEntity<PacienteDTO> buscarPorDni(@PathVariable String dni) {
+        PacienteDTO pacienteDTO = pacienteService.buscarPacientePorDni(dni);
+        return ResponseEntity.ok(pacienteDTO);
+    }
+
 }

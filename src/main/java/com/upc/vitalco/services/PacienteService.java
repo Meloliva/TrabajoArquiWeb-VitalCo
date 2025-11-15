@@ -169,6 +169,14 @@ public class PacienteService implements IPacienteServices {
         return paciente.getId();
     }
 
+    @Override
+    public PacienteDTO buscarPacientePorDni(String dni) {
+
+        Paciente paciente = pacienteRepositorio.findByDni(dni)
+                .orElseThrow(() -> new RuntimeException("Paciente con DNI " + dni + " no encontrado"));
+
+        return modelMapper.map(paciente, PacienteDTO.class);
+    }
 
 }
 
