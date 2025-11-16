@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.security.access.prepost.PreAuthorize;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -83,7 +84,7 @@ public class UsuarioController {
     @PostMapping("/recuperarCuenta")
     public ResponseEntity<?> solicitarRecuperacion(@RequestParam String correo) {
             usuarioService.solicitarRecuperacion(correo);
-            return ResponseEntity.ok("Se envió el código de recuperación al correo.");
+            return ResponseEntity.ok(Collections.singletonMap("mensaje","\"Se envió el código de recuperación al correo.\""));
     }
     @PostMapping("/verificarCodigoRecuperacion")
     public ResponseEntity<Map<String, Object>> verificarCodigo(@RequestBody VerificarCodigoDTO verificarCodigoDTO) {
