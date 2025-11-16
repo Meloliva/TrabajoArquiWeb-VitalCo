@@ -129,8 +129,8 @@ public class UsuarioService implements IUsuarioServices {
     @Override
     public void solicitarRecuperacion(String correo) {
         Usuario usuario = usuarioRepositorio.findByCorreo(correo);
-        if (usuario == null || !"Desactivado".equals(usuario.getEstado())) {
-            throw new RuntimeException("Correo no válido o usuario activo.");
+        if (usuario == null ) {
+            throw new RuntimeException("Correo no válido");
         }
         String codigo = generarCodigoVerificacion();
         usuario.setCodigoRecuperacion(codigo);
