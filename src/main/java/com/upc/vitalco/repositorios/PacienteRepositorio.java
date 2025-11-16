@@ -18,5 +18,5 @@ public interface PacienteRepositorio extends JpaRepository<Paciente, Integer>{
             "WHERE u.id = :usuarioId")
     Optional<Paciente> findByIdusuarioId(@Param("usuarioId") Integer usuarioId);
     Optional<Paciente> findByIdusuario_Id(Integer idUsuario);
-
+    Optional<Paciente> findById(Integer id);
 }

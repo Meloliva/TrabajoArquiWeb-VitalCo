@@ -3,6 +3,7 @@ package com.upc.vitalco.interfaces;
 import com.upc.vitalco.dto.CitaDTO;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 
 public interface ICitaServices {
@@ -16,4 +17,5 @@ public interface ICitaServices {
     List<CitaDTO> listarPorNutricionistaHoy(Integer idNutricionista);
     List<CitaDTO> listarPorPacienteHoy(Integer idPaciente);
     List<CitaDTO> listarPorPacienteMañana(Integer idPaciente);
+    public boolean existeCita(Long nutricionistaId, LocalDate dia, LocalTime hora);
 }

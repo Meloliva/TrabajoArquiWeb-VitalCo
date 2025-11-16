@@ -44,4 +44,15 @@ public class PacienteController {
         return ResponseEntity.ok(pacienteDTO);
     }
 
+    @GetMapping("/buscarPorId/{id}")
+    @PreAuthorize("hasRole('NUTRICIONISTA')")
+    public ResponseEntity<PacienteDTO> obtenerPacientePorId(@PathVariable Integer id) {
+        PacienteDTO pacienteDTO = pacienteService.buscarPorId(id);
+
+        if (pacienteDTO == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+
+        return ResponseEntity.ok(pacienteDTO);
+    }
 }

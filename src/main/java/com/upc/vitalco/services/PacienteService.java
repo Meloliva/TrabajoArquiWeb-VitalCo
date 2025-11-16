@@ -177,7 +177,17 @@ public class PacienteService implements IPacienteServices {
 
         return modelMapper.map(paciente, PacienteDTO.class);
     }
+    @Override
+    public PacienteDTO buscarPorId(Integer id) {
 
+        Paciente paciente = pacienteRepositorio.findById(id).orElse(null);
+
+        if (paciente == null) {
+            return null;   // o lanzar excepción
+        }
+
+        return modelMapper.map(paciente, PacienteDTO.class);
+    }
 }
 
 

@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -180,5 +181,9 @@ public class CitaService implements ICitaServices {
         return cita.getLink();
     }
 
-
+    public boolean existeCita(Long nutricionistaId, LocalDate dia, LocalTime hora) {
+        return citaRepositorio
+                .findByNutricionistaIdAndDiaAndHora(nutricionistaId, dia, hora)
+                .isPresent();
+    }
 }

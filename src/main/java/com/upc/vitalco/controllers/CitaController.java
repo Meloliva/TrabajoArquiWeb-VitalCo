@@ -7,11 +7,13 @@ import com.upc.vitalco.services.NutricionistaService;
 import com.upc.vitalco.services.PacienteService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.security.access.prepost.PreAuthorize;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 
 @RestController
@@ -32,7 +34,7 @@ public class CitaController {
         return citaService.registrar(citaDTO);
     }
 
-    @GetMapping("/listarCitasPorNutricionista")
+    @GetMapping("/listarCitasPorNutricionista/{fecha}")
     @PreAuthorize("hasRole('NUTRICIONISTA')")
     public List<CitaDTO> listarPorNutricionista(@PathVariable LocalDate fecha){
         Integer idUsuario = securityUtils.getUsuarioAutenticadoId();
@@ -99,5 +101,19 @@ public class CitaController {
         List<CitaDTO> citas = citaService.listarPorNutricionistaMañana(idNutricionista);
         return ResponseEntity.ok(citas);
     }
-
+    @GetMapping("/verificarDisponibilidad")
+    @PreAuthorize("hasRole('NUTRICIONISTA') or hasRole('PACIENTE')")
+    public ResponseEntity<Boolean> verificarDisponibilidad(
+            @RequestParam Long nutricionistaId,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dia,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.TIME) LocalTime hora
+    ) {
+        try {
+            boolean existeCita = citaService.existeCita(nutricionistaId, dia, hora);
+            return ResponseEntity.ok(existeCita);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(false);
+        }
+    }
 }

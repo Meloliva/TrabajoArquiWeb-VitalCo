@@ -9,4 +9,5 @@ public interface IPacienteServices {
     public PacienteDTO actualizar(EditarPacienteDTO editarPacienteDTO);
     public PacienteDTO obtenerPorUsuario(Integer idUsuario);
     public PacienteDTO buscarPacientePorDni(String dni);
+    public PacienteDTO buscarPorId(Integer id);
 }
