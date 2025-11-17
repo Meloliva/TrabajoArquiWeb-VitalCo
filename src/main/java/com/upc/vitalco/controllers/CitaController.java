@@ -76,7 +76,7 @@ public class CitaController {
         return ResponseEntity.ok(citas);
     }
 
-    @GetMapping("/paciente/mañana")
+    @GetMapping("/paciente/manana")
     @PreAuthorize("hasRole('PACIENTE')")
     public ResponseEntity<List<CitaDTO>> listarMisCitasPacienteMañana() {
         Integer idUsuario = securityUtils.getUsuarioAutenticadoId();
