@@ -22,7 +22,7 @@ public class NutricionistaController {
     }
 
     @GetMapping("/listarNutricionistas")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('PACIENTE')")
     public List<NutricionistaDTO> findAll(){
         return nutricionistaService.findAll();
     }
