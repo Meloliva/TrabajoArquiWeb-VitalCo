@@ -38,6 +38,13 @@ public class CitaService implements ICitaServices {
 
     @Override
     public CitaDTO registrar(CitaDTO citaDTO) {
+        // 1. VALIDACIÓN DE TIEMPO (NUEVA)
+        // Comparamos la fecha y hora de la cita con el momento actual
+        LocalDateTime fechaHoraCita = LocalDateTime.of(citaDTO.getDia(), citaDTO.getHora());
+        if (fechaHoraCita.isBefore(LocalDateTime.now())) {
+            throw new RuntimeException("No puedes registrar una cita en una fecha u hora pasada.");
+        }
+
         Cita cita = new Cita();
 
         cita.setDia(citaDTO.getDia());
@@ -48,8 +55,8 @@ public class CitaService implements ICitaServices {
 
         Paciente paciente = pacienteRepositorio.findById(citaDTO.getIdPaciente())
                 .orElseThrow(() -> new RuntimeException("Paciente no encontrado"));
-        cita.setPaciente(paciente);
 
+        // Validación del plan
         if (paciente.getIdplan() == null ||
                 !"Plan premium".equalsIgnoreCase(paciente.getIdplan().getTipo())) {
             throw new RuntimeException("Solo los pacientes con plan premium pueden registrar citas.");
@@ -58,12 +65,14 @@ public class CitaService implements ICitaServices {
 
         Nutricionista nutricionista = nutricionistaRepositorio.findById(citaDTO.getIdNutricionista())
                 .orElseThrow(() -> new RuntimeException("Nutricionista no encontrado"));
-// Validar que la hora de la cita esté dentro del turno del nutricionista
-        if (citaDTO.getHora().isBefore(nutricionista.getIdturno().getInicioturno()) || citaDTO.getHora().isAfter(nutricionista.getIdturno().getFinturno())) {
+
+        // Validar turno del nutricionista
+        if (citaDTO.getHora().isBefore(nutricionista.getIdturno().getInicioturno()) ||
+                citaDTO.getHora().isAfter(nutricionista.getIdturno().getFinturno())) {
             throw new RuntimeException("La hora de la cita está fuera del turno del nutricionista.");
         }
 
-// Validar que el nutricionista no tenga otra cita ese día y hora
+        // Validar duplicidad
         boolean existeCita = citaRepositorio
                 .findByNutricionistaIdAndDiaAndHora(nutricionista.getId(), citaDTO.getDia(), citaDTO.getHora())
                 .isPresent();
@@ -72,9 +81,9 @@ public class CitaService implements ICitaServices {
         }
 
         cita.setNutricionista(nutricionista);
-
         cita = citaRepositorio.save(cita);
 
+        // Mapeo manual de respuesta
         CitaDTO dto = new CitaDTO();
         dto.setId(cita.getId());
         dto.setDia(cita.getDia());
@@ -161,13 +170,28 @@ public class CitaService implements ICitaServices {
     //Editar cita y saldria pendiente en estado
     @Override
     public CitaDTO actualizar(CitaDTO citaDTO) {
+        // 1. VALIDACIÓN DE TIEMPO PARA REPROGRAMAR (NUEVA)
+        LocalDateTime fechaHoraCita = LocalDateTime.of(citaDTO.getDia(), citaDTO.getHora());
+        if (fechaHoraCita.isBefore(LocalDateTime.now())) {
+            throw new RuntimeException("No puedes reprogramar la cita para una fecha u hora pasada.");
+        }
+
         return citaRepositorio.findById(citaDTO.getId())
                 .map(existing -> {
+                    // Validar también disponibilidad del nutricionista al cambiar hora
+                    // (Opcional: podrías agregar la validación de turno/disponibilidad aquí también)
+
                     existing.setDia(citaDTO.getDia());
                     existing.setHora(citaDTO.getHora());
                     existing.setDescripcion(citaDTO.getDescripcion());
                     existing.setLink(citaDTO.getLink());
+                    // Al reprogramar, usualmente vuelve a estar Pendiente de realización
                     existing.setEstado("Pendiente");
+
+                    // Resetear asistencias si cambias la fecha (si usas la lógica de asistencia)
+                    existing.setAsistioPaciente(false);
+                    existing.setAsistioNutricionista(false);
+
                     Cita guardado = citaRepositorio.save(existing);
                     return modelMapper.map(guardado, CitaDTO.class);
                 })
