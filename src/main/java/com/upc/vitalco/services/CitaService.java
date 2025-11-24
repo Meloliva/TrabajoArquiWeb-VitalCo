@@ -8,11 +8,13 @@ import com.upc.vitalco.interfaces.ICitaServices;
 import com.upc.vitalco.repositorios.CitaRepositorio;
 import com.upc.vitalco.repositorios.PacienteRepositorio;
 import com.upc.vitalco.repositorios.NutricionistaRepositorio;
+import com.upc.vitalco.security.util.SecurityUtils;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -27,6 +29,9 @@ public class CitaService implements ICitaServices {
 
     @Autowired
     private NutricionistaRepositorio nutricionistaRepositorio;
+
+    @Autowired
+    private SecurityUtils securityUtils;
 
     @Autowired
     private ModelMapper modelMapper;
@@ -171,13 +176,50 @@ public class CitaService implements ICitaServices {
 
     @Override
     public String unirseACita(Integer idCita) {
+        // 1. BUSCAR LA CITA
         Cita cita = citaRepositorio.findById(idCita)
                 .orElseThrow(() -> new RuntimeException("Cita no encontrada"));
-        if (!"Pendiente".equalsIgnoreCase(cita.getEstado())) {
-            throw new RuntimeException("Solo puedes unirte a citas pendientes.");
+
+        // 2. VALIDAR HORA (Ejemplo: Permitir entrar 10 min antes hasta 60 min después)
+        LocalDateTime ahora = LocalDateTime.now();
+        LocalDateTime fechaHoraCita = LocalDateTime.of(cita.getDia(), cita.getHora());
+
+        if (ahora.isBefore(fechaHoraCita.minusMinutes(10))) {
+            throw new RuntimeException("Aún es muy temprano. El enlace se habilitará 10 minutos antes de la cita.");
         }
-        cita.setEstado("Aceptada");
+
+        // Opcional: Validar si ya pasó mucho tiempo (ej. 2 horas)
+        if (ahora.isAfter(fechaHoraCita.plusMinutes(5))) {
+            throw new RuntimeException("La tolerancia de espera ha terminado. Ya no puedes unirte a la cita.");
+        }
+
+        // 3. IDENTIFICAR QUIÉN SE ESTÁ UNIENDO
+        Integer idUsuarioLogueado = securityUtils.getUsuarioAutenticadoId();
+        boolean esPaciente = cita.getPaciente().getIdusuario().getId().equals(idUsuarioLogueado);
+        boolean esNutricionista = cita.getNutricionista().getIdusuario().getId().equals(idUsuarioLogueado);
+
+        if (!esPaciente && !esNutricionista) {
+            throw new RuntimeException("No tienes permiso para acceder a esta cita.");
+        }
+
+        // 4. MARCAR ASISTENCIA INDIVIDUAL (Check-in)
+        if (esPaciente) {
+            cita.setAsistioPaciente(true);
+        } else {
+            cita.setAsistioNutricionista(true);
+        }
+
+        // 5. VALIDAR SI AMBOS HAN INGRESADO
+        // Solo cambiamos el estado a "Aceptada" (o "En Curso") si LOS DOS marcaron asistencia
+        if (Boolean.TRUE.equals(cita.getAsistioPaciente()) && Boolean.TRUE.equals(cita.getAsistioNutricionista())) {
+            if (!"Aceptada".equalsIgnoreCase(cita.getEstado())) {
+                cita.setEstado("Aceptada");
+            }
+        }
+        // Opcional: Si solo entró uno, el estado sigue "Pendiente" (o podrías poner "Esperando...")
+
         citaRepositorio.save(cita);
+
         return cita.getLink();
     }
 

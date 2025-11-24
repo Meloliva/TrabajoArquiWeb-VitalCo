@@ -42,4 +42,10 @@ public class Cita {
     @Column(name = "estado")
     private String estado="Pendiente";
 
+    @Column(name = "asistio_paciente")
+    private Boolean asistioPaciente = false;
+
+    @Column(name = "asistio_nutricionista")
+    private Boolean asistioNutricionista = false;
+
 }
