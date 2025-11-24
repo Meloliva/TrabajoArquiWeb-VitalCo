@@ -92,8 +92,17 @@ public class NutricionistaService implements INutricionistaServices {
         }
 
         if (dto.getCorreo() != null && !dto.getCorreo().isEmpty()) {
-            nutricionista.getIdusuario().setCorreo(dto.getCorreo());
+            String correoActual = nutricionista.getIdusuario().getCorreo();
+            if (!dto.getCorreo().equalsIgnoreCase(correoActual)) {
+
+                if (usuarioRepositorio.existsByCorreo(dto.getCorreo())) {
+                    throw new DataIntegrityViolationException("El correo ya está registrado.");
+                }
+                nutricionista.getIdusuario().setCorreo(dto.getCorreo());
+            }
         }
+
+
         if (dto.getContraseña() != null && !dto.getContraseña().isEmpty()) {
             BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
             nutricionista.getIdusuario().setContraseña(encoder.encode(dto.getContraseña()));
