@@ -38,7 +38,7 @@ public class Usuario {
     @Column(name = "estado", length = 50)
     private String estado;
 
-    @Column(name = "fotoPerfil", length = 50)
+    @Column(name = "fotoPerfil",columnDefinition = "TEXT" )
     private String fotoPerfil;
 
     @ManyToOne(fetch = FetchType.EAGER, optional = false)
