@@ -56,7 +56,7 @@ public class Receta {
     private List<PlanRecetaReceta> planrecetas = new ArrayList<>();
 
 
-    @Column(name = "foto")
+    @Column(name = "foto" ,columnDefinition = "TEXT")
     private String foto;
 
 }
