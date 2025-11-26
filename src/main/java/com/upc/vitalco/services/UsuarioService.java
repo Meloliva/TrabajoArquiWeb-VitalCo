@@ -147,10 +147,6 @@ public class UsuarioService implements IUsuarioServices {
             throw new RuntimeException("Código no válido o no asociado a ningún usuario.");
         }
 
-        if (!"Desactivado".equals(usuario.getEstado())) {
-            throw new RuntimeException("La cuenta no está desactivada.");
-        }
-
         if (usuario.getCodigoRecuperacion() == null) {
             throw new RuntimeException("No hay un código de recuperación activo.");
         }
