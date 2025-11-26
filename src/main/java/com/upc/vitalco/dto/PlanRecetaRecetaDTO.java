@@ -16,4 +16,5 @@ public class PlanRecetaRecetaDTO {
     private Integer idPlanReceta;
     private RecetaDTO recetaDTO;
     private LocalDate fecharegistro=LocalDate.now();
+    private Boolean favorito;
 }

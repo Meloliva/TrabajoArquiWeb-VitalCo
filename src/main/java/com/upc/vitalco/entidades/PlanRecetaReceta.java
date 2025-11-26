@@ -2,6 +2,7 @@ package com.upc.vitalco.entidades;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.ColumnDefault;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -31,6 +32,11 @@ public class PlanRecetaReceta {
     public void prePersist() {
         this.fecharegistro = LocalDate.now();
     }
+
+    @ColumnDefault("false")
+    @Column(name = "favorito")
+    private Boolean favorito = false;
+
 
 }
 

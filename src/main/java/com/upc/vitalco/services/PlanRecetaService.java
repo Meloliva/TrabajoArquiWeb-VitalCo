@@ -139,32 +139,33 @@ public class PlanRecetaService implements IPlanRecetaServices {
             asignarRecetasAPlan(planreceta.getId());
         }
 
-        return unicos.stream()
-                .map(planReceta -> {
-                    PlanRecetaDTO dto = modelMapper.map(planReceta, PlanRecetaDTO.class);
+        return unicos.stream().map(planReceta -> {
+            PlanRecetaDTO dto = modelMapper.map(planReceta, PlanRecetaDTO.class);
 
-                    List<PlanRecetaReceta> relaciones = planrecetaRecetaRepositorio.findByPlanreceta(planReceta);
-                    String tipoPlan = planReceta.getIdplanalimenticio().getIdpaciente().getIdplan().getTipo();
-                    if ("Plan free".equalsIgnoreCase(tipoPlan) && relaciones.size() > 15) {
-                        relaciones = relaciones.subList(0, 15);
-                    }
-                    List<PlanRecetaRecetaDTO> relacionesDTO = relaciones.stream()
-                            .map(rel -> {
-                                PlanRecetaRecetaDTO relDTO = new PlanRecetaRecetaDTO();
-                                relDTO.setIdPlanRecetaReceta(rel.getIdPlanRecetaReceta());
-                                relDTO.setIdPlanReceta(rel.getPlanreceta().getId());
+            // Obtenemos las recetas de ESTE plan
+            List<PlanRecetaReceta> relaciones = planrecetaRecetaRepositorio.findByPlanreceta(planReceta);
 
-                                RecetaDTO recetaDTO = modelMapper.map(rel.getReceta(), RecetaDTO.class);
-                                relDTO.setRecetaDTO(recetaDTO);
+            // Lógica Plan Free
+            String tipoPlan = planReceta.getIdplanalimenticio().getIdpaciente().getIdplan().getTipo();
+            if ("Plan free".equalsIgnoreCase(tipoPlan) && relaciones.size() > 15) {
+                relaciones = relaciones.subList(0, 15);
+            }
 
-                                return relDTO;
-                            })
-                            .collect(Collectors.toList());
+            List<PlanRecetaRecetaDTO> relacionesDTO = relaciones.stream().map(rel -> {
+                PlanRecetaRecetaDTO relDTO = new PlanRecetaRecetaDTO();
+                relDTO.setIdPlanRecetaReceta(rel.getIdPlanRecetaReceta());
+                relDTO.setIdPlanReceta(rel.getPlanreceta().getId());
 
-                    dto.setRecetas(relacionesDTO);
-                    return dto;
-                })
-                .collect(Collectors.toList());
+                // ✅ IMPORTANTE: Mapeamos el favorito individual de la tabla intermedia
+                relDTO.setFavorito(rel.getFavorito());
+
+                relDTO.setRecetaDTO(modelMapper.map(rel.getReceta(), RecetaDTO.class));
+                return relDTO;
+            }).collect(Collectors.toList());
+
+            dto.setRecetas(relacionesDTO);
+            return dto;
+        }).collect(Collectors.toList());
     }
 
     @Override
@@ -263,83 +264,65 @@ public class PlanRecetaService implements IPlanRecetaServices {
         return resultado;
     }
 
+    @Override
     public List<PlanRecetaDTO> listarFavoritosPorPaciente(Integer idPaciente) {
-        if (idPaciente == null) {
-            throw new IllegalArgumentException("id de paciente inválido");
-        }
-
         List<Planreceta> planes = planRecetaRepositorio.buscarPorPaciente(idPaciente);
-        if (planes == null || planes.isEmpty()) {
-            return Collections.emptyList();
-        }
+        if (planes == null || planes.isEmpty()) return Collections.emptyList();
 
-        // Filtrar solo favoritos
-        List<Planreceta> favoritos = planes.stream()
-                .filter(p -> Boolean.TRUE.equals(p.getFavorito()))
-                .collect(Collectors.toList());
-        if (favoritos.isEmpty()) return Collections.emptyList();
-
-        // Tomar el plan más reciente (último creado) por cada plan alimenticio
-        List<Planreceta> unicos = favoritos.stream()
+        // Filtramos los planes más recientes
+        List<Planreceta> unicos = planes.stream()
                 .collect(Collectors.toMap(
                         p -> p.getIdplanalimenticio().getId(),
                         p -> p,
                         (p1, p2) -> p1.getFecharegistro().isAfter(p2.getFecharegistro()) ? p1 : p2
-                ))
-                .values()
-                .stream()
-                .collect(Collectors.toList());
+                )).values().stream().collect(Collectors.toList());
 
-        for (int i = 0; i < unicos.size(); i++) {
-            Planreceta planreceta = unicos.get(i);
+        return unicos.stream().map(plan -> {
+                    List<PlanRecetaReceta> relaciones = planrecetaRecetaRepositorio.findByPlanreceta(plan);
 
-            if (planreceta.getId() == null) {
-                planreceta = planRecetaRepositorio.save(planreceta);
-                unicos.set(i, planreceta);
-            }
-
-            asignarRecetasAPlan(planreceta.getId());
-        }
-
-        return unicos.stream()
-                .map(planReceta -> {
-                    PlanRecetaDTO dto = modelMapper.map(planReceta, PlanRecetaDTO.class);
-
-                    List<PlanRecetaReceta> relaciones = planrecetaRecetaRepositorio.findByPlanreceta(planReceta);
-                    String tipoPlan = planReceta.getIdplanalimenticio().getIdpaciente().getIdplan().getTipo();
-                    if ("Plan free".equalsIgnoreCase(tipoPlan) && relaciones.size() > 15) {
-                        relaciones = relaciones.subList(0, 15);
-                    }
-                    List<PlanRecetaRecetaDTO> relacionesDTO = relaciones.stream()
+                    // ✅ FILTRAR: Solo quedarnos con las recetas que tienen favorito = true
+                    List<PlanRecetaRecetaDTO> favs = relaciones.stream()
+                            .filter(rel -> Boolean.TRUE.equals(rel.getFavorito()))
                             .map(rel -> {
                                 PlanRecetaRecetaDTO relDTO = new PlanRecetaRecetaDTO();
                                 relDTO.setIdPlanRecetaReceta(rel.getIdPlanRecetaReceta());
                                 relDTO.setIdPlanReceta(rel.getPlanreceta().getId());
-
-                                RecetaDTO recetaDTO = modelMapper.map(rel.getReceta(), RecetaDTO.class);
-                                relDTO.setRecetaDTO(recetaDTO);
-
+                                relDTO.setFavorito(true);
+                                relDTO.setRecetaDTO(modelMapper.map(rel.getReceta(), RecetaDTO.class));
                                 return relDTO;
-                            })
-                            .collect(Collectors.toList());
+                            }).collect(Collectors.toList());
 
-                    dto.setRecetas(relacionesDTO);
+                    if (favs.isEmpty()) return null; // Si el plan no tiene recetas favoritas, lo ignoramos
+
+                    PlanRecetaDTO dto = modelMapper.map(plan, PlanRecetaDTO.class);
+                    dto.setRecetas(favs);
                     return dto;
                 })
+                .filter(Objects::nonNull) // Eliminamos los planes nulos (sin favoritos)
                 .collect(Collectors.toList());
     }
+    // ✅ REEMPLAZA TU MÉTODO actualizarFavorito ACTUAL POR ESTE:
     @Override
-    public PlanRecetaDTO actualizarFavorito(Integer idPlanReceta, Boolean favorito) {
-        Planreceta planreceta = planRecetaRepositorio.findById(idPlanReceta)
-                .orElseThrow(() -> new RuntimeException("No existe el plan receta con ID: " + idPlanReceta));
+    public PlanRecetaRecetaDTO actualizarFavorito(Long idPlanRecetaReceta, Boolean favorito) {
+        // 1. Buscamos la relación específica (Plato específico dentro del Plan)
+        PlanRecetaReceta relacion = planrecetaRecetaRepositorio.findById(idPlanRecetaReceta)
+                .orElseThrow(() -> new RuntimeException("No existe la relación con ID: " + idPlanRecetaReceta));
 
-        if (Objects.equals(planreceta.getFavorito(), favorito)) {
-            return modelMapper.map(planreceta, PlanRecetaDTO.class);
-        }
+        // 2. Guardamos el favorito EN LA RECETA, no en el plan
+        relacion.setFavorito(Boolean.TRUE.equals(favorito));
+        PlanRecetaReceta actualizada = planrecetaRecetaRepositorio.save(relacion);
 
-        planreceta.setFavorito(Boolean.TRUE.equals(favorito));
-        Planreceta actualizado = planRecetaRepositorio.save(planreceta);
-        return modelMapper.map(actualizado, PlanRecetaDTO.class);
+        // 3. Convertimos manualmente a DTO para devolverlo
+        PlanRecetaRecetaDTO dto = new PlanRecetaRecetaDTO();
+        dto.setIdPlanRecetaReceta(actualizada.getIdPlanRecetaReceta());
+        dto.setIdPlanReceta(actualizada.getPlanreceta().getId());
+        dto.setFavorito(actualizada.getFavorito());
+
+        // Mapeamos la receta interior
+        RecetaDTO recetaDTO = modelMapper.map(actualizada.getReceta(), RecetaDTO.class);
+        dto.setRecetaDTO(recetaDTO);
+
+        return dto;
     }
 
 

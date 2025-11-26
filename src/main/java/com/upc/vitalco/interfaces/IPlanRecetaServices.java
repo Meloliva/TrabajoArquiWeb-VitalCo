@@ -1,5 +1,6 @@
 package com.upc.vitalco.interfaces;
 import com.upc.vitalco.dto.PlanRecetaDTO;
+import com.upc.vitalco.dto.PlanRecetaRecetaDTO;
 import com.upc.vitalco.dto.RecetaDTO;
 
 import java.util.List;
@@ -13,5 +14,5 @@ public interface IPlanRecetaServices {
     List<RecetaDTO> buscarRecetasEnPlanReciente(Integer idPaciente, String texto);
     List<Map<String, String>> listarRecetasAgregadasHoyPorPacienteId(Integer pacienteId);
     List<PlanRecetaDTO> listarFavoritosPorPaciente(Integer idPaciente);
-    PlanRecetaDTO actualizarFavorito(Integer idPlanReceta, Boolean esFavorito);
+    PlanRecetaRecetaDTO actualizarFavorito(Long idPlanReceta, Boolean esFavorito);
 }

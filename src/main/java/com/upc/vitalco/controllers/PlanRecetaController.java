@@ -1,5 +1,6 @@
 package com.upc.vitalco.controllers;
 import com.upc.vitalco.dto.PlanRecetaDTO;
+import com.upc.vitalco.dto.PlanRecetaRecetaDTO;
 import com.upc.vitalco.dto.RecetaDTO;
 import com.upc.vitalco.security.util.SecurityUtils;
 import com.upc.vitalco.services.PacienteService;
@@ -40,11 +41,11 @@ public class PlanRecetaController {
 
     @PreAuthorize("hasRole('PACIENTE')")
     @PutMapping("/actualizarPlanReceta/{id}/favorito")
-    public ResponseEntity<PlanRecetaDTO> actualizarFavorito(
-            @PathVariable Integer id,
+    public ResponseEntity<PlanRecetaRecetaDTO> actualizarFavorito(
+            @PathVariable Long id,  // 👈 OJO: Ahora es Long
             @RequestParam Boolean favorito) {
         try {
-            PlanRecetaDTO actualizado = planRecetaService.actualizarFavorito(id, favorito);
+            PlanRecetaRecetaDTO actualizado = planRecetaService.actualizarFavorito(id, favorito);
             return ResponseEntity.ok(actualizado);
         } catch (RuntimeException ex) {
             return ResponseEntity.notFound().build();
