@@ -181,9 +181,6 @@ public class UsuarioService implements IUsuarioServices {
     @Override
     public void restablecerCuenta(String correo, String nuevaContraseña) {
         Usuario usuario = usuarioRepositorio.findByCorreo(correo);
-        if (usuario == null || !"Desactivado".equals(usuario.getEstado())) {
-            throw new RuntimeException("No se puede restablecer la cuenta.");
-        }
         usuario.setEstado("Activo");
         usuario.setContraseña(passwordEncoder.encode(nuevaContraseña));
         usuario.setCodigoRecuperacion(null);
