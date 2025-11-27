@@ -230,7 +230,7 @@ public class PlanRecetaService implements IPlanRecetaServices {
                 .collect(Collectors.toList());
     }
     @Override
-    public List<Map<String, String>> listarRecetasAgregadasHoyPorPacienteId(Integer pacienteId) {
+    public List<Map<String, Object>> listarRecetasAgregadasHoyPorPacienteId(Integer pacienteId) { // 👈 Cambio a Object
         if (pacienteId == null) {
             throw new IllegalArgumentException("id de paciente inválido");
         }
@@ -238,25 +238,31 @@ public class PlanRecetaService implements IPlanRecetaServices {
         Paciente paciente = pacienteRepositorio.findById(pacienteId)
                 .orElseThrow(() -> new RuntimeException("Paciente con ID " + pacienteId + " no encontrado"));
 
-
         LocalDate hoy = LocalDate.now();
         List<Seguimiento> seguimientos = seguimientoRepositorio.buscarPorPacienteYFecha(paciente.getId(), hoy);
+
         if (seguimientos == null || seguimientos.isEmpty()) {
             return Collections.emptyList();
         }
 
-        // Mantener orden y eliminar duplicados por nombre
-        Set<String> vistos = new LinkedHashSet<>();
-        List<Map<String, String>> resultado = new ArrayList<>();
+        List<Map<String, Object>> resultado = new ArrayList<>();
+
+        // No usamos Set<String> vistos para evitar ocultar duplicados si comiste lo mismo 2 veces
+        // Si quieres permitir borrar individualmente, necesitamos listar todos.
+
         for (Seguimiento s : seguimientos) {
             if (s == null || s.getPlanRecetaReceta() == null) continue;
             Receta receta = s.getPlanRecetaReceta().getReceta();
-            if (receta == null || receta.getNombre() == null) continue;
-            String nombre = receta.getNombre();
-            if (vistos.add(nombre)) { // solo la primera aparición se añade
-                Map<String, String> m = new LinkedHashMap<>();
-                m.put("nombre", nombre);
+
+            if (receta != null) {
+                Map<String, Object> m = new LinkedHashMap<>();
+                // ✅ AGREGAMOS LOS IDS NECESARIOS PARA ELIMINAR
+                m.put("seguimientoId", s.getId());
+                m.put("recetaId", receta.getId());
+
+                m.put("nombre", receta.getNombre());
                 m.put("descripcion", Optional.ofNullable(receta.getDescripcion()).orElse(""));
+
                 resultado.add(m);
             }
         }

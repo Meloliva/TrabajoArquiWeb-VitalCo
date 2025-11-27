@@ -88,9 +88,9 @@ public class PlanRecetaController {
     }
     @PreAuthorize("hasRole('PACIENTE')")
     @GetMapping("/listarRecetasAgregadasHoy")
-    public List<Map<String, String>> listarRecetasAgregadasHoy() {
+    public List<Map<String, Object>> listarRecetasAgregadasHoy() { // 👈 Cambio a Object
         Integer idUsuario = securityUtils.getUsuarioAutenticadoId();
-        Integer idPaciente=pacienteService.obtenerIdPacientePorUsuario(idUsuario);
+        Integer idPaciente = pacienteService.obtenerIdPacientePorUsuario(idUsuario);
         return planRecetaService.listarRecetasAgregadasHoyPorPacienteId(idPaciente);
     }
 

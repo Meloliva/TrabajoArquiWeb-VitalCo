@@ -261,14 +261,26 @@ public class SeguimientoService implements ISeguimientoServices {
 
     @Override
     public void eliminarRecetaDeSeguimiento(Integer pacienteId, Integer seguimientoId, Integer recetaId) {
+        // 1. Buscamos el seguimiento
         Seguimiento seguimiento = seguimientoRepositorio.findById(seguimientoId)
                 .orElseThrow(() -> new RuntimeException("Seguimiento no encontrado"));
+
+        // 2. Validaciones de seguridad
+        // Verificar que el seguimiento pertenezca al paciente (a través del plan)
+        Integer idPacienteDelSeguimiento = seguimiento.getPlanRecetaReceta()
+                .getPlanreceta().getIdplanalimenticio().getIdpaciente().getId();
+
+        if (!idPacienteDelSeguimiento.equals(pacienteId)) {
+            throw new RuntimeException("El seguimiento no corresponde al paciente");
+        }
 
         LocalDate hoy = LocalDate.now();
         if (!seguimiento.getFecharegistro().equals(hoy)) {
             throw new RuntimeException("Solo se pueden eliminar recetas registradas en el día actual");
         }
-        seguimientoRepositorio.eliminarRecetaDeSeguimiento(seguimientoId, recetaId, pacienteId);
+
+        // 3. ✅ BORRADO SEGURO: Usar el método estándar de JPA
+        seguimientoRepositorio.delete(seguimiento);
     }
     //metodo de nutricionista, paciente
     @Override

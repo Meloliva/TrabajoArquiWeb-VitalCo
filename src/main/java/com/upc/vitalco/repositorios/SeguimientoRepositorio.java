@@ -34,17 +34,10 @@ AND s.planRecetaReceta.planreceta.idplanalimenticio.idpaciente.idusuario.dni LIK
     );
 
 
+    // Asegúrate de que tu query sea así:
     @Modifying
-    @Transactional
-    @Query("""
-    DELETE FROM Seguimiento s
-    WHERE s.id = :seguimientoId
-      AND s.planRecetaReceta.receta.id = :recetaId
-      AND s.planRecetaReceta.planreceta.idplanalimenticio.idpaciente.id = :pacienteId
-""")
-    void eliminarRecetaDeSeguimiento(@Param("seguimientoId") Integer seguimientoId,
-                                     @Param("recetaId") Integer recetaId,
-                                     @Param("pacienteId") Integer pacienteId);
+    @Query("DELETE FROM Seguimiento s WHERE s.id = :seguimientoId")
+    void eliminarPorId(@Param("seguimientoId") Integer seguimientoId);
 
     List<Seguimiento> findByPlanRecetaReceta_Planreceta_Idplanalimenticio_Id(Integer id);
 

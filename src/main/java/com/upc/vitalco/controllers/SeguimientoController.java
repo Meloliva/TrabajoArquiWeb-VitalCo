@@ -75,8 +75,11 @@ public class SeguimientoController {
             @PathVariable("seguimientoId") Integer seguimientoId,
             @PathVariable("recetaId") Integer recetaId) {
         Integer idUsuario = securityUtils.getUsuarioAutenticadoId();
-        Integer idPaciente=pacienteService.obtenerIdPacientePorUsuario(idUsuario);
+        Integer idPaciente = pacienteService.obtenerIdPacientePorUsuario(idUsuario);
+
+        // Llamamos al servicio modificado
         seguimientoService.eliminarRecetaDeSeguimiento(idPaciente, seguimientoId, recetaId);
+
         return ResponseEntity.noContent().build();
     }
 

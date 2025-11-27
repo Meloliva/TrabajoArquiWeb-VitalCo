@@ -12,7 +12,8 @@ public interface IPlanRecetaServices {
     List<RecetaDTO> listarRecetasPorHorarioEnPlanRecienteDePaciente(Integer idPaciente, String nombreHorario) ;
     List<String> autocompletarNombreRecetaEnPlanReciente(Integer idPaciente, String texto);
     List<RecetaDTO> buscarRecetasEnPlanReciente(Integer idPaciente, String texto);
-    List<Map<String, String>> listarRecetasAgregadasHoyPorPacienteId(Integer pacienteId);
     List<PlanRecetaDTO> listarFavoritosPorPaciente(Integer idPaciente);
     PlanRecetaRecetaDTO actualizarFavorito(Long idPlanReceta, Boolean esFavorito);
+    // Busca este método y cámbialo:
+    List<Map<String, Object>> listarRecetasAgregadasHoyPorPacienteId(Integer pacienteId);
 }
