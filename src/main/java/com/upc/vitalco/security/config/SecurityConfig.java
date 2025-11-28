@@ -77,9 +77,11 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of("http://localhost:4200"));
-        // tu frontend Angular
-        configuration.setAllowedOrigins(List.of("https://localhost:4200"));
+        // ✅ Aceptamos tanto HTTP (WebStorm) como HTTPS (Facebook Login)
+        configuration.setAllowedOrigins(List.of(
+                "http://localhost:4200",  // Para desarrollo normal (WebStorm)
+                "https://localhost:4200"  // Para pruebas con Facebook (SSL)
+        ));
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("Authorization", "Content-Type"));
         configuration.setExposedHeaders(List.of("Authorization"));
