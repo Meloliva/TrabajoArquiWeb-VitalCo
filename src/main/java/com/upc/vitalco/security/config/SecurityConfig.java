@@ -62,7 +62,8 @@ public class SecurityConfig {
                                 "/api/listarRoles",
                                 "/api/listarTurnos",
                                 "/api/listarPlanesNutricionales",
-                                "/api/listarPlanesSuscripcion"
+                                "/api/listarPlanesSuscripcion",
+                                "/api/authenticate/social"
                         ).permitAll()
                         .anyRequest().authenticated()
                 )
@@ -76,7 +77,9 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of("http://localhost:4200")); // tu frontend Angular
+        configuration.setAllowedOrigins(List.of("http://localhost:4200"));
+        // tu frontend Angular
+        configuration.setAllowedOrigins(List.of("https://localhost:4200"));
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("Authorization", "Content-Type"));
         configuration.setExposedHeaders(List.of("Authorization"));
