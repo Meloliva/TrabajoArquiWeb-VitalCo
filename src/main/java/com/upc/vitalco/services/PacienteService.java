@@ -140,7 +140,7 @@ public class PacienteService implements IPacienteServices {
         Paciente guardado = pacienteRepositorio.save(paciente);
 
         // ✅ LUEGO recalcular el plan (sin tocar la edad)
-        planAlimenticioService.recalcularPlanAlimenticioPorPaciente(guardado.getId());
+        planAlimenticioService.recalcularPlanAlimenticio(guardado);
 
         // ✅ VOLVER A ESTABLECER la edad manual después del recálculo
         guardado.setEdad(edadManual != null ? edadManual : guardado.getEdad());

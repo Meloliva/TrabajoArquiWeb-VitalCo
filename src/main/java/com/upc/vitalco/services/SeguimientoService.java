@@ -35,6 +35,7 @@ public class SeguimientoService implements ISeguimientoServices {
 
 
     //registrar funciona bien
+
     @Override
     public SeguimientoDTO agregarProgreso(Long idPlanRecetaReceta) {
 
@@ -205,6 +206,11 @@ public class SeguimientoService implements ISeguimientoServices {
         return caloriasPorHorario;
     }
 
+
+    private double redondear(double valor) {
+        return Math.round(valor * 100.0) / 100.0;
+    }
+
     @Override
     public Map<String, Object> verificarCumplimientoDiario(String dni, LocalDate fecha) {
         Paciente paciente = pacienteRepositorio.findByDni(dni)
@@ -246,10 +252,10 @@ public class SeguimientoService implements ISeguimientoServices {
         double porcCarb = reqCarb > 0 ? (conCarb / reqCarb) * 100 : 0;
 
         Map<String, Object> resultado = new HashMap<>();
-        resultado.put("calorias", Map.of("consumido", conCal, "requerido", reqCal, "porcentaje", porcCal));
-        resultado.put("proteinas", Map.of("consumido", conProt, "requerido", reqProt, "porcentaje", porcProt));
-        resultado.put("grasas", Map.of("consumido", conGrasas, "requerido", reqGrasas, "porcentaje", porcGrasas));
-        resultado.put("carbohidratos", Map.of("consumido", conCarb, "requerido", reqCarb, "porcentaje", porcCarb));
+        resultado.put("calorias", Map.of("consumido", conCal, "requerido", reqCal, "porcentaje", redondear(porcCal)));
+        resultado.put("proteinas", Map.of("consumido", conProt, "requerido", reqProt, "porcentaje", redondear(porcProt)));
+        resultado.put("grasas", Map.of("consumido", conGrasas, "requerido", reqGrasas, "porcentaje", redondear(porcGrasas)));
+        resultado.put("carbohidratos", Map.of("consumido", conCarb, "requerido", reqCarb, "porcentaje", redondear(porcCarb)));
 
         boolean cumplio = porcCal == 100 && porcProt == 100 && porcGrasas == 100 && porcCarb == 100;
         resultado.put("cumplio", cumplio);

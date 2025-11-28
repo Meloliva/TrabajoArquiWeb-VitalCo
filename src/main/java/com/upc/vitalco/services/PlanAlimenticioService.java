@@ -166,22 +166,32 @@ public class PlanAlimenticioService implements IPlanAlimenticioServices {
 
 
 
-    public PlanAlimenticioDTO recalcularPlanAlimenticioPorPaciente(Integer idPaciente) {
-        Planalimenticio plan = planAlimenticioRepositorio.findByIdpacienteId(idPaciente);
+    // En src/main/java/com/upc/vitalco/services/PlanAlimenticioService.java
+
+// CAMBIA ESTO:
+// public PlanAlimenticioDTO recalcularPlanAlimenticioPorPaciente(Integer idPaciente) { ... }
+
+    // POR ESTO:
+    public PlanAlimenticioDTO recalcularPlanAlimenticio(Paciente paciente) {
+        // 1. Buscamos el plan existente del paciente
+        Planalimenticio plan = planAlimenticioRepositorio.findByIdpacienteId(paciente.getId());
+
         if (plan == null) {
-            throw new RuntimeException("Plan alimenticio no encontrado para el paciente con ID: " + idPaciente);
+            throw new RuntimeException("Plan alimenticio no encontrado para el paciente con ID: " + paciente.getId());
         }
 
-        Paciente paciente = pacienteRepositorio.findById(idPaciente)
-                .orElseThrow(() -> new RuntimeException("Paciente no encontrado"));
+        // 2. IMPORTANTE: Ya NO buscamos el paciente por ID.
+        // Usamos el objeto 'paciente' que recibimos, que tiene los triglicéridos recién editados.
 
         Plannutricional planNutricional = planNutricionalRepositorio.findById(
                         paciente.getIdPlanNutricional().getId())
                 .orElseThrow(() -> new RuntimeException("Plan nutricional no encontrado"));
 
+        // 3. Calculamos usando los datos frescos
         double calorias = calcularCalorias(paciente, planNutricional.getObjetivo(), planNutricional.getDuracion());
         double[] macros = calcularMacronutrientes(calorias, planNutricional.getObjetivo(), paciente.getTrigliceridos().doubleValue());
 
+        // 4. Guardamos los cambios en el plan
         plan.setCaloriasDiaria(calorias);
         plan.setCarbohidratosDiaria(macros[0]);
         plan.setProteinasDiaria(macros[1]);
