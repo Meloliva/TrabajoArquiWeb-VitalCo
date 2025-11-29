@@ -1,9 +1,6 @@
 package com.upc.vitalco.interfaces;
 
-import com.upc.vitalco.dto.RecetaDTO;
-import com.upc.vitalco.dto.SeguimientoBusquedaDTO;
-import com.upc.vitalco.dto.SeguimientoDTO;
-import com.upc.vitalco.dto.SeguimientoResumenDTO;
+import com.upc.vitalco.dto.*;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -16,4 +13,5 @@ public interface ISeguimientoServices {
     SeguimientoResumenDTO resumenSeguimientoNutri(String dni, LocalDate fecha);
     public void eliminarRecetaDeSeguimiento(Integer seguimientoId, Integer recetaId, Integer pacienteId);
     List<SeguimientoBusquedaDTO> listarPorDniYFecha(String dni, LocalDate fecha);
+    List<HistorialSemanalDTO> obtenerHistorialFiltrado(String dni, String objetivo, LocalDate fechaInicio, LocalDate fechaFin);
 }

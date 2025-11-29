@@ -41,5 +41,10 @@ AND s.planRecetaReceta.planreceta.idplanalimenticio.idpaciente.idusuario.dni LIK
 
     List<Seguimiento> findByPlanRecetaReceta_Planreceta_Idplanalimenticio_Id(Integer id);
 
-
+    @Query("SELECT s FROM Seguimiento s " +
+            "JOIN s.planRecetaReceta.planreceta.idplanalimenticio.idpaciente p " +
+            "JOIN p.idusuario u " +
+            "WHERE u.dni = :dni " +
+            "ORDER BY s.fecharegistro ASC")
+    List<Seguimiento> buscarHistorialBruto(@Param("dni") String dni);
 }

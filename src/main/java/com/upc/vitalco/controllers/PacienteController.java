@@ -55,4 +55,13 @@ public class PacienteController {
 
         return ResponseEntity.ok(pacienteDTO);
     }
+
+    @PutMapping("/cambiarPlanNutricional")
+    @PreAuthorize("hasRole('PACIENTE')")
+    public ResponseEntity<PacienteDTO> cambiarPlan(
+            @RequestParam String dni,
+            @RequestParam Integer idNuevoPlan
+    ) {
+        return ResponseEntity.ok(pacienteService.cambiarPlanNutricional(dni, idNuevoPlan));
+    }
 }

@@ -94,6 +94,16 @@ public class SeguimientoController {
         return ResponseEntity.ok(resumen);
     }
 
+    @PreAuthorize("hasRole('NUTRICIONISTA') or hasRole('PACIENTE')")
+    @GetMapping("/historial")
+    public ResponseEntity<List<HistorialSemanalDTO>> obtenerHistorial(
+            @RequestParam String dni,
+            @RequestParam(required = false) String objetivo,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaInicio,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaFin
+    ) {
+        return ResponseEntity.ok(seguimientoService.obtenerHistorialFiltrado(dni, objetivo, fechaInicio, fechaFin));
+    }
 
 }
 

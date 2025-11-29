@@ -9,6 +9,7 @@ import com.upc.vitalco.repositorios.PlanNutricionalRepositorio;
 import com.upc.vitalco.repositorios.PlanSuscripcionRepositorio;
 import com.upc.vitalco.repositorios.UsuarioRepositorio;
 import com.upc.vitalco.security.util.SecurityUtils;
+import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -33,6 +34,8 @@ public class PacienteService implements IPacienteServices {
     private PlanSuscripcionRepositorio planSuscripcionRepositorio;
     @Autowired
     private UsuarioRepositorio usuarioRepositorio;
+    @Autowired
+    private PlanNutricionalRepositorio planNutricionalRepositorio;
 
     @Autowired
     private SecurityUtils securityUtils;
@@ -196,6 +199,29 @@ public class PacienteService implements IPacienteServices {
         if (paciente == null) {
             return null;   // o lanzar excepción
         }
+
+        return modelMapper.map(paciente, PacienteDTO.class);
+    }
+
+    @Override
+    @Transactional
+    public PacienteDTO cambiarPlanNutricional(String dni, Integer idNuevoPlanNutricional) {
+        Paciente paciente = pacienteRepositorio.findByDni(dni)
+                .orElseThrow(() -> new RuntimeException("Paciente no encontrado"));
+
+        Plannutricional nuevoPlan = planNutricionalRepositorio.findById(idNuevoPlanNutricional)
+                .orElseThrow(() -> new RuntimeException("Plan nutricional no encontrado"));
+
+        if (paciente.getIdPlanNutricional().equals(nuevoPlan)) {
+            throw new RuntimeException("El paciente ya tiene asignado este plan.");
+        }
+
+        // Actualizar referencia en paciente
+        paciente.setIdPlanNutricional(nuevoPlan);
+        paciente = pacienteRepositorio.save(paciente);
+
+        // Llamar a la lógica de versionado en PlanAlimenticioService
+        planAlimenticioService.recalcularPlanAlimenticio(paciente);
 
         return modelMapper.map(paciente, PacienteDTO.class);
     }

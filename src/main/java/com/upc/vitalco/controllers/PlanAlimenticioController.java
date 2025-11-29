@@ -95,4 +95,10 @@ public class PlanAlimenticioController {
 
         return ResponseEntity.ok(actualizado);
     }
+
+    @PreAuthorize("hasRole('NUTRICIONISTA') or hasRole('PACIENTE')")
+    @GetMapping("/historialPlanes/{dni}")
+    public ResponseEntity<List<PlanAlimenticioDTO>> listarPlanesHistorial(@PathVariable String dni) {
+        return ResponseEntity.ok(planAlimenticioService.listarPlanesDePaciente(dni));
+    }
 }

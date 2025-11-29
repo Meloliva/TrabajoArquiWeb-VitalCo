@@ -19,4 +19,6 @@ public class PlanAlimenticioDTO {
     private Double carbohidratosDiaria;
     private Double proteinasDiaria;
     private Double caloriasDiaria;
+    private String nombrePlanNutricional; // Ej: "Bajar trigliceridos"
+    private String duracionPlan;
 }

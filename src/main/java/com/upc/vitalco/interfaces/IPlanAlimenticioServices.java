@@ -2,6 +2,7 @@ package com.upc.vitalco.interfaces;
 
 import com.upc.vitalco.dto.NutricionistaRequerimientoDTO;
 import com.upc.vitalco.dto.PlanAlimenticioDTO;
+import com.upc.vitalco.entidades.Paciente;
 import com.upc.vitalco.entidades.Planalimenticio;
 
 import java.util.List;
@@ -15,4 +16,6 @@ public interface IPlanAlimenticioServices {
     PlanAlimenticioDTO registrar(Integer idPaciente);
     NutricionistaRequerimientoDTO editarPlanAlimenticio(String dni, NutricionistaRequerimientoDTO nuevoPlan);
     PlanAlimenticioDTO eliminarPlanAlimenticio(Integer id);
+    PlanAlimenticioDTO recalcularPlanAlimenticio(Paciente paciente);
+    List<PlanAlimenticioDTO> listarPlanesDePaciente(String dni);
 }

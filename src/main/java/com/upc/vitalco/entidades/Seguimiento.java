@@ -40,15 +40,14 @@ public class Seguimiento {
     @Column(name = "cumplio")
     private Boolean cumplio=false;
 
-    @Column(name = "objetivo_snapshot")
+    @Column(name = "objetivo_snapshot", columnDefinition = "TEXT")
     private String objetivoSnapshot;
 
     @PrePersist
     public void prePersist() {
         this.fecharegistro = LocalDate.now();
     }
-    //para guardar el objetivo snapshot
-    public String getObjetivoSnapshot() { return objetivoSnapshot; }
-    public void setObjetivoSnapshot(String objetivoSnapshot) { this.objetivoSnapshot = objetivoSnapshot; }
+
+
 
 }

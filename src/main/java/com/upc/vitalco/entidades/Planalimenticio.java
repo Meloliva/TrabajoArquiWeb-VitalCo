@@ -39,4 +39,8 @@ public class Planalimenticio {
     @Column(name = "calorias_diaria")
     private Double caloriasDiaria;
 
+    @ManyToOne(fetch = FetchType.EAGER) // EAGER para que venga el nombre rápido
+    @JoinColumn(name = "idplannutricional")
+    private Plannutricional plannutricional;
+
 }
