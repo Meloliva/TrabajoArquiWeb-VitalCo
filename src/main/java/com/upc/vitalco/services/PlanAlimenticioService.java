@@ -44,36 +44,34 @@ public class PlanAlimenticioService implements IPlanAlimenticioServices {
         Paciente paciente = pacienteRepositorio.findById(idPaciente)
                 .orElseThrow(() -> new RuntimeException("Paciente no encontrado con ID: " + idPaciente));
 
-        Plannutricional planNutricional = planNutricionalRepositorio.findById(paciente.getIdPlanNutricional().getId())
-                .orElseThrow(() -> new RuntimeException("Plan nutricional no encontrado para el paciente con ID: " + idPaciente));
+        Plannutricional planNutricional = paciente.getIdPlanNutricional();
+        if (planNutricional == null) {
+            throw new RuntimeException("El paciente no tiene un Plan Nutricional asociado.");
+        }
 
         String objetivo = planNutricional.getObjetivo();
         String duracion = planNutricional.getDuracion();
-        Plannutricional planBase = paciente.getIdPlanNutricional();
 
+        // Cálculos
         double caloriasDiarias = calcularCalorias(paciente, objetivo, duracion);
         double[] macros = calcularMacronutrientes(caloriasDiarias, objetivo, paciente.getTrigliceridos().doubleValue());
-        double carbohidratosDiarios = macros[0];
-        double proteinasDiarias = macros[1];
-        double grasasDiarias = macros[2];
 
         Planalimenticio planAlimenticio = new Planalimenticio();
         planAlimenticio.setIdpaciente(paciente);
+        planAlimenticio.setPlannutricional(planNutricional); // ✅ Se vincula el Plannutricional
         planAlimenticio.setCaloriasDiaria(caloriasDiarias);
-        planAlimenticio.setPlannutricional(planBase);
-        planAlimenticio.setCarbohidratosDiaria(carbohidratosDiarios);
-        planAlimenticio.setProteinasDiaria(proteinasDiarias);
-        planAlimenticio.setGrasasDiaria(grasasDiarias);
+        planAlimenticio.setCarbohidratosDiaria(macros[0]);
+        planAlimenticio.setProteinasDiaria(macros[1]);
+        planAlimenticio.setGrasasDiaria(macros[2]);
 
         LocalDate fechaInicio = LocalDate.now();
-        LocalDate fechaFinal = calcularFechaFinal(duracion, fechaInicio);
-
         planAlimenticio.setFechainicio(fechaInicio);
-        planAlimenticio.setFechafin(fechaFinal);
+        planAlimenticio.setFechafin(calcularFechaFinal(duracion, fechaInicio));
 
         planAlimenticio = planAlimenticioRepositorio.save(planAlimenticio);
         planRecetaService.crearPlanReceta(planAlimenticio.getId());
-        return modelMapper.map(planAlimenticio, PlanAlimenticioDTO.class);
+
+        return mapearDTO(planAlimenticio);
     }
 
     @Override
@@ -92,7 +90,6 @@ public class PlanAlimenticioService implements IPlanAlimenticioServices {
         Paciente paciente = pacienteRepositorio.findByDni(dni)
                 .orElseThrow(() -> new RuntimeException("Paciente no encontrado"));
 
-        // Validaciones...
         if (paciente.getIdplan() == null || !"plan premium".equalsIgnoreCase(paciente.getIdplan().getTipo())) {
             throw new IllegalStateException("Solo pacientes Premium pueden editar su plan.");
         }
@@ -119,7 +116,7 @@ public class PlanAlimenticioService implements IPlanAlimenticioServices {
             pacienteRepositorio.save(paciente);
         }
 
-        // ✅ LO QUE FALTABA: Vincular el Plan Alimenticio al Plan Nutricional del ciclo
+        // ✅ LÍNEA CRUCIAL: VINCULAR EL PLAN BASE
         nuevoPlan.setPlannutricional(planBase);
 
         // Calcular fecha fin usando la duración del planBase actualizado
@@ -164,6 +161,10 @@ public class PlanAlimenticioService implements IPlanAlimenticioServices {
         nuevoPlan.setFechainicio(LocalDate.now());
 
         Plannutricional planBase = paciente.getIdPlanNutricional();
+
+        // ✅ VINCULAR EL PLAN BASE
+        nuevoPlan.setPlannutricional(planBase);
+
         nuevoPlan.setFechafin(calcularFechaFinal(planBase.getDuracion(), LocalDate.now()));
 
         // Cálculos automáticos
@@ -181,7 +182,7 @@ public class PlanAlimenticioService implements IPlanAlimenticioServices {
         planRecetaService.crearPlanReceta(nuevoPlan.getId());
         planRecetaService.recalcularPlanRecetas(nuevoPlan.getId());
 
-        return modelMapper.map(nuevoPlan, PlanAlimenticioDTO.class);
+        return mapearDTO(nuevoPlan); // ✅ Usamos el mapeador corregido
     }
 
 
@@ -189,7 +190,7 @@ public class PlanAlimenticioService implements IPlanAlimenticioServices {
     public List<PlanAlimenticioDTO> findAll() {
         return planAlimenticioRepositorio.findAll()
                 .stream()
-                .map(planAlimenticio -> modelMapper.map(planAlimenticio, PlanAlimenticioDTO.class))
+                .map(this::mapearDTO) // ✅ Usamos el mapeador corregido
                 .collect(Collectors.toList());
     }
 
@@ -341,9 +342,10 @@ public class PlanAlimenticioService implements IPlanAlimenticioServices {
         Paciente paciente = pacienteRepositorio.findByDni(dni)
                 .orElseThrow(() -> new RuntimeException("Paciente no encontrado"));
 
+        // Usamos la función auxiliar 'mapearDTO'
         return planAlimenticioRepositorio.listarHistorialPorPaciente(paciente.getId())
                 .stream()
-                .map(p -> modelMapper.map(p, PlanAlimenticioDTO.class))
+                .map(this::mapearDTO) // 👈 Aquí se aplica el mapeo corregido
                 .collect(Collectors.toList());
     }
 
@@ -357,9 +359,23 @@ public class PlanAlimenticioService implements IPlanAlimenticioServices {
 
     private PlanAlimenticioDTO mapearDTO(Planalimenticio entity) {
         PlanAlimenticioDTO dto = modelMapper.map(entity, PlanAlimenticioDTO.class);
+
+        // Concatenamos Objetivo y Duración para el Frontend
         if (entity.getPlannutricional() != null) {
-            dto.setNombrePlanNutricional(entity.getPlannutricional().getObjetivo());
-            dto.setDuracionPlan(entity.getPlannutricional().getDuracion());
+            String objetivo = entity.getPlannutricional().getObjetivo();
+            String duracion = entity.getPlannutricional().getDuracion();
+
+            // Asignación de campos individuales (para DTO)
+            dto.setNombrePlanNutricional(objetivo);
+            dto.setDuracionPlan(duracion);
+
+            // Si el ModelMapper no pudo mapear, lo hacemos manual y concatenamos
+            String nombreConcatenado = objetivo + " - " + duracion;
+            dto.setNombrePlanNutricional(nombreConcatenado);
+
+        } else {
+            dto.setNombrePlanNutricional("Plan Sin Objetivo");
+            dto.setDuracionPlan("N/A");
         }
         return dto;
     }

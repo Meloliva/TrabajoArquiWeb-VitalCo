@@ -16,7 +16,6 @@ public class RolController {
     @Autowired
     private RolService rolService;
 
-    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/registrarRol")
     public RolDTO registrar(@RequestBody RolDTO rolesDTO){ //wrapper
         return rolService.registrar(rolesDTO);

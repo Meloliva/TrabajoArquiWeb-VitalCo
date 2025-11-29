@@ -34,8 +34,6 @@ public class PacienteService implements IPacienteServices {
     private PlanSuscripcionRepositorio planSuscripcionRepositorio;
     @Autowired
     private UsuarioRepositorio usuarioRepositorio;
-    @Autowired
-    private PlanNutricionalRepositorio planNutricionalRepositorio;
 
     @Autowired
     private SecurityUtils securityUtils;
