@@ -1,9 +1,11 @@
 package com.upc.vitalco.services;
 import com.upc.vitalco.dto.*;
 import com.upc.vitalco.entidades.Paciente;
+import com.upc.vitalco.entidades.Plannutricional;
 import com.upc.vitalco.entidades.Usuario;
 import com.upc.vitalco.interfaces.IPacienteServices;
 import com.upc.vitalco.repositorios.PacienteRepositorio;
+import com.upc.vitalco.repositorios.PlanNutricionalRepositorio;
 import com.upc.vitalco.repositorios.PlanSuscripcionRepositorio;
 import com.upc.vitalco.repositorios.UsuarioRepositorio;
 import com.upc.vitalco.security.util.SecurityUtils;
@@ -25,6 +27,8 @@ public class PacienteService implements IPacienteServices {
     private ModelMapper modelMapper;
     @Autowired
     private PlanAlimenticioService planAlimenticioService;
+    @Autowired
+    private PlanNutricionalRepositorio planNutricionalRepositorio;
     @Autowired
     private PlanSuscripcionRepositorio planSuscripcionRepositorio;
     @Autowired
@@ -126,9 +130,21 @@ public class PacienteService implements IPacienteServices {
         paciente.setTrigliceridos(editarPacienteDTO.getTrigliceridos() != null ? editarPacienteDTO.getTrigliceridos() : paciente.getTrigliceridos());
 
         // Actualizar plan suscripción solo si viene en el DTO
-        if (editarPacienteDTO.getPlanSuscripcion() != null) {
-            paciente.setIdplan(planSuscripcionRepositorio.findByTipo((editarPacienteDTO.getPlanSuscripcion()))
-                    .orElseThrow(() -> new DataIntegrityViolationException("El plan de suscripción no es válido.")));
+        if (editarPacienteDTO.getPlanSuscripcion() != null && !editarPacienteDTO.getPlanSuscripcion().isEmpty()) {
+            try {
+                Integer idPlanNutricional = Integer.parseInt(editarPacienteDTO.getPlanSuscripcion());
+                Plannutricional nuevoPlan = planNutricionalRepositorio.findById(idPlanNutricional)
+                        .orElseThrow(() -> new DataIntegrityViolationException("El plan nutricional con ID " + idPlanNutricional + " no existe."));
+
+                paciente.setIdPlanNutricional(nuevoPlan);
+
+                // Recalcular el plan alimenticio con el nuevo objetivo
+                Paciente guardadoTemp = pacienteRepositorio.save(paciente);
+                planAlimenticioService.recalcularPlanAlimenticio(guardadoTemp);
+
+            } catch (NumberFormatException e) {
+                throw new DataIntegrityViolationException("El ID del plan nutricional debe ser un número válido.");
+            }
         }
 
         // Validar que el paciente tenga un plan antes de guardar
@@ -138,11 +154,6 @@ public class PacienteService implements IPacienteServices {
 
         // ✅ PRIMERO guardar el paciente con la edad manual
         Paciente guardado = pacienteRepositorio.save(paciente);
-
-        // ✅ LUEGO recalcular el plan (sin tocar la edad)
-        planAlimenticioService.recalcularPlanAlimenticio(guardado);
-
-        // ✅ VOLVER A ESTABLECER la edad manual después del recálculo
         guardado.setEdad(edadManual != null ? edadManual : guardado.getEdad());
         Paciente finalizado = pacienteRepositorio.save(guardado);
 
