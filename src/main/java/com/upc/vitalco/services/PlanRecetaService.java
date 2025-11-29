@@ -60,15 +60,13 @@ public class PlanRecetaService implements IPlanRecetaServices {
     }
 
     public String asignarRecetasAPlan(Integer idPlanReceta) {
+        // Mantenemos este método para la carga inicial o manual,
+        // pero NO lo usaremos para regenerar el plan cada vez que se lista.
         Planreceta planreceta = planRecetaRepositorio.findById(idPlanReceta)
                 .orElseThrow(() -> new RuntimeException("No existe el plan receta con ID: " + idPlanReceta));
 
         Planalimenticio plan = planreceta.getIdplanalimenticio();
-
         double caloriasObjetivo = plan.getCaloriasDiaria();
-        double proteinasObjetivo = plan.getProteinasDiaria();
-        double grasasObjetivo = plan.getGrasasDiaria();
-        double carbohidratosObjetivo = plan.getCarbohidratosDiaria();
 
         List<Receta> todasRecetas = recetaRepositorio.findAll();
         List<PlanRecetaReceta> relacionesActuales = planrecetaRecetaRepositorio.findByPlanreceta(planreceta);
@@ -76,32 +74,23 @@ public class PlanRecetaService implements IPlanRecetaServices {
                 .map(rel -> rel.getReceta().getId())
                 .collect(Collectors.toSet());
 
+        // Solo lógica de llenado inicial (si está vacío o se pide recalcular)
         for (Receta receta : todasRecetas) {
-            double cal = receta.getCalorias() != null ? receta.getCalorias() : 0.0;
-            double pro = receta.getProteinas() != null ? receta.getProteinas() : 0.0;
-            double gra = receta.getGrasas() != null ? receta.getGrasas() : 0.0;
-            double car = receta.getCarbohidratos() != null ? receta.getCarbohidratos() : 0.0;
-
-            boolean cumple = cal <= caloriasObjetivo &&
-                    pro <= proteinasObjetivo &&
-                    gra <= grasasObjetivo &&
-                    car <= carbohidratosObjetivo;
-
-            if (cumple && !recetasActualesIds.contains(receta.getId())) {
+            double cal = Optional.ofNullable(receta.getCalorias()).orElse(0.0);
+            // Aquí puedes mantener la lógica simple de asignación
+            // ya que el FILTRADO real ocurrirá al listar.
+            if (cal <= caloriasObjetivo && !recetasActualesIds.contains(receta.getId())) {
                 PlanRecetaReceta nuevaRelacion = new PlanRecetaReceta();
                 nuevaRelacion.setPlanreceta(planreceta);
                 nuevaRelacion.setReceta(receta);
                 planrecetaRecetaRepositorio.save(nuevaRelacion);
             }
         }
-
-        return "Recetas asignadas correctamente al plan.";
+        return "Recetas asignadas correctamente.";
     }
-
 
     public void recalcularPlanRecetas(Integer idPlan) {
         Planreceta nuevoPlanreceta = crearPlanReceta(idPlan);
-
         asignarRecetasAPlan(nuevoPlanreceta.getId());
     }
 
@@ -113,36 +102,53 @@ public class PlanRecetaService implements IPlanRecetaServices {
         }
     }
 
+    // ✅ LÓGICA COMPLETA: Filtrado por TODOS los macronutrientes
     @Override
     public List<PlanRecetaDTO> listarPorPaciente(Integer idPaciente) {
+        // 1. Obtener el plan asignado
         List<Planreceta> planes = planRecetaRepositorio.buscarPorPaciente(idPaciente);
 
-        // Tomar el plan más reciente (último creado) por cada plan alimenticio
         List<Planreceta> unicos = planes.stream()
                 .collect(Collectors.toMap(
                         p -> p.getIdplanalimenticio().getId(),
                         p -> p,
-                        (p1, p2) -> p1.getFecharegistro().isAfter(p2.getFecharegistro()) ? p1 : p2  // ← Tomar el más reciente
+                        (p1, p2) -> p1.getFecharegistro().isAfter(p2.getFecharegistro()) ? p1 : p2
                 ))
                 .values()
                 .stream()
                 .collect(Collectors.toList());
 
-        for (int i = 0; i < unicos.size(); i++) {
-            Planreceta planreceta = unicos.get(i);
+        // 2. Calcular consumos de HOY para TODOS los macros
+        LocalDate hoy = LocalDate.now();
+        List<Seguimiento> consumosHoy = seguimientoRepositorio.buscarPorPacienteYFecha(idPaciente, hoy);
 
-            if (planreceta.getId() == null) {
-                planreceta = planRecetaRepositorio.save(planreceta);
-                unicos.set(i, planreceta);
-            }
-
-            asignarRecetasAPlan(planreceta.getId());
-        }
+        double conCal = consumosHoy.stream().mapToDouble(s -> Optional.ofNullable(s.getCalorias()).orElse(0.0)).sum();
+        double conPro = consumosHoy.stream().mapToDouble(s -> Optional.ofNullable(s.getProteinas()).orElse(0.0)).sum();
+        double conGra = consumosHoy.stream().mapToDouble(s -> Optional.ofNullable(s.getGrasas()).orElse(0.0)).sum();
+        double conCar = consumosHoy.stream().mapToDouble(s -> Optional.ofNullable(s.getCarbohidratos()).orElse(0.0)).sum();
 
         return unicos.stream().map(planReceta -> {
             PlanRecetaDTO dto = modelMapper.map(planReceta, PlanRecetaDTO.class);
+            Planalimenticio planAlim = planReceta.getIdplanalimenticio();
 
-            // Obtenemos las recetas de ESTE plan
+            // 3. Calcular SALDOS DISPONIBLES (Objetivo - Consumido)
+            double salCal = Optional.ofNullable(planAlim.getCaloriasDiaria()).orElse(2000.0) - conCal;
+            double salPro = Optional.ofNullable(planAlim.getProteinasDiaria()).orElse(0.0) - conPro;
+            double salGra = Optional.ofNullable(planAlim.getGrasasDiaria()).orElse(0.0) - conGra;
+            double salCar = Optional.ofNullable(planAlim.getCarbohidratosDiaria()).orElse(0.0) - conCar;
+
+            // Evitar negativos
+            if (salCal < 0) salCal = 0;
+            if (salPro < 0) salPro = 0;
+            if (salGra < 0) salGra = 0;
+            if (salCar < 0) salCar = 0;
+
+            // Variables finales para el lambda
+            final double fSalCal = salCal;
+            final double fSalPro = salPro;
+            final double fSalGra = salGra;
+            final double fSalCar = salCar;
+
             List<PlanRecetaReceta> relaciones = planrecetaRecetaRepositorio.findByPlanreceta(planReceta);
 
             // Lógica Plan Free
@@ -151,38 +157,77 @@ public class PlanRecetaService implements IPlanRecetaServices {
                 relaciones = relaciones.subList(0, 15);
             }
 
-            List<PlanRecetaRecetaDTO> relacionesDTO = relaciones.stream().map(rel -> {
-                PlanRecetaRecetaDTO relDTO = new PlanRecetaRecetaDTO();
-                relDTO.setIdPlanRecetaReceta(rel.getIdPlanRecetaReceta());
-                relDTO.setIdPlanReceta(rel.getPlanreceta().getId());
+            // 4. FILTRADO ESTRICTO: La receta debe caber en TODO
+            List<PlanRecetaRecetaDTO> relacionesDTO = relaciones.stream()
+                    .filter(rel -> {
+                        Receta r = rel.getReceta();
+                        double rCal = Optional.ofNullable(r.getCalorias()).orElse(0.0);
+                        double rPro = Optional.ofNullable(r.getProteinas()).orElse(0.0);
+                        double rGra = Optional.ofNullable(r.getGrasas()).orElse(0.0);
+                        double rCar = Optional.ofNullable(r.getCarbohidratos()).orElse(0.0);
 
-                // ✅ IMPORTANTE: Mapeamos el favorito individual de la tabla intermedia
-                relDTO.setFavorito(rel.getFavorito());
-
-                relDTO.setRecetaDTO(modelMapper.map(rel.getReceta(), RecetaDTO.class));
-                return relDTO;
-            }).collect(Collectors.toList());
+                        // CONDICIÓN MAESTRA: Debe cumplir con los 4 requisitos
+                        return rCal <= fSalCal && rPro <= fSalPro && rGra <= fSalGra && rCar <= fSalCar;
+                    })
+                    .map(rel -> {
+                        PlanRecetaRecetaDTO relDTO = new PlanRecetaRecetaDTO();
+                        relDTO.setIdPlanRecetaReceta(rel.getIdPlanRecetaReceta());
+                        relDTO.setIdPlanReceta(rel.getPlanreceta().getId());
+                        relDTO.setFavorito(rel.getFavorito());
+                        relDTO.setRecetaDTO(modelMapper.map(rel.getReceta(), RecetaDTO.class));
+                        return relDTO;
+                    }).collect(Collectors.toList());
 
             dto.setRecetas(relacionesDTO);
             return dto;
         }).collect(Collectors.toList());
     }
 
+    // ✅ ACTUALIZACIÓN TAMBIÉN PARA LA BÚSQUEDA POR HORARIO
     @Override
     public List<RecetaDTO> listarRecetasPorHorarioEnPlanRecienteDePaciente(Integer idPaciente, String nombreHorario) {
-
         List<Planreceta> planes = planRecetaRepositorio.buscarPorPaciente(idPaciente);
-        if (planes.isEmpty()) {
-            return Collections.emptyList();
-        }
+        if (planes.isEmpty()) return Collections.emptyList();
+
         Planreceta planreceta = planes.stream()
                 .max(Comparator.comparing(Planreceta::getFecharegistro))
-                .orElseThrow(() -> new RuntimeException("No hay plan receta para el paciente"));
+                .orElseThrow(() -> new RuntimeException("No hay plan receta"));
 
+        // 1. Calcular consumos
+        LocalDate hoy = LocalDate.now();
+        List<Seguimiento> consumosHoy = seguimientoRepositorio.buscarPorPacienteYFecha(idPaciente, hoy);
+
+        double conCal = consumosHoy.stream().mapToDouble(s -> Optional.ofNullable(s.getCalorias()).orElse(0.0)).sum();
+        double conPro = consumosHoy.stream().mapToDouble(s -> Optional.ofNullable(s.getProteinas()).orElse(0.0)).sum();
+        double conGra = consumosHoy.stream().mapToDouble(s -> Optional.ofNullable(s.getGrasas()).orElse(0.0)).sum();
+        double conCar = consumosHoy.stream().mapToDouble(s -> Optional.ofNullable(s.getCarbohidratos()).orElse(0.0)).sum();
+
+        // 2. Calcular saldos
+        Planalimenticio planAlim = planreceta.getIdplanalimenticio();
+        double salCal = Math.max(0, Optional.ofNullable(planAlim.getCaloriasDiaria()).orElse(0.0) - conCal);
+        double salPro = Math.max(0, Optional.ofNullable(planAlim.getProteinasDiaria()).orElse(0.0) - conPro);
+        double salGra = Math.max(0, Optional.ofNullable(planAlim.getGrasasDiaria()).orElse(0.0) - conGra);
+        double salCar = Math.max(0, Optional.ofNullable(planAlim.getCarbohidratosDiaria()).orElse(0.0) - conCar);
+
+        final double fSalCal = salCal;
+        final double fSalPro = salPro;
+        final double fSalGra = salGra;
+        final double fSalCar = salCar;
+
+        // 3. Filtrar
         List<PlanRecetaReceta> relaciones = planrecetaRecetaRepositorio.findByPlanreceta(planreceta);
         return relaciones.stream()
                 .map(PlanRecetaReceta::getReceta)
                 .filter(receta -> receta.getIdhorario().getNombre().equalsIgnoreCase(nombreHorario))
+                .filter(r -> {
+                    double rCal = Optional.ofNullable(r.getCalorias()).orElse(0.0);
+                    double rPro = Optional.ofNullable(r.getProteinas()).orElse(0.0);
+                    double rGra = Optional.ofNullable(r.getGrasas()).orElse(0.0);
+                    double rCar = Optional.ofNullable(r.getCarbohidratos()).orElse(0.0);
+
+                    // Solo pasa si cabe en TODOS los macronutrientes
+                    return rCal <= fSalCal && rPro <= fSalPro && rGra <= fSalGra && rCar <= fSalCar;
+                })
                 .map(receta -> modelMapper.map(receta, RecetaDTO.class))
                 .collect(Collectors.toList());
     }
@@ -272,10 +317,11 @@ public class PlanRecetaService implements IPlanRecetaServices {
 
     @Override
     public List<PlanRecetaDTO> listarFavoritosPorPaciente(Integer idPaciente) {
+        // 1. Obtener los planes del paciente
         List<Planreceta> planes = planRecetaRepositorio.buscarPorPaciente(idPaciente);
         if (planes == null || planes.isEmpty()) return Collections.emptyList();
 
-        // Filtramos los planes más recientes
+        // Quedarnos con los planes más recientes
         List<Planreceta> unicos = planes.stream()
                 .collect(Collectors.toMap(
                         p -> p.getIdplanalimenticio().getId(),
@@ -283,29 +329,62 @@ public class PlanRecetaService implements IPlanRecetaServices {
                         (p1, p2) -> p1.getFecharegistro().isAfter(p2.getFecharegistro()) ? p1 : p2
                 )).values().stream().collect(Collectors.toList());
 
-        return unicos.stream().map(plan -> {
-                    List<PlanRecetaReceta> relaciones = planrecetaRecetaRepositorio.findByPlanreceta(plan);
+        // 2. Calcular consumos de HOY (Igual que en los otros métodos)
+        LocalDate hoy = LocalDate.now();
+        List<Seguimiento> consumosHoy = seguimientoRepositorio.buscarPorPacienteYFecha(idPaciente, hoy);
 
-                    // ✅ FILTRAR: Solo quedarnos con las recetas que tienen favorito = true
-                    List<PlanRecetaRecetaDTO> favs = relaciones.stream()
-                            .filter(rel -> Boolean.TRUE.equals(rel.getFavorito()))
-                            .map(rel -> {
-                                PlanRecetaRecetaDTO relDTO = new PlanRecetaRecetaDTO();
-                                relDTO.setIdPlanRecetaReceta(rel.getIdPlanRecetaReceta());
-                                relDTO.setIdPlanReceta(rel.getPlanreceta().getId());
-                                relDTO.setFavorito(true);
-                                relDTO.setRecetaDTO(modelMapper.map(rel.getReceta(), RecetaDTO.class));
-                                return relDTO;
-                            }).collect(Collectors.toList());
+        double conCal = consumosHoy.stream().mapToDouble(s -> Optional.ofNullable(s.getCalorias()).orElse(0.0)).sum();
+        double conPro = consumosHoy.stream().mapToDouble(s -> Optional.ofNullable(s.getProteinas()).orElse(0.0)).sum();
+        double conGra = consumosHoy.stream().mapToDouble(s -> Optional.ofNullable(s.getGrasas()).orElse(0.0)).sum();
+        double conCar = consumosHoy.stream().mapToDouble(s -> Optional.ofNullable(s.getCarbohidratos()).orElse(0.0)).sum();
 
-                    if (favs.isEmpty()) return null; // Si el plan no tiene recetas favoritas, lo ignoramos
+        return unicos.stream().map(planReceta -> {
+            Planalimenticio planAlim = planReceta.getIdplanalimenticio();
 
-                    PlanRecetaDTO dto = modelMapper.map(plan, PlanRecetaDTO.class);
-                    dto.setRecetas(favs);
-                    return dto;
-                })
-                .filter(Objects::nonNull) // Eliminamos los planes nulos (sin favoritos)
-                .collect(Collectors.toList());
+            // 3. Calcular SALDOS DISPONIBLES (Objetivo - Consumido)
+            double salCal = Math.max(0, Optional.ofNullable(planAlim.getCaloriasDiaria()).orElse(2000.0) - conCal);
+            double salPro = Math.max(0, Optional.ofNullable(planAlim.getProteinasDiaria()).orElse(0.0) - conPro);
+            double salGra = Math.max(0, Optional.ofNullable(planAlim.getGrasasDiaria()).orElse(0.0) - conGra);
+            double salCar = Math.max(0, Optional.ofNullable(planAlim.getCarbohidratosDiaria()).orElse(0.0) - conCar);
+
+            // Variables finales para usar dentro del stream
+            final double fSalCal = salCal;
+            final double fSalPro = salPro;
+            final double fSalGra = salGra;
+            final double fSalCar = salCar;
+
+            List<PlanRecetaReceta> relaciones = planrecetaRecetaRepositorio.findByPlanreceta(planReceta);
+
+            List<PlanRecetaRecetaDTO> favs = relaciones.stream()
+                    // Filtro 1: Solo Favoritos
+                    .filter(rel -> Boolean.TRUE.equals(rel.getFavorito()))
+                    // Filtro 2: Que quepan en el saldo nutricional restante (Igual que en la lista general)
+                    .filter(rel -> {
+                        Receta r = rel.getReceta();
+                        double rCal = Optional.ofNullable(r.getCalorias()).orElse(0.0);
+                        double rPro = Optional.ofNullable(r.getProteinas()).orElse(0.0);
+                        double rGra = Optional.ofNullable(r.getGrasas()).orElse(0.0);
+                        double rCar = Optional.ofNullable(r.getCarbohidratos()).orElse(0.0);
+
+                        // La receta solo pasa si es menor o igual a lo que sobra de TODOS los macros
+                        return rCal <= fSalCal && rPro <= fSalPro && rGra <= fSalGra && rCar <= fSalCar;
+                    })
+                    .map(rel -> {
+                        PlanRecetaRecetaDTO relDTO = new PlanRecetaRecetaDTO();
+                        relDTO.setIdPlanRecetaReceta(rel.getIdPlanRecetaReceta());
+                        relDTO.setIdPlanReceta(rel.getPlanreceta().getId());
+                        relDTO.setFavorito(true);
+                        relDTO.setRecetaDTO(modelMapper.map(rel.getReceta(), RecetaDTO.class));
+                        return relDTO;
+                    }).collect(Collectors.toList());
+
+            // Si después de filtrar no queda nada (porque ya comiste todo), no devolvemos el plan vacío
+            if (favs.isEmpty()) return null;
+
+            PlanRecetaDTO dto = modelMapper.map(planReceta, PlanRecetaDTO.class);
+            dto.setRecetas(favs);
+            return dto;
+        }).filter(Objects::nonNull).collect(Collectors.toList());
     }
     // ✅ REEMPLAZA TU MÉTODO actualizarFavorito ACTUAL POR ESTE:
     @Override
