@@ -12,15 +12,17 @@ services:
       - db
     environment:
       - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=Melanie2020
+      - POSTGRES_PASSWORD=admin
       - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/VitalCo
       - SPRING_DATASOURCE_USERNAME=postgres
-      - SPRING_DATASOURCE_PASSWORD=Melanie2020
+      - SPRING_DATASOURCE_PASSWORD=admin
       - SPRING_JPA_HIBERNATE_DDL_AUTO=update
   db:
     image: postgres:16-alpine
     volumes:
       - db_data:/var/lib/postgresql/data
+      - /sys/fs/cgroup:/sys/fs/cgroup:ro
+      - /proc:/proc:ro
     restart: always
     container_name: db
     networks:
