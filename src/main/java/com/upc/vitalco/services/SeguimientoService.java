@@ -237,6 +237,12 @@ public class SeguimientoService implements ISeguimientoServices {
         Paciente paciente = pacienteRepositorio.findByDni(dni)
                 .orElseThrow(() -> new RuntimeException("Paciente no encontrado"));
 
+        // ✅ VALIDACIÓN: Verificar que existe cita aceptada
+        boolean tieneCitaAceptada = citaRepositorio.existsByPacienteIdAndEstado(paciente.getId(), "Aceptada");
+        if (!tieneCitaAceptada) {
+            throw new RuntimeException("No tienes citas aceptadas con este paciente");
+        }
+
         // a) Consumido
         List<Seguimiento> seguimientos = seguimientoRepositorio.buscarPorPacienteYFecha(paciente.getId(), fecha);
         double conCal = seguimientos.stream().mapToDouble(s -> s.getCalorias() != null ? s.getCalorias() : 0).sum();
@@ -245,10 +251,9 @@ public class SeguimientoService implements ISeguimientoServices {
         double conCarb = seguimientos.stream().mapToDouble(s -> s.getCarbohidratos() != null ? s.getCarbohidratos() : 0).sum();
 
         // b) Requerido (Meta Histórica)
-        // ✅ AQUÍ ESTÁ LA SOLUCIÓN A LOS NULOS:
         Optional<Planalimenticio> planHistorico = planAlimenticioRepositorio.buscarPlanEnFecha(paciente.getId(), fecha);
 
-        double reqCal = 2000, reqProt = 100, reqGrasas = 50, reqCarb = 200; // Valores por defecto seguros
+        double reqCal = 2000, reqProt = 100, reqGrasas = 50, reqCarb = 200;
 
         if (planHistorico.isPresent()) {
             Planalimenticio plan = planHistorico.get();
