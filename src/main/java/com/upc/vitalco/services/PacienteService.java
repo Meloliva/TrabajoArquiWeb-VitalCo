@@ -223,6 +223,17 @@ public class PacienteService implements IPacienteServices {
 
         return modelMapper.map(paciente, PacienteDTO.class);
     }
+    @Override
+    public String obtenerDniPorId(Integer idPaciente) {
+        Paciente paciente = pacienteRepositorio.findById(idPaciente)
+                .orElseThrow(() -> new RuntimeException("Paciente no encontrado con ID: " + idPaciente));
+
+        if (paciente.getIdusuario() == null) {
+            throw new RuntimeException("El paciente no tiene usuario asociado");
+        }
+
+        return paciente.getIdusuario().getDni();
+    }
 }
 
 

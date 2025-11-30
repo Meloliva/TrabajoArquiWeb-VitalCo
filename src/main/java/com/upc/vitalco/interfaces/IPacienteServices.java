@@ -11,4 +11,5 @@ public interface IPacienteServices {
     public PacienteDTO buscarPacientePorDni(String dni);
     public PacienteDTO buscarPorId(Integer id);
     PacienteDTO cambiarPlanNutricional(String dni, Integer idNuevoPlanNutricional);
+    String obtenerDniPorId(Integer idPaciente);
 }

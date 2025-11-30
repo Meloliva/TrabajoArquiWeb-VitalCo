@@ -4,6 +4,7 @@ import com.upc.vitalco.dto.*;
 import com.upc.vitalco.security.util.SecurityUtils;
 import com.upc.vitalco.services.PacienteService;
 import com.upc.vitalco.services.SeguimientoService;
+import org.apache.tomcat.util.net.openssl.ciphers.Authentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
@@ -12,6 +13,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.HttpStatus;
@@ -39,11 +41,29 @@ public class SeguimientoController {
 
     @PreAuthorize("hasRole('PACIENTE')")
     @GetMapping("/listarSeguimientos/{fecha}")
-    public SeguimientoResumenDTO listarPorDia(
+    public ResponseEntity<SeguimientoResumenDTO> listarPorDia(
             @PathVariable("fecha") LocalDate fecha) {
+
+        // 1. Obtener el DNI del usuario autenticado
         Integer idUsuario = securityUtils.getUsuarioAutenticadoId();
-        Integer idPaciente=pacienteService.obtenerIdPacientePorUsuario(idUsuario);
-        return seguimientoService.listarPorDia(idPaciente, fecha);
+        Integer idPaciente = pacienteService.obtenerIdPacientePorUsuario(idUsuario);
+
+        // 2. Obtener el DNI del paciente
+        // (Necesitamos agregar este método al PacienteService o usar el repositorio)
+        String dni = pacienteService.obtenerDniPorId(idPaciente);
+
+        // 3. ✅ LLAMAR AL MÉTODO CORRECTO que usa plan histórico
+        try {
+            SeguimientoResumenDTO resumen = seguimientoService.resumenSeguimientoPaciente(dni, fecha);
+            return ResponseEntity.ok(resumen);
+        } catch (RuntimeException e) {
+            // Si no hay datos, devolver estructura vacía
+            SeguimientoResumenDTO vacio = new SeguimientoResumenDTO();
+            vacio.setNombrePaciente("");
+            vacio.setTotalesNutricionales(new HashMap<>());
+            vacio.setCaloriasPorHorario(new HashMap<>());
+            return ResponseEntity.ok(vacio);
+        }
     }
 
     @PreAuthorize("hasRole('NUTRICIONISTA')")
@@ -104,6 +124,5 @@ public class SeguimientoController {
     ) {
         return ResponseEntity.ok(seguimientoService.obtenerHistorialFiltrado(dni, objetivo, fechaInicio, fechaFin));
     }
-
 }
 

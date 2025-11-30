@@ -5,7 +5,7 @@ import com.upc.vitalco.dto.PlanAlimenticioDTO;
 import com.upc.vitalco.entidades.Paciente;
 import com.upc.vitalco.entidades.Planalimenticio;
 import com.upc.vitalco.entidades.Plannutricional;
-import com.upc.vitalco.entidades.Seguimiento;
+import com.upc.vitalco.entidades.Planreceta;
 import com.upc.vitalco.interfaces.IPlanAlimenticioServices;
 import com.upc.vitalco.repositorios.*;
 
@@ -29,7 +29,7 @@ public class PlanAlimenticioService implements IPlanAlimenticioServices {
     @Autowired
     private PlanNutricionalRepositorio planNutricionalRepositorio;
     @Autowired
-    private PlanRecetaService planRecetaService;
+    private PlanRecetaService planRecetaService; // Servicio PlanReceta
 
     @Autowired
     private CitaRepositorio citaRepositorio;
@@ -58,7 +58,7 @@ public class PlanAlimenticioService implements IPlanAlimenticioServices {
 
         Planalimenticio planAlimenticio = new Planalimenticio();
         planAlimenticio.setIdpaciente(paciente);
-        planAlimenticio.setPlannutricional(planNutricional); // ✅ Se vincula el Plannutricional
+        planAlimenticio.setPlannutricional(planNutricional);
         planAlimenticio.setCaloriasDiaria(caloriasDiarias);
         planAlimenticio.setCarbohidratosDiaria(macros[0]);
         planAlimenticio.setProteinasDiaria(macros[1]);
@@ -69,7 +69,11 @@ public class PlanAlimenticioService implements IPlanAlimenticioServices {
         planAlimenticio.setFechafin(calcularFechaFinal(duracion, fechaInicio));
 
         planAlimenticio = planAlimenticioRepositorio.save(planAlimenticio);
-        planRecetaService.crearPlanReceta(planAlimenticio.getId());
+
+        // ✅ CORRECCIÓN DE FLUJO: Crear PlanReceta y asignar recetas al Planreceta creado
+        Planreceta planReceta = planRecetaService.crearPlanReceta(planAlimenticio.getId());
+        planRecetaService.asignarRecetasAPlan(planReceta.getId());
+
 
         return mapearDTO(planAlimenticio);
     }
@@ -116,7 +120,7 @@ public class PlanAlimenticioService implements IPlanAlimenticioServices {
             pacienteRepositorio.save(paciente);
         }
 
-        // ✅ LÍNEA CRUCIAL: VINCULAR EL PLAN BASE
+        // VINCULAR EL PLAN BASE
         nuevoPlan.setPlannutricional(planBase);
 
         // Calcular fecha fin usando la duración del planBase actualizado
@@ -130,9 +134,11 @@ public class PlanAlimenticioService implements IPlanAlimenticioServices {
 
         nuevoPlan = planAlimenticioRepositorio.save(nuevoPlan);
 
-        // Generar recetas
-        planRecetaService.crearPlanReceta(nuevoPlan.getId());
-        planRecetaService.recalcularPlanRecetas(nuevoPlan.getId());
+        // ✅ CORRECCIÓN DE FLUJO: Crear PlanReceta y asignar recetas al Planreceta creado
+        Planreceta planReceta = planRecetaService.crearPlanReceta(nuevoPlan.getId());
+        planRecetaService.asignarRecetasAPlan(planReceta.getId());
+        // planRecetaService.recalcularPlanRecetas(nuevoPlan.getId()); <-- ERROR ELIMINADO
+
 
         // Retornar DTO
         return new NutricionistaRequerimientoDTO(
@@ -162,7 +168,7 @@ public class PlanAlimenticioService implements IPlanAlimenticioServices {
 
         Plannutricional planBase = paciente.getIdPlanNutricional();
 
-        // ✅ VINCULAR EL PLAN BASE
+        // VINCULAR EL PLAN BASE
         nuevoPlan.setPlannutricional(planBase);
 
         nuevoPlan.setFechafin(calcularFechaFinal(planBase.getDuracion(), LocalDate.now()));
@@ -178,11 +184,12 @@ public class PlanAlimenticioService implements IPlanAlimenticioServices {
 
         nuevoPlan = planAlimenticioRepositorio.save(nuevoPlan);
 
-        // Generar recetas
-        planRecetaService.crearPlanReceta(nuevoPlan.getId());
-        planRecetaService.recalcularPlanRecetas(nuevoPlan.getId());
+        // ✅ CORRECCIÓN DE FLUJO: Crear PlanReceta y asignar recetas al Planreceta creado
+        Planreceta planReceta = planRecetaService.crearPlanReceta(nuevoPlan.getId());
+        planRecetaService.asignarRecetasAPlan(planReceta.getId());
+        // planRecetaService.recalcularPlanRecetas(nuevoPlan.getId()); <-- ERROR ELIMINADO
 
-        return mapearDTO(nuevoPlan); // ✅ Usamos el mapeador corregido
+        return mapearDTO(nuevoPlan);
     }
 
 
@@ -190,7 +197,7 @@ public class PlanAlimenticioService implements IPlanAlimenticioServices {
     public List<PlanAlimenticioDTO> findAll() {
         return planAlimenticioRepositorio.findAll()
                 .stream()
-                .map(this::mapearDTO) // ✅ Usamos el mapeador corregido
+                .map(this::mapearDTO)
                 .collect(Collectors.toList());
     }
 
@@ -254,6 +261,7 @@ public class PlanAlimenticioService implements IPlanAlimenticioServices {
             planDTO.setCaloriasDiaria(caloriasActualizadas);
             planDTO.setCarbohidratosDiaria(macrosActualizados[0]);
             planDTO.setProteinasDiaria(macrosActualizados[1]);
+            // El índice aquí debe ser 2, y debe ser macrosActualizados, no caloriasActualizadas[2].
             planDTO.setGrasasDiaria(macrosActualizados[2]);
 
             return planDTO;
@@ -379,6 +387,4 @@ public class PlanAlimenticioService implements IPlanAlimenticioServices {
         }
         return dto;
     }
-
-
 }

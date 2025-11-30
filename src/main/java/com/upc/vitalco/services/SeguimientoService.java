@@ -135,28 +135,60 @@ public class SeguimientoService implements ISeguimientoServices {
 
 
     public Map<String, Double> obtenerTotalesNutricionales(Integer pacienteId, LocalDate fecha) {
-        // 1. Sumar lo que comió (Esto ya lo haces bien)
+        // 1. Calcular lo consumido en esa fecha
         List<Seguimiento> seguimientos = seguimientoRepositorio.buscarPorPacienteYFecha(pacienteId, fecha);
 
-        double totalCalorias = seguimientos.stream().mapToDouble(s -> s.getCalorias() != null ? s.getCalorias() : 0.0).sum();
-        double totalCarbohidratos = seguimientos.stream().mapToDouble(s -> s.getCarbohidratos() != null ? s.getCarbohidratos() : 0.0).sum();
-        double totalProteinas = seguimientos.stream().mapToDouble(s -> s.getProteinas() != null ? s.getProteinas() : 0.0).sum();
-        double totalGrasas = seguimientos.stream().mapToDouble(s -> s.getGrasas() != null ? s.getGrasas() : 0.0).sum();
+        double totalCalorias = seguimientos.stream()
+                .mapToDouble(s -> Optional.ofNullable(s.getCalorias()).orElse(0.0))
+                .sum();
+        double totalCarbohidratos = seguimientos.stream()
+                .mapToDouble(s -> Optional.ofNullable(s.getCarbohidratos()).orElse(0.0))
+                .sum();
+        double totalProteinas = seguimientos.stream()
+                .mapToDouble(s -> Optional.ofNullable(s.getProteinas()).orElse(0.0))
+                .sum();
+        double totalGrasas = seguimientos.stream()
+                .mapToDouble(s -> Optional.ofNullable(s.getGrasas()).orElse(0.0))
+                .sum();
 
-        // 2. CORRECCIÓN: Buscar la META HISTÓRICA correcta para esa fecha
-        // NO USAR: planAlimenticioRepositorio.buscarPorPaciente(pacienteId); <- ESTO TRAE EL NUEVO SIEMPRE
-
+        // 2. ✅ Buscar el plan que estaba vigente EN ESA FECHA
         Optional<Planalimenticio> planHistorico = planAlimenticioRepositorio.buscarPlanEnFecha(pacienteId, fecha);
 
-        double reqCalorias = 0, reqCarbohidratos = 0, reqProteinas = 0, reqGrasas = 0;
+        // 3. Valores por defecto seguros (por si no hay plan)
+        double reqCalorias = 2000.0;
+        double reqCarbohidratos = 250.0;
+        double reqProteinas = 100.0;
+        double reqGrasas = 70.0;
 
         if (planHistorico.isPresent()) {
             Planalimenticio plan = planHistorico.get();
-            // Usamos los valores que tenía ESE plan en ESE momento
-            reqCalorias = plan.getCaloriasDiaria();
-            reqCarbohidratos = plan.getCarbohidratosDiaria();
-            reqProteinas = plan.getProteinasDiaria();
-            reqGrasas = plan.getGrasasDiaria();
+
+            // ✅ LOG CRÍTICO para debugging
+            System.out.println("═══════════════════════════════════════════");
+            System.out.println("📅 Buscando plan para fecha: " + fecha);
+            System.out.println("✅ Plan encontrado:");
+            System.out.println("   ID Plan: " + plan.getId());
+            System.out.println("   Fecha Creación: " + plan.getFechaCreacion());
+            System.out.println("   Calorías: " + plan.getCaloriasDiaria());
+            System.out.println("   Proteínas: " + plan.getProteinasDiaria());
+            System.out.println("   Grasas: " + plan.getGrasasDiaria());
+            System.out.println("   Carbohidratos: " + plan.getCarbohidratosDiaria());
+            System.out.println("═══════════════════════════════════════════");
+
+            reqCalorias = Optional.ofNullable(plan.getCaloriasDiaria()).orElse(reqCalorias);
+            reqCarbohidratos = Optional.ofNullable(plan.getCarbohidratosDiaria()).orElse(reqCarbohidratos);
+            reqProteinas = Optional.ofNullable(plan.getProteinasDiaria()).orElse(reqProteinas);
+            reqGrasas = Optional.ofNullable(plan.getGrasasDiaria()).orElse(reqGrasas);
+        } else {
+            System.out.println("⚠️ NO se encontró plan para fecha: " + fecha + " paciente: " + pacienteId);
+            System.out.println("   Usando valores por defecto");
+
+            // Buscar TODOS los planes para debug
+            List<Planalimenticio> todosPlanes = planAlimenticioRepositorio.buscarPorPaciente(pacienteId);
+            System.out.println("   Planes disponibles:");
+            todosPlanes.forEach(p ->
+                    System.out.println("      - ID: " + p.getId() + ", Fecha: " + p.getFechaCreacion())
+            );
         }
 
         Map<String, Double> totales = new HashMap<>();
@@ -164,8 +196,6 @@ public class SeguimientoService implements ISeguimientoServices {
         totales.put("carbohidratos", totalCarbohidratos);
         totales.put("proteinas", totalProteinas);
         totales.put("grasas", totalGrasas);
-
-        // Aquí se guardan las metas correctas (antiguas o nuevas según la fecha)
         totales.put("requerido_calorias", reqCalorias);
         totales.put("requerido_carbohidratos", reqCarbohidratos);
         totales.put("requerido_proteinas", reqProteinas);
@@ -375,6 +405,31 @@ public class SeguimientoService implements ISeguimientoServices {
             historial.add(new HistorialSemanalDTO(f, consumoPorDia.get(f), metaPorDia.get(f)));
         }
         return historial;
+    }
+
+    @Override
+    public SeguimientoResumenDTO resumenSeguimientoPaciente(String dni, LocalDate fecha) {
+        // 1. Buscar paciente
+        Paciente paciente = pacienteRepositorio.findByDni(dni)
+                .orElseThrow(() -> new RuntimeException("Paciente con DNI " + dni + " no encontrado"));
+
+        // 2. Obtener el usuario asociado
+        Usuario usuario = paciente.getIdusuario();
+        String nombreUsuario = usuario != null ? usuario.getNombre() : "";
+
+        // 3. ✅ AQUÍ ESTÁ LA CLAVE: Obtener totales CON PLAN HISTÓRICO
+        // Los métodos obtenerTotalesNutricionales y listarCaloriasPorHorario
+        // YA usan buscarPlanEnFecha internamente, por eso funcionan correctamente
+        Map<String, Double> totalesNutricionales = obtenerTotalesNutricionales(paciente.getId(), fecha);
+        Map<String, Double> caloriasPorHorario = listarCaloriasPorHorario(paciente.getId(), fecha);
+
+        // 4. Construir respuesta
+        SeguimientoResumenDTO resumen = new SeguimientoResumenDTO();
+        resumen.setNombrePaciente(nombreUsuario);
+        resumen.setTotalesNutricionales(totalesNutricionales);
+        resumen.setCaloriasPorHorario(caloriasPorHorario);
+
+        return resumen;
     }
 
 }

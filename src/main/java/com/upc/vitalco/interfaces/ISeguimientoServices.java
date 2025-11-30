@@ -14,4 +14,5 @@ public interface ISeguimientoServices {
     public void eliminarRecetaDeSeguimiento(Integer seguimientoId, Integer recetaId, Integer pacienteId);
     List<SeguimientoBusquedaDTO> listarPorDniYFecha(String dni, LocalDate fecha);
     List<HistorialSemanalDTO> obtenerHistorialFiltrado(String dni, String objetivo, LocalDate fechaInicio, LocalDate fechaFin);
+    SeguimientoResumenDTO resumenSeguimientoPaciente(String dni, LocalDate fecha);
 }

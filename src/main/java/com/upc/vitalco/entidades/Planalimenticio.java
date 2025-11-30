@@ -43,4 +43,7 @@ public class Planalimenticio {
     @JoinColumn(name = "idplannutricional")
     private Plannutricional plannutricional;
 
+    @Column(name = "fecha_creacion")
+    private LocalDate fechaCreacion;
+
 }
