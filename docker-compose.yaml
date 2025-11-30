@@ -21,8 +21,6 @@ services:
     image: postgres:16-alpine
     volumes:
       - db_data:/var/lib/postgresql/data
-      - /sys/fs/cgroup:/sys/fs/cgroup:ro
-      - /proc:/proc:ro
     restart: always
     container_name: db
     networks:
