@@ -73,14 +73,13 @@ public class SecurityConfig {
         return http.build();
     }
 
-    // ✅ Configuración CORS personalizada
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        // ✅ Aceptamos tanto HTTP (WebStorm) como HTTPS (Facebook Login)
         configuration.setAllowedOrigins(List.of(
-                "http://localhost:4200",  // Para desarrollo normal (WebStorm)
-                "https://localhost:4200"  // Para pruebas con Facebook (SSL)
+                "http://localhost:4200",
+                "https://localhost:4200" ,
+                "${ip.frontend}"
         ));
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("Authorization", "Content-Type"));
