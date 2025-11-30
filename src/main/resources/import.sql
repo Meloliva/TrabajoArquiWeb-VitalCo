@@ -41,31 +41,31 @@ INSERT INTO plannutricional (duracion, objetivo) VALUES
                                                      ('12 meses', 'mantener mi salud');
 
 -- =============================================
--- USUARIOS (Contraseña: password123)
+-- USUARIOS (Contraseña: 123123)
 -- =============================================
 INSERT INTO usuario (dni, "contraseña", nombre, apellido, correo, genero, estado, idrol, foto_perfil) VALUES
 -- Admin
-('12345678', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy', 'Carlos', 'Rodríguez', 'admin@vitalco.com', 'Masculino', 'Activo', 1, 'https://i.pravatar.cc/150?img=12'),
+('12345678', '$2a$12$2L22dhksQWvMpDqGu5L2Kuz5MTaI.VVjtBCPe33j6dWKn8lTeejuy', 'Carlos', 'Rodríguez', 'admin@vitalco.com', 'Masculino', 'Activo', 1, 'https://i.pravatar.cc/150?img=12'),
 
 -- Nutricionistas
-('23456789', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy', 'María', 'González', 'maria.gonzalez@vitalco.com', 'Femenino', 'Activo', 3, 'https://i.pravatar.cc/150?img=47'),
-('34567890', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy', 'Roberto', 'Fernández', 'roberto.fernandez@vitalco.com', 'Masculino', 'Activo', 3, 'https://i.pravatar.cc/150?img=33'),
-('11223344', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy', 'Patricia', 'Torres', 'patricia.torres@vitalco.com', 'Femenino', 'Activo', 3, 'https://i.pravatar.cc/150?img=28'),
-('55667788', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy', 'Diego', 'Vargas', 'diego.vargas@vitalco.com', 'Masculino', 'Activo', 3, 'https://i.pravatar.cc/150?img=15'),
+('23456789', '$2a$12$2L22dhksQWvMpDqGu5L2Kuz5MTaI.VVjtBCPe33j6dWKn8lTeejuy', 'María', 'González', 'maria.gonzalez@vitalco.com', 'Femenino', 'Activo', 3, 'https://i.pravatar.cc/150?img=47'),
+('34567890', '$2a$12$2L22dhksQWvMpDqGu5L2Kuz5MTaI.VVjtBCPe33j6dWKn8lTeejuy', 'Roberto', 'Fernández', 'roberto.fernandez@vitalco.com', 'Masculino', 'Activo', 3, 'https://i.pravatar.cc/150?img=33'),
+('11223344', '$2a$12$2L22dhksQWvMpDqGu5L2Kuz5MTaI.VVjtBCPe33j6dWKn8lTeejuy', 'Patricia', 'Torres', 'patricia.torres@vitalco.com', 'Femenino', 'Activo', 3, 'https://i.pravatar.cc/150?img=28'),
+('55667788', '$2a$12$2L22dhksQWvMpDqGu5L2Kuz5MTaI.VVjtBCPe33j6dWKn8lTeejuy', 'Diego', 'Vargas', 'diego.vargas@vitalco.com', 'Masculino', 'Activo', 3, 'https://i.pravatar.cc/150?img=15'),
 
 -- Pacientes Free
-('45678901', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy', 'Ana', 'López', 'ana.lopez@gmail.com', 'Femenino', 'Activo', 2, 'https://i.pravatar.cc/150?img=5'),
-('56789012', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy', 'Pedro', 'Martínez', 'pedro.martinez@gmail.com', 'Masculino', 'Activo', 2, 'https://i.pravatar.cc/150?img=14'),
-('87654321', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy', 'Sofía', 'Mendoza', 'sofia.mendoza@gmail.com', 'Femenino', 'Activo', 2, 'https://i.pravatar.cc/150?img=9'),
-('98765432', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy', 'Miguel', 'Castro', 'miguel.castro@gmail.com', 'Masculino', 'Activo', 2, 'https://i.pravatar.cc/150?img=51'),
+('45678901', '$2a$12$2L22dhksQWvMpDqGu5L2Kuz5MTaI.VVjtBCPe33j6dWKn8lTeejuy', 'Ana', 'López', 'ana.lopez@gmail.com', 'Femenino', 'Activo', 2, 'https://i.pravatar.cc/150?img=5'),
+('56789012', '$2a$12$2L22dhksQWvMpDqGu5L2Kuz5MTaI.VVjtBCPe33j6dWKn8lTeejuy', 'Pedro', 'Martínez', 'pedro.martinez@gmail.com', 'Masculino', 'Activo', 2, 'https://i.pravatar.cc/150?img=14'),
+('87654321', '$2a$12$2L22dhksQWvMpDqGu5L2Kuz5MTaI.VVjtBCPe33j6dWKn8lTeejuy', 'Sofía', 'Mendoza', 'sofia.mendoza@gmail.com', 'Femenino', 'Activo', 2, 'https://i.pravatar.cc/150?img=9'),
+('98765432', '$2a$12$2L22dhksQWvMpDqGu5L2Kuz5MTaI.VVjtBCPe33j6dWKn8lTeejuy', 'Miguel', 'Castro', 'miguel.castro@gmail.com', 'Masculino', 'Activo', 2, 'https://i.pravatar.cc/150?img=51'),
 
 -- Pacientes Premium
-('67890123', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy', 'Laura', 'Sánchez', 'laura.sanchez@gmail.com', 'Femenino', 'Activo', 2, 'https://i.pravatar.cc/150?img=45'),
-('78901234', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy', 'Jorge', 'Ramírez', 'jorge.ramirez@gmail.com', 'Masculino', 'Activo', 2, 'https://i.pravatar.cc/150?img=52'),
-('11112222', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy', 'Valentina', 'Flores', 'valentina.flores@gmail.com', 'Femenino', 'Activo', 2, 'https://i.pravatar.cc/150?img=44'),
-('33334444', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy', 'Ricardo', 'Morales', 'ricardo.morales@gmail.com', 'Masculino', 'Activo', 2, 'https://i.pravatar.cc/150?img=13'),
-('22223333', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy', 'Camila', 'Ruiz', 'camila.ruiz@gmail.com', 'Femenino', 'Activo', 2, 'https://i.pravatar.cc/150?img=32'),
-('44445555', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy', 'Andrés', 'Vega', 'andres.vega@gmail.com', 'Masculino', 'Activo', 2, 'https://i.pravatar.cc/150?img=59'),
+('67890123', '$2a$12$2L22dhksQWvMpDqGu5L2Kuz5MTaI.VVjtBCPe33j6dWKn8lTeejuy', 'Laura', 'Sánchez', 'laura.sanchez@gmail.com', 'Femenino', 'Activo', 2, 'https://i.pravatar.cc/150?img=45'),
+('78901234', '$2a$12$2L22dhksQWvMpDqGu5L2Kuz5MTaI.VVjtBCPe33j6dWKn8lTeejuy', 'Jorge', 'Ramírez', 'jorge.ramirez@gmail.com', 'Masculino', 'Activo', 2, 'https://i.pravatar.cc/150?img=52'),
+('11112222', '$2a$12$2L22dhksQWvMpDqGu5L2Kuz5MTaI.VVjtBCPe33j6dWKn8lTeejuy', 'Valentina', 'Flores', 'valentina.flores@gmail.com', 'Femenino', 'Activo', 2, 'https://i.pravatar.cc/150?img=44'),
+('33334444', '$2a$12$2L22dhksQWvMpDqGu5L2Kuz5MTaI.VVjtBCPe33j6dWKn8lTeejuy', 'Ricardo', 'Morales', 'ricardo.morales@gmail.com', 'Masculino', 'Activo', 2, 'https://i.pravatar.cc/150?img=13'),
+('22223333', '$2a$12$2L22dhksQWvMpDqGu5L2Kuz5MTaI.VVjtBCPe33j6dWKn8lTeejuy', 'Camila', 'Ruiz', 'camila.ruiz@gmail.com', 'Femenino', 'Activo', 2, 'https://i.pravatar.cc/150?img=32'),
+('44445555', '$2a$12$2L22dhksQWvMpDqGu5L2Kuz5MTaI.VVjtBCPe33j6dWKn8lTeejuy', 'Andrés', 'Vega', 'andres.vega@gmail.com', 'Masculino', 'Activo', 2, 'https://i.pravatar.cc/150?img=59');
 
 -- =============================================
 -- NUTRICIONISTAS
